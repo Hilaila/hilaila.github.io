@@ -35,8 +35,31 @@
     <div class="card">
       <p>Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ.</p>
       <div class="status">● En ligne · Pi SDK 2.0 ✓</div>
+      <button onclick="payerPi()" style="margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;">
+  π Tokeniser — 1 GTCπ
+      </button>
     </div>
-    <script>
+    <</script>
+      <script>
+async function payerPi() {
+  try {
+    await Pi.init({ version: '2.0', sandbox: false });
+    const auth = await Pi.authenticate(['username','payments'], ()=>{});
+    await Pi.createPayment({
+      amount: 1,
+      memo: "Tokenisation GeoTerraChain QFS",
+      metadata: { platform: "GeoTerraChain QFS" }
+    }, {
+      onReadyForServerApproval: id => console.log("Approval:", id),
+      onReadyForServerCompletion: (id, tx) => console.log("Complete:", tx),
+      onCancel: id => console.log("Annule:", id),
+      onError: err => console.log("Erreur:", err),
+    });
+  } catch(e) {
+    alert("Erreur: " + e.message);
+  }
+}
+</script>
       window.addEventListener('load', async () => {
         try {
           await Pi.init({ version: '2.0', sandbox: false });
