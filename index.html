@@ -27,8 +27,9 @@ h1{font-size:36px;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;font
 <button class="pay-btn" onclick="payerPi()">π Tokeniser — 1 GTCπ</button>
 </div>
 <script>
+const WEBHOOK='https://webhook.site/ec86c191-a6a3-4a0c-a128-f0b66aec9adf';
 window.addEventListener('load',async()=>{
-  try{await Pi.init({version:'2.0',sandbox:false});console.log('Pi SDK OK');}
+  try{await Pi.init({version:'2.0',sandbox:false});}
   catch(e){console.warn('Hors Pi Browser');}
 });
 async function payerPi(){
@@ -40,8 +41,12 @@ async function payerPi(){
       memo:'Tokenisation GeoTerraChain QFS',
       metadata:{platform:'GeoTerraChain QFS'}
     },{
-      onReadyForServerApproval:id=>console.log('Approval:',id),
-      onReadyForServerCompletion:(id,tx)=>console.log('Complete:',tx),
+      onReadyForServerApproval:async id=>{
+        await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentId:id,action:'approve'})});
+      },
+      onReadyForServerCompletion:async(id,tx)=>{
+        await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentId:id,txid:tx,action:'complete'})});
+      },
       onCancel:id=>console.log('Annule:',id),
       onError:err=>alert('Erreur: '+err.message),
     });
