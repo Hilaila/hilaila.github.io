@@ -14,7 +14,8 @@ h1{font-size:36px;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;font
 .card{background:#0D0D0D;border:1px solid #C9A84C;padding:24px 40px;max-width:500px;}
 .card p{font-size:14px;color:#A0A090;line-height:1.8;}
 .status{margin-top:24px;font-size:10px;color:#2ECC71;letter-spacing:2px;}
-.pay-btn{margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;}
+.pay-btn{margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;width:100%;}
+#msg{margin-top:16px;font-size:12px;color:#C9A84C;}
 </style>
 </head>
 <body>
@@ -25,32 +26,64 @@ h1{font-size:36px;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;font
 <p>Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ.</p>
 <div class="status">● En ligne · Pi SDK 2.0 ✓</div>
 <button class="pay-btn" onclick="payerPi()">π Tokeniser — 1 GTCπ</button>
+<div id="msg"></div>
 </div>
 <script>
-const WEBHOOK='https://webhook.site/ec86c191-a6a3-4a0c-a128-f0b66aec9adf';
+const API_KEY='qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
+const msg=document.getElementById('msg');
+
 window.addEventListener('load',async()=>{
   try{await Pi.init({version:'2.0',sandbox:false});}
   catch(e){console.warn('Hors Pi Browser');}
 });
+
+async function approuver(paymentId){
+  try{
+    const r=await fetch(`https://api.minepi.com/v2/payments/${paymentId}/approve`,{
+      method:'POST',
+      headers:{Authorization:`Key ${API_KEY}`}
+    });
+    return r.ok;
+  }catch(e){return false;}
+}
+
+async function completer(paymentId,txid){
+  try{
+    const r=await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`,{
+      method:'POST',
+      headers:{Authorization:`Key ${API_KEY}`,'Content-Type':'application/json'},
+      body:JSON.stringify({txid})
+    });
+    return r.ok;
+  }catch(e){return false;}
+}
+
 async function payerPi(){
+  msg.textContent='Initialisation...';
   try{
     await Pi.init({version:'2.0',sandbox:false});
-    await Pi.authenticate(['username','payments'],()=>{});
+    await Pi.authenticate(['username','payments'],async p=>{
+      await completer(p.identifier,p.transaction?.txid);
+    });
     await Pi.createPayment({
       amount:1,
       memo:'Tokenisation GeoTerraChain QFS',
       metadata:{platform:'GeoTerraChain QFS'}
     },{
       onReadyForServerApproval:async id=>{
-        await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentId:id,action:'approve'})});
+        msg.textContent='Approbation en cours...';
+        const ok=await approuver(id);
+        msg.textContent=ok?'✓ Approuvé':'Approbation échouée';
       },
       onReadyForServerCompletion:async(id,tx)=>{
-        await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentId:id,txid:tx,action:'complete'})});
+        msg.textContent='Finalisation...';
+        const ok=await completer(id,tx);
+        msg.textContent=ok?'✓ Transaction complète !':'Finalisation échouée';
       },
-      onCancel:id=>console.log('Annule:',id),
-      onError:err=>alert('Erreur: '+err.message),
+      onCancel:id=>{msg.textContent='Annulé';},
+      onError:err=>{msg.textContent='Erreur: '+err.message;}
     });
-  }catch(e){alert('Erreur: '+e.message);}
+  }catch(e){msg.textContent='Erreur: '+e.message;}
 }
 </script>
 </body>
