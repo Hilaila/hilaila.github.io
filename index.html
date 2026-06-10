@@ -1,73 +1,52 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GeoTerraChain QFS</title>
-    <meta name="description" content="Plateforme africaine de tokenisation RWA sur Pi Network." />
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body {
-        font-family: Georgia, serif;
-        background: #0A0A0A;
-        color: #D8D0C0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 40px;
-      }
-      .sub { font-size: 10px; color: #8B6914; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 16px; }
-      h1 { font-size: 36px; color: #C9A84C; letter-spacing: 4px; text-transform: uppercase; font-weight: 400; margin-bottom: 12px; }
-      .tagline { font-size: 14px; color: #555; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
-      .card { background: #0D0D0D; border: 1px solid #C9A84C; padding: 24px 40px; max-width: 500px; }
-      .card p { font-size: 14px; color: #A0A090; line-height: 1.8; }
-      .status { margin-top: 24px; font-size: 10px; color: #2ECC71; letter-spacing: 2px; }
-    </style>
-  </head>
-  <body>
-    <div class="sub">Pi Network · Stellar · RWA</div>
-    <h1>GeoTerraChain QFS</h1>
-    <p class="tagline">Notre Terre · Notre Richesse</p>
-    <div class="card">
-      <p>Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ.</p>
-      <div class="status">● En ligne · Pi SDK 2.0 ✓</div>
-      <button onclick="payerPi()" style="margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;">
-  π Tokeniser — 1 GTCπ
-      </button>
-    </div>
-    <</script>
-      <script>
-async function payerPi() {
-  try {
-    await Pi.init({ version: '2.0', sandbox: false });
-    const auth = await Pi.authenticate(['username','payments'], ()=>{});
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GeoTerraChain QFS</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Georgia,serif;background:#0A0A0A;color:#D8D0C0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;}
+.sub{font-size:10px;color:#8B6914;letter-spacing:6px;text-transform:uppercase;margin-bottom:16px;}
+h1{font-size:36px;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;font-weight:400;margin-bottom:12px;}
+.tagline{font-size:14px;color:#555;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;}
+.card{background:#0D0D0D;border:1px solid #C9A84C;padding:24px 40px;max-width:500px;}
+.card p{font-size:14px;color:#A0A090;line-height:1.8;}
+.status{margin-top:24px;font-size:10px;color:#2ECC71;letter-spacing:2px;}
+.pay-btn{margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;}
+</style>
+</head>
+<body>
+<div class="sub">Pi Network · Stellar · RWA</div>
+<h1>GeoTerraChain QFS</h1>
+<p class="tagline">Notre Terre · Notre Richesse</p>
+<div class="card">
+<p>Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ.</p>
+<div class="status">● En ligne · Pi SDK 2.0 ✓</div>
+<button class="pay-btn" onclick="payerPi()">π Tokeniser — 1 GTCπ</button>
+</div>
+<script>
+window.addEventListener('load',async()=>{
+  try{await Pi.init({version:'2.0',sandbox:false});console.log('Pi SDK OK');}
+  catch(e){console.warn('Hors Pi Browser');}
+});
+async function payerPi(){
+  try{
+    await Pi.init({version:'2.0',sandbox:false});
+    await Pi.authenticate(['username','payments'],()=>{});
     await Pi.createPayment({
-      amount: 1,
-      memo: "Tokenisation GeoTerraChain QFS",
-      metadata: { platform: "GeoTerraChain QFS" }
-    }, {
-      onReadyForServerApproval: id => console.log("Approval:", id),
-      onReadyForServerCompletion: (id, tx) => console.log("Complete:", tx),
-      onCancel: id => console.log("Annule:", id),
-      onError: err => console.log("Erreur:", err),
+      amount:1,
+      memo:'Tokenisation GeoTerraChain QFS',
+      metadata:{platform:'GeoTerraChain QFS'}
+    },{
+      onReadyForServerApproval:id=>console.log('Approval:',id),
+      onReadyForServerCompletion:(id,tx)=>console.log('Complete:',tx),
+      onCancel:id=>console.log('Annule:',id),
+      onError:err=>alert('Erreur: '+err.message),
     });
-  } catch(e) {
-    alert("Erreur: " + e.message);
-  }
+  }catch(e){alert('Erreur: '+e.message);}
 }
 </script>
-      window.addEventListener('load', async () => {
-        try {
-          await Pi.init({ version: '2.0', sandbox: false });
-          console.log('[GeoTerraChain] Pi SDK initialisé');
-        } catch(e) {
-          console.warn('[GeoTerraChain] Hors Pi Browser');
-        }
-      });
-    </script>
-  </body>
+</body>
 </html>
