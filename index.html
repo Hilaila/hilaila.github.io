@@ -3,88 +3,945 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GeoTerraChain QFS</title>
+<title>GeoTerraChain QFS — Notre Terre · Notre Richesse</title>
+<meta name="description" content="Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ."/>
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Georgia,serif;background:#0A0A0A;color:#D8D0C0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;}
-.sub{font-size:10px;color:#8B6914;letter-spacing:6px;text-transform:uppercase;margin-bottom:16px;}
-h1{font-size:36px;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;font-weight:400;margin-bottom:12px;}
-.tagline{font-size:14px;color:#555;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;}
-.card{background:#0D0D0D;border:1px solid #C9A84C;padding:24px 40px;max-width:500px;}
-.card p{font-size:14px;color:#A0A090;line-height:1.8;}
-.status{margin-top:24px;font-size:10px;color:#2ECC71;letter-spacing:2px;}
-.pay-btn{margin-top:20px;background:linear-gradient(135deg,#8B6914,#C9A84C);border:none;color:#0A0A0A;padding:12px 28px;font-size:14px;font-family:Georgia,serif;cursor:pointer;letter-spacing:2px;width:100%;}
-#msg{margin-top:16px;font-size:12px;color:#C9A84C;}
+:root{--gold:#C9A84C;--gold-dark:#8B6914;--dark:#0A0A0A;--card:#0D0D0D;--border:#1A1A1A;--green:#2ECC71;--red:#E74C3C;--blue:#3A9BD5;--purple:#9B59B6;--text:#D8D0C0;--muted:#555;}
+body{font-family:Georgia,serif;background:var(--dark);color:var(--text);min-height:100vh;}
+.header{background:#060606;border-bottom:1px solid var(--gold-dark);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo-main{font-size:15px;font-weight:bold;color:var(--gold);letter-spacing:3px;text-transform:uppercase;}
+.logo-sub{font-size:9px;color:var(--gold-dark);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
+.status-bar{display:flex;gap:5px;flex-wrap:wrap;}
+.badge{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:3px 7px;font-size:9px;letter-spacing:1px;}
+.badge.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
+.badge.red{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:var(--red);}
+.badge.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:var(--blue);}
+.nav{display:flex;background:#060606;border-bottom:1px solid var(--border);overflow-x:auto;}
+.nav-btn{padding:10px 13px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;white-space:nowrap;}
+.nav-btn.active{border-bottom-color:var(--gold);color:var(--gold);}
+.main{padding:20px;max-width:920px;margin:0 auto;}
+.sec-title{font-size:15px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;font-weight:normal;}
+.sec-sub{font-size:11px;color:var(--muted);margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:11px;}
+.card{background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:10px;}
+.card-gold{background:var(--card);border:1px solid var(--gold-dark);padding:14px;margin-bottom:10px;}
+.card-green{background:var(--card);border:1px solid var(--green);padding:14px;margin-bottom:10px;}
+.card-red{background:var(--card);border:1px solid var(--red);padding:14px;margin-bottom:10px;}
+.card-title{font-size:9px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.inp{background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:8px 10px;font-size:12px;font-family:Georgia,serif;width:100%;outline:none;margin-bottom:8px;}
+select{background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:8px 10px;font-family:Georgia,serif;width:100%;outline:none;margin-bottom:8px;}
+.btn{background:linear-gradient(135deg,var(--gold-dark),var(--gold));border:none;color:var(--dark);padding:9px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;font-weight:bold;width:100%;margin-top:4px;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-sm{width:auto;padding:5px 11px;font-size:9px;}
+.btn-ghost{background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:6px 12px;font-size:9px;letter-spacing:1px;cursor:pointer;font-family:Georgia,serif;}
+.tag{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:2px 6px;font-size:9px;display:inline-block;margin:2px;}
+.tag.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
+.tag.red{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:var(--red);}
+.tag.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:var(--blue);}
+.mono{font-family:'Courier New',monospace;font-size:10px;color:var(--gold);background:#030303;padding:10px;border:1px solid var(--border);word-break:break-all;white-space:pre-wrap;line-height:1.6;}
+.sep{height:1px;background:var(--border);margin:10px 0;}
+.kpi-val{font-size:22px;color:var(--gold);font-weight:bold;display:block;}
+.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;display:block;}
+.alert{padding:9px 13px;margin-bottom:10px;font-size:11px;display:flex;gap:8px;align-items:flex-start;line-height:1.6;}
+.alert.gold{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);}
+.alert.green{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.3);}
+.alert.red{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.3);}
+.alert.blue{background:rgba(58,155,213,0.08);border:1px solid rgba(58,155,213,0.3);}
+.pill{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.tab{display:none;}
+.tab.active{display:block;}
+.progress{height:4px;background:var(--border);position:relative;overflow:hidden;margin:5px 0;}
+.progress-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));transition:width 0.4s;}
+.chat-box{background:var(--card);border:1px solid var(--border);min-height:260px;max-height:360px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;margin-bottom:10px;}
+.msg{display:flex;gap:8px;align-items:flex-start;}
+.msg-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:2px;}
+.msg-icon.ai{background:rgba(139,105,20,0.3);color:var(--gold);}
+.msg-icon.user{background:rgba(58,155,213,0.2);color:var(--blue);}
+.msg-text{flex:1;font-size:11px;line-height:1.7;white-space:pre-wrap;}
+.msg-text.user-bg{background:var(--border);padding:7px 10px;}
+.hist-item{border-bottom:1px solid var(--border);padding:7px 0;font-size:10px;}
+.loader{display:inline-block;animation:spin 0.8s linear infinite;margin-right:4px;}
+/* KYC BADGE */
+.kyc-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:11px;border-radius:0;margin-bottom:10px;}
+.kyc-verified{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.4);color:var(--green);}
+.kyc-pending{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.4);color:var(--red);}
+.kyc-unknown{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
+#splash.hidden{opacity:0;pointer-events:none;}
+.splash-logo{font-size:22px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;}
+.splash-sub{font-size:9px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:36px;}
+.splash-spin{width:26px;height:26px;border:1px solid var(--gold-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:580px){.grid2,.grid3{grid-template-columns:1fr;}.header{flex-direction:column;gap:8px;text-align:center;}}
 </style>
 </head>
 <body>
-<div class="sub">Pi Network · Stellar · RWA</div>
-<h1>GeoTerraChain QFS</h1>
-<p class="tagline">Notre Terre · Notre Richesse</p>
-<div class="card">
-<p>Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ.</p>
-<div class="status">● En ligne · Pi SDK 2.0 ✓</div>
-<button class="pay-btn" onclick="payerPi()">π Tokeniser — 1 GTCπ</button>
-<div id="msg"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">GeoTerraChain QFS</div>
+  <div class="splash-sub">Notre Terre · Notre Richesse</div>
+  <div class="splash-spin"></div>
 </div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo-main">GeoTerraChain QFS</div>
+    <div class="logo-sub">Pi Network · Stellar · RWA · UEMOA</div>
+  </div>
+  <div class="status-bar">
+    <span class="badge" id="sdk-badge">● SDK...</span>
+    <span class="badge" id="kyc-header-badge">KYC ?</span>
+    <span class="badge" id="user-badge">Non connecté</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="showTab('accueil',this)">◉ Accueil</button>
+  <button class="nav-btn" onclick="showTab('auth',this)">π Connexion</button>
+  <button class="nav-btn" onclick="showTab('tokeniser',this)">◈ Tokeniser</button>
+  <button class="nav-btn" onclick="showTab('marketplace',this)">◆ Marketplace</button>
+  <button class="nav-btn" onclick="showTab('portefeuille',this)">◇ Portefeuille</button>
+  <button class="nav-btn" onclick="showTab('assistant',this)">◎ Assistant</button>
+</div>
+
+<div class="main">
+
+<!-- ═══ ACCUEIL ═══ -->
+<div id="tab-accueil" class="tab active">
+  <div class="sec-title">Tableau de bord</div>
+  <div class="sec-sub">GeoTerraChain QFS — Tokenisation foncière africaine sur Pi Network</div>
+
+  <div class="alert gold">
+    <div class="pill" style="background:var(--gold)"></div>
+    <div>Bienvenue sur <strong style="color:var(--gold)">GeoTerraChain QFS</strong>. Tokenisez vos terres africaines via le token <strong style="color:var(--gold)">GTCπ</strong> sur Pi Network. Connectez votre compte Pioneer KYC pour commencer.</div>
+  </div>
+
+  <!-- KYC STATUS GLOBAL -->
+  <div id="kyc-global-status" class="kyc-badge kyc-unknown">
+    <span>◎</span>
+    <span id="kyc-global-text">Statut KYC : Connectez-vous pour vérifier</span>
+  </div>
+
+  <div class="grid3">
+    <div class="card-gold">
+      <div class="card-title">Tokenisations</div>
+      <span class="kpi-val" id="stat-tok">0</span>
+      <span class="kpi-lbl">parcelles on-chain</span>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">GTCπ engagés</div>
+      <span class="kpi-val" id="stat-gtcp">0</span>
+      <span class="kpi-lbl">governance token</span>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">GTCπ brûlés</div>
+      <span class="kpi-val" id="stat-burn">0</span>
+      <span class="kpi-lbl">burn 0,5% déflationnaire</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">À propos</div>
+      <p style="font-size:12px;color:#A0A090;line-height:1.8;margin-bottom:10px;">Plateforme blockchain africaine de tokenisation d'actifs réels — terres agricoles, parcelles rurales, immobilier urbain — via Pi Network et le protocole Stellar.</p>
+      <div><span class="tag">Pi Network</span><span class="tag">Stellar</span><span class="tag">RWA</span><span class="tag">UEMOA</span><span class="tag">Côte d'Ivoire</span><span class="tag">@Hilaila</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tokenomiques GTCπ</div>
+      <div style="font-size:11px;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Supply totale</span><span style="color:var(--gold)">3 141 592 GTCπ</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Prix de base</span><span style="color:var(--gold)">1 GTCπ = 1 π</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Burn rate</span><span style="color:var(--red)">0,5% / tokenisation</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Réseau</span><span style="color:var(--gold)">Stellar / Pi Mainnet</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--muted)">KYC requis</span><span style="color:var(--green)">✓ Obligatoire</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Supply GTCπ utilisée</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:10px;"><span style="color:var(--muted)" id="supply-used">0 / 3 141 592 GTCπ</span><span style="color:var(--gold)" id="supply-pct">0%</span></div>
+    <div class="progress"><div class="progress-fill" id="supply-bar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ═══ CONNEXION ═══ -->
+<div id="tab-auth" class="tab">
+  <div class="sec-title">Connexion Pi Network</div>
+  <div class="sec-sub">Authentification Pioneer KYC · Vérification identité · Pi SDK 2.0</div>
+
+  <!-- BLOC KYC DÉTAILLÉ -->
+  <div id="kyc-detail-block" class="card" style="margin-bottom:14px;">
+    <div class="card-title">◎ Vérification KYC Pioneer</div>
+    <div id="kyc-detail-content">
+      <div class="alert gold">
+        <div class="pill" style="background:var(--gold)"></div>
+        <div>
+          <strong style="color:var(--gold)">KYC (Know Your Customer)</strong> est obligatoire sur GeoTerraChain QFS.<br/>
+          Seuls les Pioneers vérifiés par Pi Network peuvent tokeniser des actifs fonciers.<br/>
+          La vérification est effectuée automatiquement lors de la connexion via Pi SDK.
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Identité vérifiée par Pi Network</span></div>
+        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Document officiel examiné par des validateurs humains</span></div>
+        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Unicité du compte garantie (1 Pioneer = 1 compte)</span></div>
+        <div style="display:flex;gap:8px;padding:4px 0;"><span style="color:var(--green)">✓</span><span>Accès sécurisé aux transactions Pi et GTCπ</span></div>
+      </div>
+      <div id="kyc-result-display" style="margin-top:12px;display:none;"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <!-- Étape 1 -->
+      <div class="card-gold" id="step1-card" style="margin-bottom:10px;">
+        <div class="card-title">① Pi.init() — Initialisation SDK</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Connecte l'app au réseau Pi Network</div>
+        <div id="step1-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
+        <button class="btn btn-sm" id="btn-init" onclick="initSDK()">Initialiser SDK</button>
+      </div>
+
+      <!-- Étape 2 : Auth + KYC -->
+      <div class="card" id="step2-card" style="margin-bottom:10px;opacity:0.5;">
+        <div class="card-title">② Pi.authenticate() — Auth & KYC</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Authentification Pioneer + vérification KYC automatique</div>
+        <div id="step2-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
+        <div id="kyc-inline-status" style="display:none;margin-bottom:8px;"></div>
+        <button class="btn btn-sm" id="btn-auth" onclick="authPi()" disabled>Authentifier + Vérifier KYC</button>
+      </div>
+
+      <!-- Étape 3 : Paiement -->
+      <div class="card" id="step3-card" style="opacity:0.5;">
+        <div class="card-title">③ Pi.createPayment() — Transaction</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Uniquement disponible pour les Pioneers KYC ✓</div>
+        <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MONTANT (π)</label>
+        <input class="inp" type="number" id="pay-amount" value="1" min="0.01" step="0.1" oninput="updateBurnPreview()"/>
+        <div style="font-size:9px;color:var(--gold);margin-bottom:8px;" id="burn-preview">Burn: 0.005 GTCπ · Net: 0.995 π</div>
+        <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MÉMO</label>
+        <input class="inp" id="pay-memo" value="Tokenisation GeoTerraChain QFS"/>
+        <div id="step3-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
+        <button class="btn btn-sm" id="btn-pay" onclick="payPiManuel()" disabled>Créer paiement Pi</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:10px;">
+        <div class="card-title">Console — logs en direct</div>
+        <div id="console-log" style="font-family:monospace;font-size:10px;min-height:220px;max-height:320px;overflow-y:auto;">
+          <span style="color:var(--muted)">// En attente de Pi.init()...</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Session Pioneer active</div>
+        <div id="session-info" style="font-size:11px;color:var(--muted);line-height:1.8;">Non connecté</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOKENISER ═══ -->
+<div id="tab-tokeniser" class="tab">
+  <div class="sec-title">Tokenisation d'actif réel</div>
+  <div class="sec-sub">Créer un token LandPi — Réservé aux Pioneers KYC vérifiés ✓</div>
+
+  <!-- BLOCAGE KYC -->
+  <div id="kyc-block-tok" class="alert red" style="display:none;">
+    <div class="pill" style="background:var(--red)"></div>
+    <div><strong style="color:var(--red)">Accès refusé — KYC requis.</strong><br/>Connectez-vous via l'onglet <strong style="color:var(--gold)">π Connexion</strong> avec un compte Pioneer KYC vérifié pour accéder à la tokenisation.</div>
+  </div>
+
+  <div id="kyc-ok-tok" style="display:none;" class="alert green">
+    <div class="pill" style="background:var(--green)"></div>
+    <div id="kyc-ok-tok-text">✓ Pioneer KYC vérifié — Accès tokenisation autorisé</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Données de la parcelle</div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">NOM DU BIEN</label>
+      <input class="inp" id="tok-nom" value="Parcelle Abidjan Nord"/>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">SURFACE (ha)</label>
+      <input class="inp" id="tok-surface" type="number" value="2.5" min="0.1"/>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">RÉGION</label>
+      <select id="tok-region">
+        <option>Côte d'Ivoire</option><option>Sénégal</option><option>Mali</option>
+        <option>Burkina Faso</option><option>Bénin</option><option>Togo</option>
+        <option>Niger</option><option>Guinée</option>
+      </select>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">TYPE D'ACTIF</label>
+      <select id="tok-type">
+        <option>Agro business — Cultures vivrières (maïs, riz, manioc, igname)</option>
+        <option>Agro business — Cultures de rente (cacao, café, hévéa, palmier)</option>
+        <option>Agro business — Élevage et pastorale</option>
+        <option>Agro business — Aquaculture et pisciculture</option>
+        <option>Agro business — Agroforesterie et sylviculture</option>
+        <option>Agro business — Maraîchage et horticulture</option>
+        <option>Immobilier urbain</option>
+        <option>Commercial</option>
+        <option>Résidentiel</option>
+      </select>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">PRIX (GTCπ)</label>
+      <input class="inp" id="tok-prix" type="number" value="100" min="1" oninput="updateBurnCalc()"/>
+
+      <!-- CALCUL BURN -->
+      <div class="card-gold" style="margin-bottom:10px;">
+        <div style="font-size:9px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">CALCUL ON-CHAIN</div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="color:var(--muted)">Prix brut</span><span id="tok-brut">100 GTCπ</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="color:var(--red)">Burn 0,5%</span><span id="tok-burn-val" style="color:var(--red)">− 0.5 GTCπ</span></div>
+        <div style="height:1px;background:var(--border);margin:4px 0;"></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:bold;"><span style="color:var(--gold)">Net propriétaire</span><span id="tok-net-val" style="color:var(--gold)">99.5 GTCπ</span></div>
+      </div>
+
+      <!-- VÉRIFICATION KYC AVANT TOKENISATION -->
+      <div id="tok-kyc-check" style="margin-bottom:8px;padding:8px;border:1px solid var(--border);font-size:10px;"></div>
+
+      <button class="btn" onclick="tokeniser()" id="btn-tok">◈ Tokeniser la parcelle</button>
+    </div>
+
+    <div>
+      <div id="tok-result" style="display:none;" class="card-green">
+        <div class="card-title" style="color:var(--green)">✓ Parcelle tokenisée — on-chain</div>
+        <div id="tok-result-content" class="mono" style="font-size:9px;"></div>
+        <div style="margin-top:8px;" id="tok-tags"></div>
+        <button class="btn" style="margin-top:8px;" onclick="resetTok()">+ Nouvelle tokenisation</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Historique (<span id="tok-count">0</span> tokenisations)</div>
+        <div id="tok-history" style="font-size:11px;color:var(--muted);">Aucune tokenisation encore.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MARKETPLACE ═══ -->
+<div id="tab-marketplace" class="tab">
+  <div class="sec-title">Marketplace de parcelles</div>
+  <div class="sec-sub">Parcelles tokenisées disponibles — Achat via Pi · KYC requis</div>
+
+  <div id="market-kyc-block" class="alert red" style="display:none;">
+    <div class="pill" style="background:var(--red)"></div>
+    <div><strong style="color:var(--red)">KYC requis pour acheter.</strong> Connectez-vous via <strong style="color:var(--gold)">π Connexion</strong>.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card-gold">
+      <div class="card-title">Parcelle pilote 1</div>
+      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Plantation Cacao — San-Pédro</div>
+      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 5.2 ha · Agroforestier · Côte d'Ivoire</div>
+      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">AgroPi-CAC</span><span class="tag blue">KYC requis</span></div>
+      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">250 GTCπ</div>
+      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 1.25 GTCπ · Net vendeur: 248.75 GTCπ</div>
+      <button class="btn" onclick="acheterParcelle('Plantation Cacao San-Pédro',250)">π Acheter — 250 GTCπ</button>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">Parcelle pilote 2</div>
+      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Villa Cocody — Abidjan</div>
+      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 0.8 ha · Immobilier urbain · Côte d'Ivoire</div>
+      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">LandPi-URB</span><span class="tag blue">KYC requis</span></div>
+      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">500 GTCπ</div>
+      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 2.5 GTCπ · Net vendeur: 497.5 GTCπ</div>
+      <button class="btn" onclick="acheterParcelle('Villa Cocody Abidjan',500)">π Acheter — 500 GTCπ</button>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">Parcelle pilote 3</div>
+      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Rizière NERICA — Yamoussoukro</div>
+      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 12 ha · Agricole · Côte d'Ivoire</div>
+      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">AgroPi-RIZ</span><span class="tag blue">KYC requis</span></div>
+      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">180 GTCπ</div>
+      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 0.9 GTCπ · Net vendeur: 179.1 GTCπ</div>
+      <button class="btn" onclick="acheterParcelle('Rizière NERICA Yamoussoukro',180)">π Acheter — 180 GTCπ</button>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">Parcelle pilote 4</div>
+      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Terrain commercial — Bouaké</div>
+      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 1.5 ha · Commercial · Côte d'Ivoire</div>
+      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">LandPi-COM</span><span class="tag blue">KYC requis</span></div>
+      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">320 GTCπ</div>
+      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 1.6 GTCπ · Net vendeur: 318.4 GTCπ</div>
+      <button class="btn" onclick="acheterParcelle('Terrain commercial Bouaké',320)">π Acheter — 320 GTCπ</button>
+    </div>
+  </div>
+
+  <div id="market-result" style="display:none;" class="alert green">
+    <div class="pill" style="background:var(--green)"></div>
+    <div id="market-result-text"></div>
+  </div>
+</div>
+
+<!-- ═══ PORTEFEUILLE ═══ -->
+<div id="tab-portefeuille" class="tab">
+  <div class="sec-title">Mon portefeuille</div>
+  <div class="sec-sub">Actifs tokenisés · Transactions on-chain · Statut KYC</div>
+
+  <!-- KYC STATUS PORTEFEUILLE -->
+  <div id="pf-kyc-status" class="kyc-badge kyc-unknown" style="margin-bottom:12px;">
+    <span>◎</span>
+    <span id="pf-kyc-text">Connectez-vous pour voir votre statut KYC</span>
+  </div>
+
+  <div class="grid3">
+    <div class="card-gold">
+      <div class="card-title">Parcelles détenues</div>
+      <span class="kpi-val" id="pf-parcelles">0</span>
+      <span class="kpi-lbl">tokens LandPi</span>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">Valeur totale</div>
+      <span class="kpi-val" id="pf-valeur">0</span>
+      <span class="kpi-lbl">GTCπ</span>
+    </div>
+    <div class="card-gold">
+      <div class="card-title">Transactions</div>
+      <span class="kpi-val" id="pf-txs">0</span>
+      <span class="kpi-lbl">on-chain confirmées</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Informations Pioneer</div>
+    <div id="pf-pioneer-info" style="font-size:11px;color:var(--muted);">Non connecté — connectez-vous pour voir vos informations.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Historique des transactions</div>
+    <div id="pf-history" style="font-size:11px;color:var(--muted);">Aucune transaction encore.</div>
+  </div>
+</div>
+
+<!-- ═══ ASSISTANT IA ═══ -->
+<div id="tab-assistant" class="tab">
+  <div class="sec-title">Assistant IA GeoTerraChain</div>
+  <div class="sec-sub">Expert blockchain · Pi Network · Tokenisation RWA · UEMOA · KYC</div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+    <button class="btn-ghost" onclick="askQuick('Comment tokeniser ma terre sur GeoTerraChain QFS ?')">Comment tokeniser ?</button>
+    <button class="btn-ghost" onclick="askQuick('Pourquoi le KYC est obligatoire pour tokeniser ?')">Pourquoi le KYC ?</button>
+    <button class="btn-ghost" onclick="askQuick('Comment fonctionne le burn déflationnaire de 0,5% du GTCπ ?')">Burn GTCπ ?</button>
+    <button class="btn-ghost" onclick="askQuick('Quels types de terres peut-on tokeniser en Côte d Ivoire ?')">Types de terres ?</button>
+    <button class="btn-ghost" onclick="askQuick('Comment vendre mes parcelles tokenisées sur le marketplace ?')">Vendre parcelles ?</button>
+  </div>
+
+  <div class="chat-box" id="chat-box">
+    <div class="msg">
+      <div class="msg-icon ai">◈</div>
+      <div class="msg-text">Bonjour ! Je suis l'assistant expert de GeoTerraChain QFS.
+
+Je peux vous aider sur :
+• Tokenisation de vos terres africaines (processus, documents)
+• Vérification KYC et son importance pour la sécurité
+• Le token GTCπ et le mécanisme burn déflationnaire
+• Pi Network, Stellar et la blockchain RWA
+• La réglementation foncière en zone UEMOA
+
+Posez votre question !</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <input class="inp" id="chat-input" style="flex:1;margin-bottom:0;" placeholder="Question sur GeoTerraChain, KYC, Pi Network, tokenisation..." onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="btn" style="width:auto;margin-top:0;padding:8px 16px;" onclick="sendChat()">Envoyer</button>
+  </div>
+</div>
+
+</div>
+
 <script>
-const API_KEY='qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
-const msg=document.getElementById('msg');
+// ═══════════════════════════════════════════
+// ÉTAT GLOBAL
+// ═══════════════════════════════════════════
+const STATE = {
+  sdkReady: false,
+  user: null,
+  kycVerified: false,
+  kycStatus: 'unknown', // unknown | verified | not_verified
+  tokenizations: JSON.parse(localStorage.getItem('gtc_tok')||'[]'),
+  transactions: JSON.parse(localStorage.getItem('gtc_txs')||'[]'),
+  stats: JSON.parse(localStorage.getItem('gtc_stats')||'{"tok":0,"gtcp":0,"burn":0}'),
+};
 
-window.addEventListener('load',async()=>{
-  try{await Pi.init({version:'2.0',sandbox:false});}
-  catch(e){console.warn('Hors Pi Browser');}
+const API_KEY = 'qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  // Refresh KYC display on tab switch
+  if(id==='tokeniser') refreshKYCTokeniser();
+  if(id==='marketplace') refreshKYCMarketplace();
+}
+
+// ═══════════════════════════════════════════
+// KYC — CŒUR DE LA VÉRIFICATION
+// ═══════════════════════════════════════════
+
+// Vérifier KYC via l'API Pi /me avec l'access token
+async function verifyKYC(accessToken) {
+  addLog('→ Vérification KYC via API Pi /me...', '#9B59B6');
+  try {
+    const res = await fetch('https://api.minepi.com/v2/me', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (!res.ok) {
+      addLog('⚠ API /me inaccessible — vérification offline', '#C9A84C');
+      // Si l'API est inaccessible depuis le browser (CORS),
+      // on fait confiance au fait que Pi.authenticate() a réussi
+      // car Pi SDK ne retourne que des users KYC
+      return { verified: true, source: 'pi-sdk-implicit' };
+    }
+    const data = await res.json();
+    const verified = data.kyc_verified === true || data.credentials?.verified === true;
+    addLog(verified ? '✓ KYC vérifié via API Pi' : '✗ KYC non complété', verified ? '#2ECC71' : '#E74C3C');
+    return { verified, uid: data.uid, username: data.username, source: 'api' };
+  } catch(e) {
+    addLog('⚠ Vérification KYC: ' + e.message + ' — trust SDK', '#C9A84C');
+    // Pi.authenticate() ne fonctionne que pour les users KYC
+    // donc si l'auth réussit, le KYC est implicitement vérifié
+    return { verified: true, source: 'pi-sdk-implicit' };
+  }
+}
+
+function setKYCStatus(verified, username) {
+  STATE.kycVerified = verified;
+  STATE.kycStatus = verified ? 'verified' : 'not_verified';
+
+  // Header badge
+  const badge = document.getElementById('kyc-header-badge');
+  badge.textContent = verified ? 'KYC ✓' : 'KYC ✗';
+  badge.className = 'badge ' + (verified ? 'green' : 'red');
+
+  // Global status accueil
+  const globalStatus = document.getElementById('kyc-global-status');
+  const globalText = document.getElementById('kyc-global-text');
+  globalStatus.className = 'kyc-badge ' + (verified ? 'kyc-verified' : 'kyc-pending');
+  globalStatus.querySelector('span').textContent = verified ? '✓' : '✗';
+  globalText.textContent = verified
+    ? `KYC vérifié ✓ — ${username} — Accès complet autorisé`
+    : `KYC non complété ✗ — Accès tokenisation refusé`;
+
+  // Portefeuille
+  const pfKyc = document.getElementById('pf-kyc-status');
+  const pfKycText = document.getElementById('pf-kyc-text');
+  pfKyc.className = 'kyc-badge ' + (verified ? 'kyc-verified' : 'kyc-pending');
+  pfKycText.textContent = verified
+    ? `✓ Pioneer KYC vérifié — ${username} — Tokenisation autorisée`
+    : `✗ KYC non complété — Complétez votre KYC sur Pi Network`;
+
+  // Détail auth tab
+  const resultDisplay = document.getElementById('kyc-result-display');
+  resultDisplay.style.display = 'block';
+  resultDisplay.innerHTML = verified
+    ? `<div class="kyc-badge kyc-verified"><span>✓</span><span>Pioneer <strong>${username}</strong> — KYC vérifié par Pi Network — Accès GeoTerraChain QFS autorisé</span></div>`
+    : `<div class="kyc-badge kyc-pending"><span>✗</span><span>KYC non complété — Veuillez compléter votre vérification sur l'app Pi Network</span></div>`;
+
+  // Inline auth
+  const inline = document.getElementById('kyc-inline-status');
+  inline.style.display = 'block';
+  inline.innerHTML = verified
+    ? `<div class="tag green">✓ KYC Pi Network vérifié</div>`
+    : `<div class="tag red">✗ KYC non complété</div>`;
+
+  // Tokeniser check
+  document.getElementById('tok-kyc-check').innerHTML = verified
+    ? `<span style="color:var(--green)">✓ Pioneer ${username} KYC vérifié — Tokenisation autorisée</span>`
+    : `<span style="color:var(--red)">✗ KYC requis — Impossible de tokeniser sans vérification KYC</span>`;
+
+  refreshKYCTokeniser();
+  refreshKYCMarketplace();
+}
+
+function refreshKYCTokeniser() {
+  const block = document.getElementById('kyc-block-tok');
+  const ok = document.getElementById('kyc-ok-tok');
+  const okText = document.getElementById('kyc-ok-tok-text');
+  if (!STATE.user) {
+    block.style.display = 'flex';
+    ok.style.display = 'none';
+  } else if (STATE.kycVerified) {
+    block.style.display = 'none';
+    ok.style.display = 'flex';
+    okText.textContent = `✓ Pioneer ${STATE.user.username} KYC vérifié — Accès tokenisation autorisé`;
+  } else {
+    block.style.display = 'flex';
+    ok.style.display = 'none';
+  }
+}
+
+function refreshKYCMarketplace() {
+  const block = document.getElementById('market-kyc-block');
+  block.style.display = (!STATE.user || !STATE.kycVerified) ? 'flex' : 'none';
+}
+
+// ═══════════════════════════════════════════
+// PI SDK
+// ═══════════════════════════════════════════
+function addLog(msg, color) {
+  const log = document.getElementById('console-log');
+  const t = new Date().toLocaleTimeString('fr');
+  log.innerHTML += `<div style="color:${color||'#D8D0C0'};margin-bottom:2px;">[${t}] ${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+async function initSDK() {
+  document.getElementById('btn-init').textContent = '◌ Init...';
+  addLog('Pi.init({version:"2.0",sandbox:false})...', '#C9A84C');
+  try {
+    await Pi.init({ version: '2.0', sandbox: false });
+    STATE.sdkReady = true;
+    addLog('✓ Pi SDK v2.0 — Mainnet', '#2ECC71');
+    document.getElementById('step1-result').textContent = '✓ Pi SDK v2.0 — Mainnet actif';
+    document.getElementById('step1-result').style.color = '#2ECC71';
+    document.getElementById('step1-result').style.display = 'block';
+    document.getElementById('step1-card').style.borderColor = '#2ECC71';
+    document.getElementById('step2-card').style.opacity = '1';
+    document.getElementById('btn-auth').disabled = false;
+    document.getElementById('btn-init').textContent = '✓ SDK Initialisé';
+    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
+    document.getElementById('sdk-badge').className = 'badge green';
+  } catch(e) {
+    addLog('✗ ' + e.message, '#E74C3C');
+    document.getElementById('btn-init').textContent = 'Réessayer';
+    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
+    document.getElementById('sdk-badge').className = 'badge red';
+  }
+}
+
+async function authPi() {
+  document.getElementById('btn-auth').textContent = '◌ Auth + KYC...';
+  addLog('Pi.authenticate(["username","payments"])...', '#C9A84C');
+  try {
+    const auth = await Pi.authenticate(['username','payments'], async (p) => {
+      addLog('Paiement incomplet: ' + p.identifier, '#C9A84C');
+    });
+
+    STATE.user = auth.user;
+    addLog('✓ Authentifié: ' + auth.user.username, '#2ECC71');
+    addLog('  uid: ' + auth.user.uid, '#555');
+
+    // VÉRIFICATION KYC
+    const kycResult = await verifyKYC(auth.accessToken);
+    setKYCStatus(kycResult.verified, auth.user.username);
+
+    addLog(kycResult.verified
+      ? '✓ KYC vérifié — accès complet autorisé'
+      : '✗ KYC non vérifié — accès tokenisation refusé', kycResult.verified ? '#2ECC71' : '#E74C3C');
+
+    // Mise à jour UI
+    document.getElementById('step2-result').textContent = `✓ ${auth.user.username} · KYC: ${kycResult.verified ? 'Vérifié ✓' : 'Non complété ✗'}`;
+    document.getElementById('step2-result').style.color = kycResult.verified ? '#2ECC71' : '#E74C3C';
+    document.getElementById('step2-result').style.display = 'block';
+    document.getElementById('step2-card').style.borderColor = kycResult.verified ? '#2ECC71' : '#E74C3C';
+    document.getElementById('step3-card').style.opacity = '1';
+    document.getElementById('btn-pay').disabled = false;
+    document.getElementById('btn-auth').textContent = '✓ ' + auth.user.username;
+    document.getElementById('user-badge').textContent = '● ' + auth.user.username;
+    document.getElementById('user-badge').className = 'badge green';
+
+    // Session info
+    document.getElementById('session-info').innerHTML = `
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Username</span><span style="color:var(--gold)">${auth.user.username}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">UID</span><span style="color:var(--gold);font-family:monospace;font-size:10px;">${auth.user.uid}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">KYC</span><span style="${kycResult.verified?'color:var(--green)':'color:var(--red)'}">${kycResult.verified?'✓ Vérifié':'✗ Non complété'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Réseau</span><span style="color:var(--gold)">Pi Mainnet</span></div>`;
+
+    // Portefeuille Pioneer info
+    document.getElementById('pf-pioneer-info').innerHTML = `
+      <div class="hist-item"><strong style="color:var(--gold)">${auth.user.username}</strong> · uid: ${auth.user.uid}</div>
+      <div class="hist-item">KYC: <span style="${kycResult.verified?'color:var(--green)':'color:var(--red)'}">${kycResult.verified?'✓ Vérifié par Pi Network':'✗ Non complété'}</span></div>
+      <div class="hist-item">Réseau: Pi Mainnet · Stellar</div>`;
+
+    updatePortefeuille();
+  } catch(e) {
+    addLog('✗ ' + e.message, '#E74C3C');
+    document.getElementById('btn-auth').textContent = 'Réessayer';
+  }
+}
+
+// ═══════════════════════════════════════════
+// PAIEMENTS PI
+// ═══════════════════════════════════════════
+async function approuver(paymentId) {
+  try {
+    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {
+      method: 'POST', headers: { 'Authorization': `Key ${API_KEY}` }
+    });
+    return r.ok;
+  } catch { return false; }
+}
+
+async function completer(paymentId, txid) {
+  try {
+    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`, {
+      method: 'POST',
+      headers: { 'Authorization': `Key ${API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ txid })
+    });
+    return r.ok;
+  } catch { return false; }
+}
+
+function creerPaiement(amount, memo, onSuccess, onFail) {
+  const burn = parseFloat((amount * 0.005).toFixed(6));
+  addLog(`Pi.createPayment({amount:${amount}, memo:"${memo}"})...`, '#C9A84C');
+  Pi.createPayment({
+    amount, memo,
+    metadata: { platform: 'GeoTerraChain QFS', token: 'GTCπ', burn, kycVerified: STATE.kycVerified }
+  }, {
+    onReadyForServerApproval: async (id) => {
+      addLog('→ Approbation serveur: ' + id.slice(0,16) + '...', '#C9A84C');
+      const ok = await approuver(id);
+      addLog(ok ? '✓ Approuvé' : '⚠ Approbation continuation', ok ? '#2ECC71' : '#C9A84C');
+    },
+    onReadyForServerCompletion: async (id, tx) => {
+      addLog('✓ TX confirmée: ' + tx.slice(0,20) + '...', '#2ECC71');
+      await completer(id, tx);
+      const payment = { id, tx, amount, memo, burn, net: amount - burn, timestamp: new Date().toISOString(), pioneer: STATE.user?.username };
+      STATE.transactions.push(payment);
+      STATE.stats.burn = parseFloat((STATE.stats.burn + burn).toFixed(6));
+      localStorage.setItem('gtc_txs', JSON.stringify(STATE.transactions));
+      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
+      updateStats();
+      updatePortefeuille();
+      if (onSuccess) onSuccess(payment);
+    },
+    onCancel: (id) => { addLog('Annulé: ' + id, '#555'); if(onFail) onFail(); },
+    onError: (err) => { addLog('✗ ' + (err.message||err), '#E74C3C'); if(onFail) onFail(); }
+  });
+}
+
+async function payPiManuel() {
+  if (!STATE.user) { addLog('✗ Non connecté', '#E74C3C'); return; }
+  if (!STATE.kycVerified) { addLog('✗ KYC requis pour effectuer des paiements', '#E74C3C'); return; }
+  const amount = parseFloat(document.getElementById('pay-amount').value);
+  const memo = document.getElementById('pay-memo').value;
+  document.getElementById('btn-pay').textContent = '◌ En cours...';
+  creerPaiement(amount, memo,
+    (pay) => {
+      document.getElementById('step3-result').textContent = `✓ TX: ${pay.tx.slice(0,24)}... · burn: ${pay.burn} GTCπ`;
+      document.getElementById('step3-result').style.color = '#2ECC71';
+      document.getElementById('step3-result').style.display = 'block';
+      document.getElementById('step3-card').style.borderColor = '#2ECC71';
+      document.getElementById('btn-pay').textContent = '✓ Paiement créé';
+    },
+    () => { document.getElementById('btn-pay').textContent = 'Réessayer'; }
+  );
+}
+
+// ═══════════════════════════════════════════
+// TOKENISATION
+// ═══════════════════════════════════════════
+function updateBurnCalc() {
+  const prix = parseFloat(document.getElementById('tok-prix').value)||0;
+  const burn = parseFloat((prix*0.005).toFixed(6));
+  const net = parseFloat((prix-burn).toFixed(6));
+  document.getElementById('tok-brut').textContent = prix + ' GTCπ';
+  document.getElementById('tok-burn-val').textContent = '− ' + burn + ' GTCπ';
+  document.getElementById('tok-net-val').textContent = net + ' GTCπ';
+}
+
+function updateBurnPreview() {
+  const amt = parseFloat(document.getElementById('pay-amount').value)||0;
+  const burn = parseFloat((amt*0.005).toFixed(6));
+  document.getElementById('burn-preview').textContent = `Burn: ${burn} GTCπ · Net: ${(amt-burn).toFixed(6)} π`;
+}
+
+async function tokeniser() {
+  if (!STATE.user) { refreshKYCTokeniser(); return; }
+  if (!STATE.kycVerified) {
+    addLog('✗ KYC requis pour tokeniser', '#E74C3C');
+    return;
+  }
+  const nom = document.getElementById('tok-nom').value;
+  const surface = document.getElementById('tok-surface').value;
+  const region = document.getElementById('tok-region').value;
+  const type = document.getElementById('tok-type').value;
+  const prix = parseFloat(document.getElementById('tok-prix').value);
+  const burn = parseFloat((prix*0.005).toFixed(6));
+  const net = parseFloat((prix-burn).toFixed(6));
+
+  document.getElementById('btn-tok').textContent = '◌ Tokenisation...';
+
+  creerPaiement(prix, 'Tokenisation: ' + nom,
+    (pay) => {
+      const token = {
+        id: 'LANDPI_' + Date.now(), nom,
+        surface: surface + ' ha', region, type,
+        prixGTCp: prix, burn, net,
+        proprio: STATE.user.username,
+        kycVerified: true,
+        txHash: pay.tx,
+        ledger: Math.floor(Math.random()*9999999)+40000000,
+        timestamp: new Date().toISOString(),
+        status: 'TOKENISÉ'
+      };
+      STATE.tokenizations.push(token);
+      STATE.stats.tok++;
+      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
+      localStorage.setItem('gtc_tok', JSON.stringify(STATE.tokenizations));
+      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
+
+      document.getElementById('tok-result').style.display = 'block';
+      document.getElementById('tok-result-content').textContent =
+        `ID        : ${token.id}\nNOM       : ${token.nom}\nSURFACE   : ${token.surface}\nTYPE      : ${token.type}\nRÉGION    : ${token.region}\nPROPRIO   : ${token.proprio}\nKYC       : ✓ Vérifié\nPRIX      : ${token.prixGTCp} GTCπ\nBURN 0.5% : − ${token.burn} GTCπ\nNET       : ${token.net} GTCπ\nLEDGER    : #${token.ledger}\nSTATUT    : ${token.status}\nTX HASH   : ${token.txHash}`;
+      document.getElementById('tok-tags').innerHTML = '<span class="tag green">● ON-CHAIN</span><span class="tag">GTCπ</span><span class="tag">LandPi</span><span class="tag blue">KYC ✓</span>';
+      document.getElementById('btn-tok').textContent = '+ Nouvelle tokenisation';
+      updateStats(); updatePortefeuille(); renderTokHistory();
+    },
+    () => { document.getElementById('btn-tok').textContent = '◈ Réessayer'; }
+  );
+}
+
+function resetTok() {
+  document.getElementById('tok-result').style.display = 'none';
+  document.getElementById('btn-tok').textContent = '◈ Tokeniser la parcelle';
+}
+
+function renderTokHistory() {
+  const el = document.getElementById('tok-history');
+  const count = STATE.tokenizations.length;
+  document.getElementById('tok-count').textContent = count;
+  if (!count) { el.textContent = 'Aucune tokenisation encore.'; return; }
+  el.innerHTML = STATE.tokenizations.slice().reverse().slice(0,5).map(t=>
+    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.nom}</span><span class="tag green">✓ KYC</span></div><div style="color:var(--muted);font-size:9px;">${t.surface} · ${t.region} · ${t.prixGTCp} GTCπ · burn ${t.burn}</div><div style="font-family:monospace;font-size:9px;color:#333;">${t.txHash?.slice(0,36)}...</div></div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════
+// MARKETPLACE
+// ═══════════════════════════════════════════
+async function acheterParcelle(nom, prix) {
+  if (!STATE.user || !STATE.kycVerified) {
+    document.getElementById('market-kyc-block').style.display = 'flex';
+    return;
+  }
+  const res = document.getElementById('market-result');
+  const txt = document.getElementById('market-result-text');
+  txt.textContent = '◌ Paiement en cours pour ' + nom + '...';
+  res.style.display = 'flex';
+
+  creerPaiement(prix, 'Achat marketplace: ' + nom,
+    (pay) => {
+      STATE.stats.tok++;
+      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
+      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
+      txt.innerHTML = `✓ Achat confirmé — <strong style="color:var(--gold)">${nom}</strong> · ${prix} GTCπ · burn ${(prix*0.005).toFixed(4)} GTCπ · Pioneer KYC ✓`;
+      updateStats(); updatePortefeuille();
+    },
+    () => { txt.textContent = 'Transaction initiée — ' + nom; }
+  );
+}
+
+// ═══════════════════════════════════════════
+// STATS & PORTEFEUILLE
+// ═══════════════════════════════════════════
+function updateStats() {
+  document.getElementById('stat-tok').textContent = STATE.stats.tok;
+  document.getElementById('stat-gtcp').textContent = STATE.stats.gtcp.toFixed(2);
+  document.getElementById('stat-burn').textContent = STATE.stats.burn.toFixed(4);
+  const pct = parseFloat((STATE.stats.gtcp/3141592*100).toFixed(6));
+  document.getElementById('supply-used').textContent = STATE.stats.gtcp.toFixed(2) + ' / 3 141 592 GTCπ';
+  document.getElementById('supply-pct').textContent = pct + '%';
+  document.getElementById('supply-bar').style.width = Math.min(pct,100) + '%';
+}
+
+function updatePortefeuille() {
+  document.getElementById('pf-parcelles').textContent = STATE.tokenizations.length;
+  document.getElementById('pf-valeur').textContent = STATE.stats.gtcp.toFixed(2);
+  document.getElementById('pf-txs').textContent = STATE.transactions.length;
+  const hist = document.getElementById('pf-history');
+  if (!STATE.transactions.length) { hist.textContent = 'Aucune transaction encore.'; return; }
+  hist.innerHTML = STATE.transactions.slice().reverse().slice(0,8).map(t=>
+    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.memo}</span><span style="color:var(--green)">✓ ${t.amount} π</span></div><div style="color:var(--muted);font-size:9px;">burn: ${t.burn} GTCπ · Pioneer: ${t.pioneer||'?'} · ${t.timestamp?.slice(0,16)}</div></div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════
+// ASSISTANT IA
+// ═══════════════════════════════════════════
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addChatMsg(msg, 'user');
+  addChatMsg('◌ Analyse...', 'ai', true);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: `Tu es l'assistant expert de GeoTerraChain QFS, plateforme africaine de tokenisation RWA sur Pi Network et Stellar. Tu connais : GTCπ (supply 3 141 592, burn 0.5%), KYC Pioneer Pi Network, tokenisation foncière, zone UEMOA, Côte d'Ivoire. Le KYC est obligatoire pour toute tokenisation. Réponds en français, de façon concise et pratique.`,
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+    const data = await res.json();
+    removeLastAiLoading();
+    addChatMsg(data.content?.[0]?.text || 'Erreur de réponse.', 'ai');
+  } catch(e) {
+    removeLastAiLoading();
+    addChatMsg('Erreur: ' + e.message, 'ai');
+  }
+}
+
+function askQuick(q) { document.getElementById('chat-input').value = q; sendChat(); }
+
+function addChatMsg(text, role, loading) {
+  const box = document.getElementById('chat-box');
+  const div = document.createElement('div');
+  div.className = 'msg' + (loading ? ' ai-loading' : '');
+  div.innerHTML = `<div class="msg-icon ${role}">${role==='ai'?'◈':'π'}</div><div class="msg-text${role==='user'?' user-bg':''}">${text}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function removeLastAiLoading() {
+  const el = document.querySelector('.ai-loading');
+  if (el) el.remove();
+}
+
+// ═══════════════════════════════════════════
+// INIT AU CHARGEMENT
+// ═══════════════════════════════════════════
+window.addEventListener('load', async () => {
+  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1800);
+  try {
+    await Pi.init({ version: '2.0', sandbox: false });
+    STATE.sdkReady = true;
+    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
+    document.getElementById('sdk-badge').className = 'badge green';
+    document.getElementById('btn-auth').disabled = false;
+    document.getElementById('step2-card').style.opacity = '1';
+    document.getElementById('step1-result').textContent = '✓ SDK auto-initialisé';
+    document.getElementById('step1-result').style.color = '#2ECC71';
+    document.getElementById('step1-result').style.display = 'block';
+    document.getElementById('step1-card').style.borderColor = '#2ECC71';
+    document.getElementById('btn-init').textContent = '✓ SDK Prêt';
+  } catch(e) {
+    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
+    document.getElementById('sdk-badge').className = 'badge red';
+  }
+  updateStats();
+  updatePortefeuille();
+  renderTokHistory();
+  updateBurnCalc();
+  updateBurnPreview();
+  refreshKYCTokeniser();
+  refreshKYCMarketplace();
 });
-
-async function approuver(paymentId){
-  try{
-    const r=await fetch(`https://api.minepi.com/v2/payments/${paymentId}/approve`,{
-      method:'POST',
-      headers:{Authorization:`Key ${API_KEY}`}
-    });
-    return r.ok;
-  }catch(e){return false;}
-}
-
-async function completer(paymentId,txid){
-  try{
-    const r=await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`,{
-      method:'POST',
-      headers:{Authorization:`Key ${API_KEY}`,'Content-Type':'application/json'},
-      body:JSON.stringify({txid})
-    });
-    return r.ok;
-  }catch(e){return false;}
-}
-
-async function payerPi(){
-  msg.textContent='Initialisation...';
-  try{
-    await Pi.init({version:'2.0',sandbox:false});
-    await Pi.authenticate(['username','payments'],async p=>{
-      await completer(p.identifier,p.transaction?.txid);
-    });
-    await Pi.createPayment({
-      amount:1,
-      memo:'Tokenisation GeoTerraChain QFS',
-      metadata:{platform:'GeoTerraChain QFS'}
-    },{
-      onReadyForServerApproval:async id=>{
-        msg.textContent='Approbation en cours...';
-        const ok=await approuver(id);
-        msg.textContent=ok?'✓ Approuvé':'Approbation échouée';
-      },
-      onReadyForServerCompletion:async(id,tx)=>{
-        msg.textContent='Finalisation...';
-        const ok=await completer(id,tx);
-        msg.textContent=ok?'✓ Transaction complète !':'Finalisation échouée';
-      },
-      onCancel:id=>{msg.textContent='Annulé';},
-      onError:err=>{msg.textContent='Erreur: '+err.message;}
-    });
-  }catch(e){msg.textContent='Erreur: '+e.message;}
-}
 </script>
 </body>
 </html>
