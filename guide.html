@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guide de tokenisation — GeoTerraChain QFS</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#C9A84C;--gold-dark:#8B6914;--gold-light:#E8C97A;
+  --dark:#0A0A0A;--card:#0D0D0D;--border:#1A1A1A;
+  --green:#2ECC71;--red:#E74C3C;--blue:#3A9BD5;
+  --text:#D8D0C0;--muted:#555;
+}
+body{font-family:Georgia,serif;background:var(--dark);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.header{background:#060606;border-bottom:1px solid var(--gold-dark);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo-main{font-size:15px;font-weight:bold;color:var(--gold);letter-spacing:3px;text-transform:uppercase;}
+.logo-sub{font-size:9px;color:var(--gold-dark);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
+.badge{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:3px 8px;font-size:9px;letter-spacing:1px;display:inline-block;}
+.badge.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
+
+/* NAV */
+.nav{display:flex;background:#060606;border-bottom:1px solid var(--border);overflow-x:auto;}
+.nav-btn{padding:10px 14px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;white-space:nowrap;text-decoration:none;display:inline-block;}
+.nav-btn.active{border-bottom-color:var(--gold);color:var(--gold);}
+.nav-btn:hover{color:var(--gold);}
+
+/* HERO */
+.hero{background:linear-gradient(180deg,#0D0D0D 0%,#080808 100%);border-bottom:1px solid var(--gold-dark);padding:48px 24px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(201,168,76,0.06) 0%,transparent 70%);}
+.hero-eyebrow{font-size:9px;color:var(--gold-dark);letter-spacing:6px;text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-size:32px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:400;margin-bottom:12px;line-height:1.2;}
+.hero-sub{font-size:13px;color:var(--muted);max-width:500px;margin:0 auto 24px;line-height:1.8;}
+.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.hero-badge{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:5px 12px;font-size:10px;letter-spacing:2px;}
+
+/* MAIN */
+.main{padding:32px 24px;max-width:860px;margin:0 auto;}
+
+/* PROGRESS TRACKER */
+.progress-tracker{display:flex;gap:0;margin-bottom:36px;overflow-x:auto;padding-bottom:4px;}
+.pt-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;cursor:pointer;}
+.pt-circle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);margin-bottom:6px;transition:all 0.3s;position:relative;z-index:1;}
+.pt-step.active .pt-circle{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
+.pt-step.done .pt-circle{border-color:var(--green);color:var(--green);background:rgba(46,204,113,0.1);}
+.pt-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-align:center;text-transform:uppercase;}
+.pt-step.active .pt-label{color:var(--gold);}
+.pt-step.done .pt-label{color:var(--green);}
+.pt-line{flex:1;height:1px;background:var(--border);margin-top:18px;min-width:20px;}
+.pt-line.done{background:var(--green);}
+
+/* STEP CARDS */
+.step-card{background:var(--card);border:1px solid var(--border);margin-bottom:16px;overflow:hidden;transition:border-color 0.3s;}
+.step-card.active{border-color:var(--gold);}
+.step-card.done{border-color:var(--green);}
+.step-header{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer;user-select:none;}
+.step-num{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);flex-shrink:0;font-family:'Courier New',monospace;}
+.step-card.done .step-num{border-color:var(--green);color:var(--green);}
+.step-title-wrap{flex:1;}
+.step-title{font-size:14px;color:var(--gold);margin-bottom:3px;}
+.step-card.done .step-title{color:var(--green);}
+.step-desc{font-size:11px;color:var(--muted);}
+.step-status{font-size:10px;padding:3px 8px;border:1px solid;letter-spacing:1px;}
+.step-status.pending{color:var(--muted);border-color:var(--muted);}
+.step-status.active{color:var(--gold);border-color:var(--gold);}
+.step-status.done{color:var(--green);border-color:var(--green);}
+.step-body{padding:0 20px 20px;border-top:1px solid var(--border);}
+.step-body.hidden{display:none;}
+
+/* INSTRUCTIONS */
+.instruction{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+.instruction:last-child{border-bottom:none;}
+.inst-num{width:24px;height:24px;border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0;margin-top:2px;font-family:'Courier New',monospace;}
+.inst-content{flex:1;}
+.inst-title{font-size:12px;color:var(--text);margin-bottom:4px;font-weight:bold;}
+.inst-detail{font-size:11px;color:var(--muted);line-height:1.7;}
+.inst-code{font-family:'Courier New',monospace;font-size:11px;color:var(--gold);background:#050505;padding:6px 10px;border:1px solid var(--border);margin-top:6px;display:block;word-break:break-all;}
+.inst-tip{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:8px 12px;margin-top:8px;font-size:10px;color:var(--text);display:flex;gap:8px;line-height:1.6;}
+.inst-tip-icon{color:var(--gold);flex-shrink:0;}
+
+/* BURN CALC */
+.burn-demo{background:#050505;border:1px solid var(--gold-dark);padding:16px;margin-top:12px;}
+.burn-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.burn-row:last-child{border-bottom:none;font-weight:bold;padding-top:8px;}
+.burn-label{color:var(--muted);}
+.burn-val{color:var(--gold);}
+.burn-val.red{color:var(--red);}
+.burn-val.green{color:var(--green);}
+
+/* FIELD DEMO */
+.field-demo{margin-top:12px;}
+.field-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;display:block;}
+.field-val{background:#050505;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 12px;font-size:12px;font-family:Georgia,serif;width:100%;margin-bottom:10px;display:block;}
+select.field-val{cursor:pointer;}
+
+/* COMPLETION */
+.completion-box{background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.3);padding:20px;text-align:center;margin-top:16px;}
+.completion-icon{font-size:32px;color:var(--green);margin-bottom:8px;}
+.completion-title{font-size:14px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.completion-text{font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* RESULT DISPLAY */
+.result-display{background:#030303;border:1px solid var(--green);padding:14px;margin-top:12px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;white-space:pre-wrap;display:none;}
+
+/* BUTTONS */
+.btn{background:linear-gradient(135deg,var(--gold-dark),var(--gold));border:none;color:var(--dark);padding:10px 20px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;font-weight:bold;display:inline-block;}
+.btn-ghost{background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 16px;font-size:10px;letter-spacing:2px;cursor:pointer;font-family:Georgia,serif;}
+.btn:hover{opacity:0.85;}
+.btn-ghost:hover{background:rgba(201,168,76,0.08);}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0;}
+.faq-q{font-size:13px;color:var(--gold);margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;}
+.faq-a{font-size:12px;color:var(--muted);line-height:1.8;display:none;}
+.faq-a.open{display:block;}
+
+/* TAG */
+.tag{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:2px 7px;font-size:9px;display:inline-block;margin:2px;}
+.tag.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
+.tag.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:#3A9BD5;}
+
+/* ALERT */
+.alert{padding:10px 14px;margin-bottom:12px;font-size:11px;display:flex;gap:8px;align-items:flex-start;line-height:1.6;}
+.alert.gold{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);}
+.alert.green{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.3);}
+.alert.blue{background:rgba(58,155,213,0.08);border:1px solid rgba(58,155,213,0.3);}
+.pill{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+
+/* SECTION */
+.sec-title{font-size:14px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;font-weight:normal;}
+.sec-sep{height:1px;background:var(--border);margin:28px 0;}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
+#splash.hidden{opacity:0;pointer-events:none;}
+.splash-logo{font-size:20px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;}
+.splash-sub{font-size:9px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;}
+.splash-spin{width:24px;height:24px;border:1px solid var(--gold-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .grid2{grid-template-columns:1fr;}
+  .hero-title{font-size:22px;}
+  .progress-tracker{gap:0;}
+  .pt-label{font-size:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">GeoTerraChain QFS</div>
+  <div class="splash-sub">Guide de Tokenisation</div>
+  <div class="splash-spin"></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo-main">GeoTerraChain QFS</div>
+    <div class="logo-sub">Guide officiel de tokenisation foncière</div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <span class="badge green">● Pi SDK 2.0</span>
+    <span class="badge">KYC requis</span>
+    <span class="badge">GTCπ</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <a class="nav-btn active" href="https://hilaila.github.io">◉ Accueil</a>
+  <a class="nav-btn" href="https://hilaila.github.io#auth">π Connexion</a>
+  <a class="nav-btn" href="https://hilaila.github.io#tokeniser">◈ Tokeniser</a>
+  <a class="nav-btn" href="https://hilaila.github.io#marketplace">◆ Marketplace</a>
+  <span class="nav-btn active" style="border-bottom-color:var(--gold);color:var(--gold);">📖 Guide</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Documentation officielle</div>
+  <h1 class="hero-title">Comment tokeniser<br/>votre actif foncier</h1>
+  <p class="hero-sub">Guide complet étape par étape pour tokeniser vos terres africaines sur Pi Network via GeoTerraChain QFS — Notre Terre · Notre Richesse.</p>
+  <div class="hero-badges">
+    <span class="hero-badge">7 étapes simples</span>
+    <span class="hero-badge">KYC Pioneer requis</span>
+    <span class="hero-badge">Transaction Pi on-chain</span>
+    <span class="hero-badge">Burn 0,5% GTCπ</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- AVANT DE COMMENCER -->
+  <div class="alert gold" style="margin-bottom:20px;">
+    <div class="pill" style="background:var(--gold)"></div>
+    <div>
+      <strong style="color:var(--gold)">Avant de commencer</strong> — Vous avez besoin de :
+      <span class="tag" style="margin-left:6px;">Pi Browser installé</span>
+      <span class="tag">Compte Pioneer KYC vérifié</span>
+      <span class="tag">Test-Pi disponible</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS TRACKER -->
+  <div class="progress-tracker" id="progress-tracker">
+    <div class="pt-step done" onclick="showStep(0)"><div class="pt-circle">✓</div><div class="pt-label">Ouvrir<br/>l'app</div></div>
+    <div class="pt-line done"></div>
+    <div class="pt-step active" onclick="showStep(1)"><div class="pt-circle">2</div><div class="pt-label">Se<br/>connecter</div></div>
+    <div class="pt-line"></div>
+    <div class="pt-step" onclick="showStep(2)"><div class="pt-circle">3</div><div class="pt-label">Aller à<br/>Tokeniser</div></div>
+    <div class="pt-line"></div>
+    <div class="pt-step" onclick="showStep(3)"><div class="pt-circle">4</div><div class="pt-label">Remplir<br/>formulaire</div></div>
+    <div class="pt-line"></div>
+    <div class="pt-step" onclick="showStep(4)"><div class="pt-circle">5</div><div class="pt-label">Calcul<br/>burn</div></div>
+    <div class="pt-line"></div>
+    <div class="pt-step" onclick="showStep(5)"><div class="pt-circle">6</div><div class="pt-circle" style="display:none">✓</div><div class="pt-label">Confirmer<br/>paiement</div></div>
+    <div class="pt-line"></div>
+    <div class="pt-step" onclick="showStep(6)"><div class="pt-circle">7</div><div class="pt-label">Token<br/>créé ✓</div></div>
+  </div>
+
+  <!-- ÉTAPES -->
+
+  <!-- ÉTAPE 1 -->
+  <div class="step-card done" id="step-0">
+    <div class="step-header" onclick="toggleStep(0)">
+      <div class="step-num">✓</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 1 — Ouvrir GeoTerraChain QFS</div>
+        <div class="step-desc">Accéder à la plateforme dans Pi Browser</div>
+      </div>
+      <span class="step-status done">COMPLÉTÉ</span>
+    </div>
+    <div class="step-body" id="body-0">
+      <div style="padding-top:16px;">
+        <div class="instruction">
+          <div class="inst-num">1</div>
+          <div class="inst-content">
+            <div class="inst-title">Ouvrir Pi Browser sur votre téléphone</div>
+            <div class="inst-detail">Pi Browser est l'application officielle de Pi Network pour accéder aux apps. Téléchargez-le sur App Store ou Google Play si ce n'est pas encore fait.</div>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">2</div>
+          <div class="inst-content">
+            <div class="inst-title">Taper l'URL dans la barre d'adresse</div>
+            <div class="inst-detail">Dans la barre d'adresse en haut de Pi Browser, tapez exactement :</div>
+            <code class="inst-code">https://hilaila.github.io</code>
+            <div class="inst-tip"><span class="inst-tip-icon">◈</span><span>Le splash screen GeoTerraChain QFS apparaît pendant 2 secondes, puis l'app se charge automatiquement.</span></div>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">3</div>
+          <div class="inst-content">
+            <div class="inst-title">Vérifier que le Pi SDK est initialisé</div>
+            <div class="inst-detail">Dans le header de l'app, vous devez voir :</div>
+            <code class="inst-code">● Pi SDK v2.0 ✓</code>
+            <div class="inst-tip"><span class="inst-tip-icon">✓</span><span>Si vous voyez "● Hors Pi Browser", utilisez bien Pi Browser et non Chrome ou Firefox.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 2 -->
+  <div class="step-card active" id="step-1">
+    <div class="step-header" onclick="toggleStep(1)">
+      <div class="step-num">2</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 2 — Se connecter avec votre compte Pi</div>
+        <div class="step-desc">Authentification Pioneer KYC via Pi SDK 2.0</div>
+      </div>
+      <span class="step-status active">EN COURS</span>
+    </div>
+    <div class="step-body" id="body-1">
+      <div style="padding-top:16px;">
+        <div class="alert blue">
+          <div class="pill" style="background:#3A9BD5"></div>
+          <div><strong style="color:#3A9BD5">KYC obligatoire</strong> — Seuls les Pioneers dont le KYC est approuvé par Pi Network peuvent accéder à la tokenisation. La vérification est automatique lors de la connexion.</div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">1</div>
+          <div class="inst-content">
+            <div class="inst-title">Cliquer sur "π Connexion" dans la navigation</div>
+            <div class="inst-detail">La barre de navigation en haut de l'app contient 6 onglets. Cliquez sur le deuxième onglet.</div>
+            <code class="inst-code">π Connexion</code>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">2</div>
+          <div class="inst-content">
+            <div class="inst-title">Cliquer sur "Authentifier + Vérifier KYC"</div>
+            <div class="inst-detail">Le bouton violet lance le processus d'authentification Pi SDK. Pi Network va vérifier automatiquement votre identité KYC.</div>
+            <div class="inst-tip"><span class="inst-tip-icon">◎</span><span>Une fenêtre Pi Network s'ouvre pour demander votre autorisation. Cliquez sur "Allow" pour autoriser GeoTerraChain QFS à accéder à votre compte.</span></div>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">3</div>
+          <div class="inst-content">
+            <div class="inst-title">Vérifier le statut KYC dans le header</div>
+            <div class="inst-detail">Après connexion réussie, vous devez voir dans le header :</div>
+            <code class="inst-code">KYC ✓    ● VotreUsername</code>
+            <div class="inst-tip"><span class="inst-tip-icon">✓</span><span>Si vous voyez "KYC ✗", votre vérification KYC Pi Network n'est pas encore complétée. Rendez-vous dans l'app Pi Mining → KYC pour finaliser.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 3 -->
+  <div class="step-card" id="step-2">
+    <div class="step-header" onclick="toggleStep(2)">
+      <div class="step-num">3</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 3 — Accéder à l'onglet Tokeniser</div>
+        <div class="step-desc">Naviguer vers le formulaire de tokenisation</div>
+      </div>
+      <span class="step-status pending">À FAIRE</span>
+    </div>
+    <div class="step-body hidden" id="body-2">
+      <div style="padding-top:16px;">
+        <div class="instruction">
+          <div class="inst-num">1</div>
+          <div class="inst-content">
+            <div class="inst-title">Cliquer sur "◈ Tokeniser" dans la navigation</div>
+            <div class="inst-detail">Troisième onglet de la barre de navigation.</div>
+            <code class="inst-code">◈ Tokeniser</code>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">2</div>
+          <div class="inst-content">
+            <div class="inst-title">Vérifier le message d'accès autorisé</div>
+            <div class="inst-detail">Si votre KYC est vérifié, vous verrez le message vert en haut du formulaire :</div>
+            <code class="inst-code">✓ Pioneer [Username] KYC vérifié — Accès tokenisation autorisé</code>
+            <div class="inst-tip"><span class="inst-tip-icon">⚠</span><span>Si vous voyez "Accès refusé — KYC requis", retournez à l'étape 2 et connectez-vous d'abord.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 4 -->
+  <div class="step-card" id="step-3">
+    <div class="step-header" onclick="toggleStep(3)">
+      <div class="step-num">4</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 4 — Remplir les données de l'actif</div>
+        <div class="step-desc">Informations de la parcelle à tokeniser</div>
+      </div>
+      <span class="step-status pending">À FAIRE</span>
+    </div>
+    <div class="step-body hidden" id="body-3">
+      <div style="padding-top:16px;">
+        <div class="alert gold">
+          <div class="pill" style="background:var(--gold)"></div>
+          <div>Remplissez chaque champ avec les vraies informations de votre bien foncier. Ces données seront enregistrées on-chain sur le ledger Stellar.</div>
+        </div>
+
+        <div class="field-demo">
+          <span class="field-label">Nom du bien</span>
+          <span class="field-val">Plantation Cacao — San-Pédro</span>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Le nom complet et descriptif de votre actif foncier.</div>
+
+          <span class="field-label">Surface (ha)</span>
+          <span class="field-val">5.2</span>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">La surface en hectares. Utilisez un point (.) et non une virgule pour les décimales.</div>
+
+          <span class="field-label">Région</span>
+          <span class="field-val">Côte d'Ivoire</span>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Le pays ou la région où se situe l'actif. 8 pays UEMOA disponibles.</div>
+
+          <span class="field-label">Type d'actif</span>
+          <span class="field-val">Agro business — Cultures de rente (cacao, café, hévéa, palmier)</span>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">Choisissez la classification la plus adaptée à votre bien :</div>
+          <div style="margin-bottom:12px;">
+            <span class="tag">Cultures vivrières</span>
+            <span class="tag">Cultures de rente</span>
+            <span class="tag">Élevage</span>
+            <span class="tag">Aquaculture</span>
+            <span class="tag">Agroforesterie</span>
+            <span class="tag">Maraîchage</span>
+            <span class="tag">Immobilier urbain</span>
+            <span class="tag">Commercial</span>
+          </div>
+
+          <span class="field-label">Prix (GTCπ)</span>
+          <span class="field-val">100</span>
+          <div style="font-size:10px;color:var(--muted);">La valeur de l'actif en GTCπ. Pour un premier test, utilisez 1 GTCπ.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 5 -->
+  <div class="step-card" id="step-4">
+    <div class="step-header" onclick="toggleStep(4)">
+      <div class="step-num">5</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 5 — Comprendre le calcul burn</div>
+        <div class="step-desc">Mécanisme déflationnaire GTCπ automatique</div>
+      </div>
+      <span class="step-status pending">À FAIRE</span>
+    </div>
+    <div class="step-body hidden" id="body-4">
+      <div style="padding-top:16px;">
+        <div class="alert blue">
+          <div class="pill" style="background:#3A9BD5"></div>
+          <div><strong style="color:#3A9BD5">Burn déflationnaire</strong> — À chaque tokenisation, 0,5% du prix est automatiquement brûlé (détruit définitivement). Cela rend GTCπ déflationnaire et augmente sa valeur au fil du temps.</div>
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Exemple avec un actif à 100 GTCπ :</div>
+        <div class="burn-demo">
+          <div style="font-size:9px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;">CALCUL ON-CHAIN AUTOMATIQUE</div>
+          <div class="burn-row"><span class="burn-label">Prix brut de l'actif</span><span class="burn-val">100 GTCπ</span></div>
+          <div class="burn-row"><span class="burn-label" style="color:var(--red);">Burn déflationnaire (0,5%)</span><span class="burn-val red">− 0.5 GTCπ</span></div>
+          <div class="burn-row"><span class="burn-label" style="color:var(--gold);">Net reçu par le propriétaire</span><span class="burn-val green">99.5 GTCπ</span></div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Calculateur interactif :</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="number" id="calc-prix" value="100" min="1" oninput="calcBurn()" style="background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:7px 10px;font-family:Georgia,serif;width:120px;outline:none;font-size:12px;"/>
+            <span style="font-size:11px;color:var(--muted);">GTCπ →</span>
+            <span id="calc-result" style="font-size:12px;color:var(--green);">Burn: 0.5 · Net: 99.5 GTCπ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 6 -->
+  <div class="step-card" id="step-5">
+    <div class="step-header" onclick="toggleStep(5)">
+      <div class="step-num">6</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 6 — Confirmer la transaction Pi</div>
+        <div class="step-desc">Signature avec votre passphrase et confirmation blockchain</div>
+      </div>
+      <span class="step-status pending">À FAIRE</span>
+    </div>
+    <div class="step-body hidden" id="body-5">
+      <div style="padding-top:16px;">
+        <div class="instruction">
+          <div class="inst-num">1</div>
+          <div class="inst-content">
+            <div class="inst-title">Cliquer sur "◈ Tokeniser la parcelle"</div>
+            <div class="inst-detail">Le bouton doré en bas du formulaire lance la transaction Pi.</div>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">2</div>
+          <div class="inst-content">
+            <div class="inst-title">Fenêtre de confirmation Pi Network</div>
+            <div class="inst-detail">Pi Network affiche un récapitulatif de la transaction :</div>
+            <code class="inst-code">Application : GeoTerraChain QFS
+Montant     : X.X Test-Pi
+Destinataire: GB2AR...UPW6R
+Mémo        : Tokenisation: [Nom du bien]</code>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">3</div>
+          <div class="inst-content">
+            <div class="inst-title">Entrer votre passphrase de 24 mots</div>
+            <div class="inst-detail">Pour confirmer la transaction, entrez votre passphrase secrète de 24 mots dans le champ prévu.</div>
+            <div class="inst-tip"><span class="inst-tip-icon">🔒</span><span>Votre passphrase est confidentielle. Ne la partagez jamais avec personne. GeoTerraChain QFS ne vous demande jamais votre passphrase directement.</span></div>
+          </div>
+        </div>
+        <div class="instruction">
+          <div class="inst-num">4</div>
+          <div class="inst-content">
+            <div class="inst-title">Confirmer la transaction</div>
+            <div class="inst-detail">Appuyez sur le bouton de confirmation. La transaction est envoyée sur le ledger Stellar / Pi Network.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 7 -->
+  <div class="step-card" id="step-6">
+    <div class="step-header" onclick="toggleStep(6)">
+      <div class="step-num">7</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Étape 7 — Token créé, actif enregistré on-chain !</div>
+        <div class="step-desc">Votre parcelle est maintenant tokenisée sur la blockchain Pi</div>
+      </div>
+      <span class="step-status pending">À FAIRE</span>
+    </div>
+    <div class="step-body hidden" id="body-6">
+      <div style="padding-top:16px;">
+        <div class="completion-box">
+          <div class="completion-icon">🎉</div>
+          <div class="completion-title">Tokenisation réussie !</div>
+          <div class="completion-text">Votre actif foncier est maintenant enregistré on-chain sur le ledger Stellar / Pi Network. Un token LandPi unique lui a été attribué avec un hash de transaction vérifiable.</div>
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);margin:14px 0 8px;">Exemple de token LandPi généré :</div>
+        <div style="background:#030303;border:1px solid var(--green);padding:14px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;">
+ID        : LANDPI_1749775234521
+NOM       : Plantation Cacao — San-Pédro
+SURFACE   : 5.2 ha
+TYPE      : Agro business — Cultures de rente
+RÉGION    : Côte d'Ivoire
+PROPRIO   : @Hilaila
+KYC       : ✓ Vérifié
+PRIX      : 100 GTCπ
+BURN 0.5% : − 0.5 GTCπ
+NET       : 99.5 GTCπ
+LEDGER    : #47823941
+STATUT    : TOKENISÉ
+TX HASH   : bb37b800beae08f56b6d014adecc75d...</div>
+
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <span class="tag green">● ON-CHAIN</span>
+          <span class="tag">GTCπ</span>
+          <span class="tag">LandPi</span>
+          <span class="tag blue">KYC ✓</span>
+          <span class="tag">Stellar Ledger</span>
+        </div>
+
+        <div class="alert green" style="margin-top:14px;">
+          <div class="pill" style="background:var(--green)"></div>
+          <div>Votre token apparaît maintenant dans l'onglet <strong style="color:var(--green)">◇ Portefeuille</strong> de l'app. L'historique complet de vos tokenisations y est conservé.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SÉPARATEUR -->
+  <div class="sec-sep"></div>
+
+  <!-- FAQ -->
+  <div class="sec-title" style="margin-bottom:16px;">Questions fréquentes</div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Pourquoi le KYC est-il obligatoire ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      Le KYC (Know Your Customer) garantit que chaque tokenisation est effectuée par un humain réel et vérifié. Cela protège l'intégrité du registre foncier on-chain et prévient la fraude. Pi Network vérifie votre identité via une pièce officielle et un selfie avant d'approuver votre compte Pioneer.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Qu'est-ce que le burn déflationnaire de 0,5% ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      À chaque tokenisation, 0,5% du montant en GTCπ est détruit définitivement. Ce mécanisme réduit progressivement la supply totale de GTCπ (3 141 592), ce qui augmente la rareté et donc la valeur du token au fil du temps. C'est un mécanisme économique conçu pour bénéficier aux détenteurs de GTCπ sur le long terme.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Quels types d'actifs peut-on tokeniser ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      GeoTerraChain QFS accepte 9 types d'actifs : Cultures vivrières, Cultures de rente (cacao, café, hévéa, palmier), Élevage et pastorale, Aquaculture et pisciculture, Agroforesterie et sylviculture, Maraîchage et horticulture, Immobilier urbain, Commercial, et Résidentiel. Tous les actifs situés dans la zone UEMOA sont éligibles.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Que signifie "on-chain" ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      "On-chain" signifie que votre tokenisation est enregistrée de façon permanente et immuable sur le ledger (registre) Stellar — la blockchain sous-jacente de Pi Network. Chaque token possède un hash de transaction unique, vérifiable publiquement. Personne ne peut modifier ou effacer cet enregistrement.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Combien de Test-Pi dois-je avoir pour tokeniser ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      Vous avez besoin d'au moins le montant du prix en GTCπ + 0,01 Pi de frais de transaction. Pour un premier test, utilisez 1 GTCπ — vous aurez besoin d'environ 1,01 Test-Pi dans votre wallet. Vous pouvez obtenir des Test-Pi gratuitement via developer.minepi.com/faucet dans Pi Browser.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Comment voir mes tokenisations passées ?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      Rendez-vous dans l'onglet "◇ Portefeuille" de l'app. Toutes vos tokenisations et transactions sont conservées et affichées avec les détails complets : hash de transaction, ledger Stellar, montant, burn, et timestamp.
+    </div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="sec-sep"></div>
+  <div style="text-align:center;padding:32px 0;">
+    <div style="font-size:10px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;">Prêt à commencer ?</div>
+    <div style="font-size:24px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Tokenisez votre première parcelle</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:24px;">Rejoignez les Pioneers africains qui tokenisent leurs terres sur Pi Network</div>
+    <a href="https://hilaila.github.io" style="text-decoration:none;">
+      <button class="btn" style="font-size:11px;padding:12px 32px;">◈ Accéder à GeoTerraChain QFS</button>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <span style="font-size:9px;color:#222;letter-spacing:2px;">GEOTERRRACHAIN QFS · PI NETWORK · NOTRE TERRE · NOTRE RICHESSE</span>
+    <span style="font-size:9px;color:#222;">Développé par @Hilaila · Côte d'Ivoire · UEMOA</span>
+  </div>
+
+</div>
+
+<script>
+// SPLASH
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1600);
+});
+
+// TOGGLE STEP
+function toggleStep(idx) {
+  const body = document.getElementById('body-' + idx);
+  body.classList.toggle('hidden');
+}
+
+function showStep(idx) {
+  const body = document.getElementById('body-' + idx);
+  body.classList.remove('hidden');
+  document.getElementById('step-' + idx).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// BURN CALC
+function calcBurn() {
+  const prix = parseFloat(document.getElementById('calc-prix').value) || 0;
+  const burn = parseFloat((prix * 0.005).toFixed(6));
+  const net = parseFloat((prix - burn).toFixed(6));
+  document.getElementById('calc-result').textContent = `Burn: ${burn} GTCπ · Net: ${net} GTCπ`;
+}
+
+// FAQ TOGGLE
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('span');
+  answer.classList.toggle('open');
+  icon.textContent = answer.classList.contains('open') ? '−' : '+';
+}
+
+// Ouvrir le premier step par défaut
+toggleStep(0);
+</script>
+</body>
+</html>
