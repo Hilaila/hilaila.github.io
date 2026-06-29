@@ -1,1095 +1,1494 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GeoTerraChain QFS — Notre Terre · Notre Richesse</title>
-<meta name="description" content="Plateforme africaine de tokenisation d'actifs réels sur Pi Network. Tokenisez vos terres et biens immobiliers via GTCπ."/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>GeoTerraChain QFS</title>
+
+<!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{--gold:#C9A84C;--gold-dark:#8B6914;--dark:#0A0A0A;--card:#0D0D0D;--border:#1A1A1A;--green:#2ECC71;--red:#E74C3C;--blue:#3A9BD5;--purple:#9B59B6;--text:#D8D0C0;--muted:#555;}
-body{font-family:Georgia,serif;background:var(--dark);color:var(--text);min-height:100vh;}
-.header{background:#060606;border-bottom:1px solid var(--gold-dark);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo-main{font-size:15px;font-weight:bold;color:var(--gold);letter-spacing:3px;text-transform:uppercase;}
-.logo-sub{font-size:9px;color:var(--gold-dark);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
-.status-bar{display:flex;gap:5px;flex-wrap:wrap;}
-.badge{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:3px 7px;font-size:9px;letter-spacing:1px;}
-.badge.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
-.badge.red{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:var(--red);}
-.badge.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:var(--blue);}
-.nav{display:flex;background:#060606;border-bottom:1px solid var(--border);overflow-x:auto;}
-.nav-btn{padding:10px 13px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;white-space:nowrap;}
-.nav-btn.active{border-bottom-color:var(--gold);color:var(--gold);}
-.main{padding:20px;max-width:920px;margin:0 auto;}
-.sec-title{font-size:15px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;font-weight:normal;}
-.sec-sub{font-size:11px;color:var(--muted);margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:11px;}
-.card{background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:10px;}
-.card-gold{background:var(--card);border:1px solid var(--gold-dark);padding:14px;margin-bottom:10px;}
-.card-green{background:var(--card);border:1px solid var(--green);padding:14px;margin-bottom:10px;}
-.card-red{background:var(--card);border:1px solid var(--red);padding:14px;margin-bottom:10px;}
-.card-title{font-size:9px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
-.inp{background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:8px 10px;font-size:12px;font-family:Georgia,serif;width:100%;outline:none;margin-bottom:8px;}
-select{background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:8px 10px;font-family:Georgia,serif;width:100%;outline:none;margin-bottom:8px;}
-.btn{background:linear-gradient(135deg,var(--gold-dark),var(--gold));border:none;color:var(--dark);padding:9px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;font-weight:bold;width:100%;margin-top:4px;}
-.btn:disabled{opacity:0.4;cursor:not-allowed;}
-.btn-sm{width:auto;padding:5px 11px;font-size:9px;}
-.btn-ghost{background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:6px 12px;font-size:9px;letter-spacing:1px;cursor:pointer;font-family:Georgia,serif;}
-.tag{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:2px 6px;font-size:9px;display:inline-block;margin:2px;}
-.tag.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
-.tag.red{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:var(--red);}
-.tag.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:var(--blue);}
-.mono{font-family:'Courier New',monospace;font-size:10px;color:var(--gold);background:#030303;padding:10px;border:1px solid var(--border);word-break:break-all;white-space:pre-wrap;line-height:1.6;}
-.sep{height:1px;background:var(--border);margin:10px 0;}
-.kpi-val{font-size:22px;color:var(--gold);font-weight:bold;display:block;}
-.kpi-lbl{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;display:block;}
-.alert{padding:9px 13px;margin-bottom:10px;font-size:11px;display:flex;gap:8px;align-items:flex-start;line-height:1.6;}
-.alert.gold{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);}
-.alert.green{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.3);}
-.alert.red{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.3);}
-.alert.blue{background:rgba(58,155,213,0.08);border:1px solid rgba(58,155,213,0.3);}
-.pill{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.tab{display:none;}
-.tab.active{display:block;}
-.progress{height:4px;background:var(--border);position:relative;overflow:hidden;margin:5px 0;}
-.progress-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));transition:width 0.4s;}
-.chat-box{background:var(--card);border:1px solid var(--border);min-height:260px;max-height:360px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;margin-bottom:10px;}
-.msg{display:flex;gap:8px;align-items:flex-start;}
-.msg-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:2px;}
-.msg-icon.ai{background:rgba(139,105,20,0.3);color:var(--gold);}
-.msg-icon.user{background:rgba(58,155,213,0.2);color:var(--blue);}
-.msg-text{flex:1;font-size:11px;line-height:1.7;white-space:pre-wrap;}
-.msg-text.user-bg{background:var(--border);padding:7px 10px;}
-.hist-item{border-bottom:1px solid var(--border);padding:7px 0;font-size:10px;}
-.loader{display:inline-block;animation:spin 0.8s linear infinite;margin-right:4px;}
-/* KYC BADGE */
-.kyc-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:11px;border-radius:0;margin-bottom:10px;}
-.kyc-verified{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.4);color:var(--green);}
-.kyc-pending{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.4);color:var(--red);}
-.kyc-unknown{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
-/* SPLASH */
-#splash{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
-#splash.hidden{opacity:0;pointer-events:none;}
-.splash-logo{font-size:22px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;}
-.splash-sub{font-size:9px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:36px;}
-.splash-spin{width:26px;height:26px;border:1px solid var(--gold-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-@media(max-width:580px){.grid2,.grid3{grid-template-columns:1fr;}.header{flex-direction:column;gap:8px;text-align:center;}}
+/* ══════════════════════════════════════════
+   CSS VARIABLES & RESET
+══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#E8C96A;
+  --gold-pale:#F5E6B8;
+  --dark:#08080E;
+  --dark2:#0D0D1A;
+  --dark3:#121220;
+  --dark4:#181828;
+  --purple:#1A0533;
+  --green:#1B5E20;
+  --green-mid:#2E7D32;
+  --text:#E8D5B0;
+  --text-dim:#A89060;
+  --white:#FAF5EA;
+  --radius:4px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+html,body{
+  height:100%;
+  background:var(--dark);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+
+/* Noise grain */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.35;
+}
+
+/* ══════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════ */
+#app{
+  display:flex;flex-direction:column;
+  height:100%;
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bottom);
+}
+
+/* ── TOP BAR ── */
+#topbar{
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 12px;
+  background:linear-gradient(180deg,rgba(8,8,14,.98) 0%,rgba(8,8,14,.9) 100%);
+  border-bottom:1px solid rgba(201,168,76,.15);
+  backdrop-filter:blur(12px);
+  position:relative;z-index:50;
+}
+.logo-mark{
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,var(--gold),var(--green));
+  display:flex;align-items:center;justify-content:center;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  font-size:.8rem;font-weight:700;color:var(--dark);font-family:'Cinzel',serif;
+}
+.logo-text{
+  font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;
+  letter-spacing:.08em;color:var(--gold);
+}
+.logo-text span{color:var(--gold-light)}
+.logo-sub{font-size:.55rem;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;margin-top:1px}
+
+/* User pill */
+#user-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,.08);
+  border:1px solid rgba(201,168,76,.2);
+  padding:6px 12px;cursor:pointer;
+  transition:all .25s;
+}
+#user-pill:hover{background:rgba(201,168,76,.14)}
+#user-pill.loading{opacity:.5;pointer-events:none}
+.user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--green));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--dark);font-family:'Cinzel',serif;
+  flex-shrink:0;
+}
+.user-name{font-size:.75rem;font-weight:600;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-status{font-size:.58rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+
+/* ── PAGE CONTAINER ── */
+#pages{flex:1;overflow:hidden;position:relative}
+.page{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  display:none;
+  padding:0 0 80px;
+}
+.page.active{display:block}
+/* Custom scrollbar */
+.page::-webkit-scrollbar{width:3px}
+.page::-webkit-scrollbar-track{background:transparent}
+.page::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3)}
+
+/* ── BOTTOM NAV ── */
+#bottomnav{
+  flex-shrink:0;
+  display:flex;align-items:center;
+  background:rgba(8,8,14,.97);
+  border-top:1px solid rgba(201,168,76,.12);
+  backdrop-filter:blur(16px);
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:10px 4px 8px;cursor:pointer;
+  transition:all .2s;position:relative;
+  border:none;background:none;
+}
+.nav-item::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:2px;
+  background:var(--gold);transform:scaleX(0);transition:transform .25s;
+}
+.nav-item.active::before{transform:scaleX(1)}
+.nav-item .nav-icon{font-size:1.25rem;transition:transform .2s;line-height:1}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-item .nav-label{
+  font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);margin-top:4px;font-weight:600;
+  transition:color .2s;
+}
+.nav-item.active .nav-label{color:var(--gold)}
+
+/* ══════════════════════════════════════════
+   COMMON COMPONENTS
+══════════════════════════════════════════ */
+.page-header{
+  padding:24px 18px 16px;
+  border-bottom:1px solid rgba(201,168,76,.08);
+}
+.page-tag{
+  font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.page-tag::before{content:'';width:20px;height:1px;background:var(--gold)}
+.page-title{
+  font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;
+  color:var(--white);line-height:1.2;
+}
+.page-title em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.page-desc{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem;color:var(--text-dim);margin-top:8px;line-height:1.5;
+}
+
+/* Card */
+.card{
+  background:var(--dark2);
+  border:1px solid rgba(201,168,76,.1);
+  padding:20px;margin:0 18px 12px;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.card:active{transform:scale(.98);border-color:rgba(201,168,76,.3)}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent);
+}
+.card-tag{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.card-title{font-family:'Cinzel',serif;font-size:.95rem;color:var(--white);font-weight:600;margin-bottom:6px}
+.card-desc{font-size:.8rem;color:var(--text-dim);line-height:1.5}
+
+/* Button */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.12em;font-weight:700;
+  text-transform:uppercase;border:none;cursor:pointer;
+  transition:all .25s;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:var(--dark);padding:13px 24px;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+}
+.btn-gold:active{transform:scale(.96)}
+.btn-outline{
+  background:transparent;color:var(--gold);
+  border:1px solid rgba(201,168,76,.4);
+  padding:12px 22px;
+}
+.btn-outline:active{background:rgba(201,168,76,.1)}
+.btn-block{width:100%;display:flex}
+.btn-sm{font-size:.64rem;padding:9px 16px}
+
+/* Status badge */
+.badge{
+  display:inline-block;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid;
+}
+.badge-active{color:#4CAF50;border-color:rgba(76,175,80,.3);background:rgba(76,175,80,.06)}
+.badge-pending{color:var(--gold);border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.06)}
+.badge-draft{color:var(--text-dim);border-color:rgba(168,144,96,.2)}
+
+/* Divider */
+.divider{height:1px;background:rgba(201,168,76,.08);margin:8px 18px}
+
+/* Section title inside page */
+.section-head{
+  padding:20px 18px 10px;
+  font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-dim);
+}
+
+/* Stat row */
+.stat-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(201,168,76,.08);margin:0 0 1px;
+}
+.stat-cell{
+  background:var(--dark2);padding:16px 12px;text-align:center;
+}
+.stat-val{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);display:block;font-weight:700}
+.stat-lbl{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-top:3px;display:block}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(13,13,26,.97);border:1px solid rgba(201,168,76,.3);
+  padding:12px 20px;font-size:.78rem;letter-spacing:.08em;color:var(--gold);
+  white-space:nowrap;z-index:200;
+  opacity:0;transition:all .3s;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Loading spinner */
+.spinner{
+  width:32px;height:32px;border:2px solid rgba(201,168,76,.15);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .8s linear infinite;margin:40px auto;display:block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══════════════════════════════════════════
+   PAGE 1 — ACCUEIL / DASHBOARD
+══════════════════════════════════════════ */
+#page-home .hero-banner{
+  background:linear-gradient(135deg,var(--dark2),var(--purple));
+  border-bottom:1px solid rgba(201,168,76,.12);
+  padding:28px 18px 24px;
+  position:relative;overflow:hidden;
+}
+#page-home .hero-banner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(201,168,76,.06),transparent);
+}
+#page-home .hero-banner::after{
+  content:'🌍';position:absolute;right:-10px;top:-10px;
+  font-size:5rem;opacity:.08;
+}
+.hero-greeting{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.hero-user-name{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--gold);font-weight:700}
+.hero-slogan{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.95rem;color:var(--text-dim);margin-top:8px;line-height:1.4;
+}
+.hero-balance-box{
+  margin-top:18px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+}
+.balance-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim)}
+.balance-amount{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);font-weight:700}
+.balance-sub{font-size:.65rem;color:var(--text-dim);margin-top:2px}
+
+/* Quick actions */
+.quick-actions{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:rgba(201,168,76,.06);margin:16px 0 0;
+}
+.quick-btn{
+  background:var(--dark2);padding:14px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;transition:background .2s;border:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.quick-btn:active{background:var(--dark3)}
+.quick-btn .q-icon{font-size:1.3rem}
+.quick-btn .q-label{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+
+/* Recent activity */
+.activity-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border-bottom:1px solid rgba(201,168,76,.06);
+  cursor:pointer;transition:background .2s;
+}
+.activity-item:active{background:rgba(201,168,76,.04)}
+.act-icon{
+  width:38px;height:38px;flex-shrink:0;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.15);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.act-body{flex:1;min-width:0}
+.act-title{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act-sub{font-size:.7rem;color:var(--text-dim);margin-top:2px}
+.act-right{text-align:right;flex-shrink:0}
+.act-val{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);font-weight:600}
+.act-date{font-size:.62rem;color:var(--text-dim);margin-top:2px}
+
+/* ══════════════════════════════════════════
+   PAGE 2 — MES PARCELLES
+══════════════════════════════════════════ */
+.parcel-card{
+  margin:0 18px 12px;
+  background:var(--dark2);border:1px solid rgba(201,168,76,.12);
+  overflow:hidden;
+  transition:border-color .25s;
+}
+.parcel-card:active{border-color:rgba(201,168,76,.4)}
+.parcel-map-preview{
+  height:100px;
+  background:linear-gradient(135deg,rgba(27,94,32,.2),rgba(201,168,76,.08));
+  position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.parcel-map-preview::before{
+  content:'';position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(201,168,76,.04) 14px,rgba(201,168,76,.04) 15px),
+    repeating-linear-gradient(90deg,transparent,transparent 14px,rgba(201,168,76,.04) 14px,rgba(201,168,76,.04) 15px);
+}
+.parcel-terrain-icon{font-size:2rem;opacity:.6;z-index:1}
+.parcel-nft-badge{
+  position:absolute;top:8px;right:8px;
+  background:rgba(8,8,14,.85);border:1px solid rgba(201,168,76,.3);
+  font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);padding:3px 8px;
+}
+.parcel-gps{
+  position:absolute;bottom:8px;left:8px;
+  font-size:.6rem;color:rgba(201,168,76,.5);font-family:monospace;
+}
+.parcel-info{padding:14px 16px}
+.parcel-id{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:4px}
+.parcel-name{font-family:'Cinzel',serif;font-size:.95rem;color:var(--white);font-weight:600;margin-bottom:6px}
+.parcel-meta{display:flex;gap:16px;margin-bottom:12px}
+.parcel-meta-item{font-size:.72rem;color:var(--text-dim)}
+.parcel-meta-item strong{color:var(--text);font-weight:600}
+.parcel-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:10px;border-top:1px solid rgba(201,168,76,.08);
+}
+.parcel-value{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold)}
+.parcel-value span{font-size:.65rem;color:var(--text-dim)}
+
+/* FAB */
+#fab{
+  position:fixed;bottom:90px;right:18px;z-index:100;
+  width:52px;height:52px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  border:none;cursor:pointer;
+  clip-path:polygon(20% 0%,100% 0%,80% 100%,0% 100%);
+  display:none;
+  align-items:center;justify-content:center;
+  font-size:1.4rem;color:var(--dark);
+  box-shadow:0 4px 20px rgba(201,168,76,.3);
+  transition:transform .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+#fab:active{transform:scale(.92)}
+#fab.visible{display:flex}
+
+/* ══════════════════════════════════════════
+   PAGE 3 — PAIEMENTS Pi
+══════════════════════════════════════════ */
+.payment-header{
+  background:linear-gradient(135deg,var(--dark2),rgba(26,5,51,.8));
+  padding:24px 18px;border-bottom:1px solid rgba(201,168,76,.1);
+}
+.pi-balance-display{
+  text-align:center;padding:10px 0;
+}
+.pi-bal-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+.pi-bal-amount{font-family:'Cinzel',serif;font-size:2.4rem;color:var(--gold);font-weight:700;line-height:1}
+.pi-bal-usd{font-size:.78rem;color:var(--text-dim);margin-top:6px}
+
+/* Token pills */
+.token-scroll{
+  display:flex;gap:10px;padding:16px 18px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.token-scroll::-webkit-scrollbar{display:none}
+.token-pill{
+  flex-shrink:0;
+  background:var(--dark2);border:1px solid rgba(201,168,76,.15);
+  padding:12px 16px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  min-width:80px;transition:all .2s;
+}
+.token-pill.selected{border-color:var(--gold);background:rgba(201,168,76,.08)}
+.token-pill:active{transform:scale(.95)}
+.token-symbol{font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);font-weight:700}
+.token-name{font-size:.58rem;color:var(--text-dim);letter-spacing:.08em;text-align:center}
+.token-icon{font-size:1.1rem}
+
+/* Payment form */
+.pay-form{padding:0 18px 20px}
+.input-group{margin-bottom:16px}
+.input-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;display:block}
+.input-field{
+  width:100%;background:var(--dark2);border:1px solid rgba(201,168,76,.15);
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.95rem;
+  padding:13px 16px;outline:none;transition:border-color .25s;
+  -webkit-appearance:none;
+}
+.input-field:focus{border-color:rgba(201,168,76,.4)}
+.input-field::placeholder{color:rgba(168,144,96,.4)}
+
+/* Transaction list */
+.tx-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;border-bottom:1px solid rgba(201,168,76,.05);
+}
+.tx-dir{
+  width:32px;height:32px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(201,168,76,.08);font-size:.9rem;
+}
+.tx-body{flex:1;min-width:0}
+.tx-memo{font-size:.8rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-date{font-size:.68rem;color:var(--text-dim);margin-top:2px}
+.tx-amount{font-family:'Cinzel',serif;font-size:.88rem;font-weight:700}
+.tx-in{color:#4CAF50}
+.tx-out{color:var(--gold)}
+
+/* ══════════════════════════════════════════
+   PAGE 4 — MARCHÉ
+══════════════════════════════════════════ */
+.market-filters{
+  display:flex;gap:8px;padding:14px 18px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.market-filters::-webkit-scrollbar{display:none}
+.filter-chip{
+  flex-shrink:0;padding:7px 14px;
+  background:var(--dark2);border:1px solid rgba(201,168,76,.12);
+  font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);cursor:pointer;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.filter-chip.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold)}
+.filter-chip:active{transform:scale(.95)}
+
+.listing-card{
+  margin:0 18px 12px;
+  background:var(--dark2);border:1px solid rgba(201,168,76,.1);
+  display:flex;gap:0;overflow:hidden;
+  transition:border-color .2s;cursor:pointer;
+}
+.listing-card:active{border-color:rgba(201,168,76,.35)}
+.listing-thumb{
+  width:90px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(27,94,32,.25),rgba(201,168,76,.1));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+}
+.listing-body{flex:1;padding:14px}
+.listing-type{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.listing-title{font-family:'Cinzel',serif;font-size:.88rem;color:var(--white);font-weight:600;margin-bottom:6px}
+.listing-meta{font-size:.73rem;color:var(--text-dim);line-height:1.5}
+.listing-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:10px;
+}
+.listing-price{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold);font-weight:700}
+.listing-area{font-size:.68rem;color:var(--text-dim)}
+
+/* ══════════════════════════════════════════
+   PAGE 5 — PROFIL
+══════════════════════════════════════════ */
+.profile-hero{
+  background:linear-gradient(180deg,var(--dark2),var(--dark));
+  padding:30px 18px 20px;text-align:center;
+  border-bottom:1px solid rgba(201,168,76,.08);
+}
+.profile-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--green));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:1.8rem;color:var(--dark);font-weight:700;
+  margin:0 auto 14px;
+  border:2px solid rgba(201,168,76,.3);
+  box-shadow:0 0 30px rgba(201,168,76,.2);
+}
+.profile-name{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--white);font-weight:700}
+.profile-handle{font-size:.72rem;color:var(--text-dim);letter-spacing:.1em;margin-top:4px}
+.profile-badges{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
+.menu-item{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;border-bottom:1px solid rgba(201,168,76,.06);
+  cursor:pointer;transition:background .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.menu-item:active{background:rgba(201,168,76,.04)}
+.menu-item-icon{
+  width:36px;height:36px;flex-shrink:0;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.12);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem;
+}
+.menu-item-body{flex:1}
+.menu-item-title{font-size:.85rem;font-weight:600;color:var(--text)}
+.menu-item-sub{font-size:.7rem;color:var(--text-dim);margin-top:2px}
+.menu-item-arrow{color:rgba(201,168,76,.4);font-size:.9rem}
+
+/* ══════════════════════════════════════════
+   MODAL / OVERLAY
+══════════════════════════════════════════ */
+#modal-overlay{
+  position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+#modal-overlay.open{display:flex}
+#modal-sheet{
+  width:100%;max-width:480px;
+  background:var(--dark2);
+  border-top:1px solid rgba(201,168,76,.2);
+  border-left:1px solid rgba(201,168,76,.1);
+  border-right:1px solid rgba(201,168,76,.1);
+  padding:0 0 calc(20px + var(--safe-bottom));
+  max-height:85vh;overflow-y:auto;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,1,.24,1);
+}
+#modal-overlay.open #modal-sheet{transform:translateY(0)}
+.modal-handle{
+  width:40px;height:3px;background:rgba(201,168,76,.3);
+  border-radius:2px;margin:12px auto 0;
+}
+.modal-header{
+  padding:16px 20px 14px;
+  border-bottom:1px solid rgba(201,168,76,.08);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);font-weight:700}
+.modal-close{
+  width:30px;height:30px;background:none;border:none;
+  color:var(--text-dim);font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.modal-body{padding:20px}
+
+/* ══════════════════════════════════════════
+   SPLASH / LOADING SCREEN
+══════════════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:300;
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;
+  transition:opacity .5s,visibility .5s;
+}
+#splash.hidden{opacity:0;visibility:hidden}
+.splash-africa{
+  width:120px;
+  animation:splashPulse 2s ease-in-out infinite;
+  margin-bottom:32px;opacity:.5;
+}
+@keyframes splashPulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.6;transform:scale(1.04)}}
+.splash-logo{font-family:'Cinzel',serif;font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-pale),var(--gold),var(--gold-light));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.12em;margin-bottom:6px;
+}
+.splash-sub{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim);margin-bottom:40px}
+.splash-bar{
+  width:160px;height:2px;background:rgba(201,168,76,.15);position:relative;overflow:hidden;
+}
+.splash-progress{
+  height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));
+  width:0%;transition:width 2s ease;
+}
+.splash-msg{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-top:12px}
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
+<!-- ══ SPLASH SCREEN ══ -->
 <div id="splash">
-  <div class="splash-logo">GeoTerraChain QFS</div>
-  <div class="splash-sub">Notre Terre · Notre Richesse</div>
-  <div class="splash-spin"></div>
+  <svg class="splash-africa" viewBox="0 0 400 500" fill="rgba(201,168,76,0.6)" xmlns="http://www.w3.org/2000/svg">
+    <path d="M200,20C160,20 130,40 120,60C100,80 90,100 80,130C70,160 60,180 55,210C50,240 45,265 50,290C55,315 65,330 75,355C85,380 90,395 95,415C100,435 105,455 115,470C125,485 140,490 155,488C170,486 185,478 200,480C215,482 230,490 245,488C260,486 270,476 280,462C290,448 295,430 300,410C305,390 310,370 315,348C320,326 325,305 320,278C315,251 305,235 300,208C295,181 295,160 285,135C275,110 260,88 245,68C230,48 220,22 200,20Z"/>
+  </svg>
+  <div class="splash-logo">GeoTerraChain</div>
+  <div class="splash-sub">NOTRE TERRE · NOTRE RICHESSE</div>
+  <div class="splash-bar"><div class="splash-progress" id="splashBar"></div></div>
+  <div class="splash-msg" id="splashMsg">Initialisation Pi SDK…</div>
 </div>
 
-<!-- HEADER -->
-<div class="header">
-  <div>
-    <div class="logo-main">GeoTerraChain QFS</div>
-    <div class="logo-sub">Pi Network · Stellar · RWA · UEMOA</div>
-  </div>
-  <div class="status-bar">
-    <span class="badge" id="sdk-badge">● SDK...</span>
-    <span class="badge" id="kyc-header-badge">KYC ?</span>
-    <span class="badge" id="user-badge">Non connecté</span>
-  </div>
-</div>
+<!-- ══ APP SHELL ══ -->
+<div id="app">
 
-<!-- NAV -->
-<div class="nav">
-  <button class="nav-btn active" onclick="showTab('accueil',this)">◉ Accueil</button>
-  <button class="nav-btn" onclick="showTab('auth',this)">π Connexion</button>
-  <button class="nav-btn" onclick="showTab('tokeniser',this)">◈ Tokeniser</button>
-  <button class="nav-btn" onclick="showTab('marketplace',this)">◆ Marketplace</button>
-  <button class="nav-btn" onclick="showTab('portefeuille',this)">◇ Portefeuille</button>
-  <button class="nav-btn" onclick="showTab('assistant',this)">◎ Assistant</button>
-  <button class="nav-btn" onclick="showTab('apropos',this)">ℹ À propos</button>
-  <a class="nav-btn" href="/guide.html" style="text-decoration:none;">📖 Guide</a>
-  <a class="nav-btn" href="/vision.html" style="text-decoration:none;">🌍 Vision</a>
-  <a class="nav-btn" href="/litepaper.html" style="text-decoration:none;">💼 Litepaper</a>
-</div>
-
-<div class="main">
-
-<!-- ═══ ACCUEIL ═══ -->
-<div id="tab-accueil" class="tab active">
-  <div class="sec-title">Tableau de bord</div>
-  <div class="sec-sub">GeoTerraChain QFS — Tokenisation foncière africaine sur Pi Network</div>
-
-  <div class="alert gold">
-    <div class="pill" style="background:var(--gold)"></div>
-    <div>Bienvenue sur <strong style="color:var(--gold)">GeoTerraChain QFS</strong>. Tokenisez vos terres africaines via le token <strong style="color:var(--gold)">GTCπ</strong> sur Pi Network. Connectez votre compte Pioneer KYC pour commencer.</div>
-  </div>
-
-  <!-- KYC STATUS GLOBAL -->
-  <div id="kyc-global-status" class="kyc-badge kyc-unknown">
-    <span>◎</span>
-    <span id="kyc-global-text">Statut KYC : Connectez-vous pour vérifier</span>
-  </div>
-
-  <div class="grid3">
-    <div class="card-gold">
-      <div class="card-title">Tokenisations</div>
-      <span class="kpi-val" id="stat-tok">0</span>
-      <span class="kpi-lbl">parcelles on-chain</span>
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="logo-mark">
+      <div class="logo-icon">G</div>
+      <div>
+        <div class="logo-text">GeoTerra<span>Chain</span></div>
+        <div class="logo-sub">QFS · Pi Network</div>
+      </div>
     </div>
-    <div class="card-gold">
-      <div class="card-title">GTCπ engagés</div>
-      <span class="kpi-val" id="stat-gtcp">0</span>
-      <span class="kpi-lbl">governance token</span>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">GTCπ brûlés</div>
-      <span class="kpi-val" id="stat-burn">0</span>
-      <span class="kpi-lbl">burn 0,5% déflationnaire</span>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <div class="card-title">À propos</div>
-      <p style="font-size:12px;color:#A0A090;line-height:1.8;margin-bottom:10px;">Plateforme blockchain africaine de tokenisation d'actifs réels — terres agricoles, parcelles rurales, immobilier urbain — via Pi Network et le protocole Stellar.</p>
-      <div><span class="tag">Pi Network</span><span class="tag">Stellar</span><span class="tag">RWA</span><span class="tag">UEMOA</span><span class="tag">Côte d'Ivoire</span><span class="tag">@Hilaila</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Tokenomiques GTCπ</div>
-      <div style="font-size:11px;">
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Supply totale</span><span style="color:var(--gold)">3 141 592 GTCπ</span></div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Prix de base</span><span style="color:var(--gold)">1 GTCπ = 1 π</span></div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Burn rate</span><span style="color:var(--red)">0,5% / tokenisation</span></div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Réseau</span><span style="color:var(--gold)">Stellar / Pi Mainnet</span></div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--muted)">KYC requis</span><span style="color:var(--green)">✓ Obligatoire</span></div>
+    <div id="user-pill" class="loading" onclick="triggerLogin()">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div>
+        <div class="user-name" id="userName">Connexion…</div>
+        <div class="user-status" id="userStatus">Pi Auth</div>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">Supply GTCπ utilisée</div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:10px;"><span style="color:var(--muted)" id="supply-used">0 / 3 141 592 GTCπ</span><span style="color:var(--gold)" id="supply-pct">0%</span></div>
-    <div class="progress"><div class="progress-fill" id="supply-bar" style="width:0%"></div></div>
-  </div>
-</div>
+  <!-- PAGES -->
+  <div id="pages">
 
-<!-- ═══ CONNEXION ═══ -->
-<div id="tab-auth" class="tab">
-  <div class="sec-title">Connexion Pi Network</div>
-  <div class="sec-sub">Authentification Pioneer KYC · Vérification identité · Pi SDK 2.0</div>
+    <!-- ── PAGE HOME ── -->
+    <div class="page active" id="page-home">
 
-  <!-- BLOC KYC DÉTAILLÉ -->
-  <div id="kyc-detail-block" class="card" style="margin-bottom:14px;">
-    <div class="card-title">◎ Vérification KYC Pioneer</div>
-    <div id="kyc-detail-content">
-      <div class="alert gold">
-        <div class="pill" style="background:var(--gold)"></div>
-        <div>
-          <strong style="color:var(--gold)">KYC (Know Your Customer)</strong> est obligatoire sur GeoTerraChain QFS.<br/>
-          Seuls les Pioneers vérifiés par Pi Network peuvent tokeniser des actifs fonciers.<br/>
-          La vérification est effectuée automatiquement lors de la connexion via Pi SDK.
+      <!-- Hero Banner -->
+      <div class="hero-banner" id="heroBanner">
+        <div class="hero-greeting" id="heroGreeting">Bienvenue sur GeoTerraChain</div>
+        <div class="hero-user-name" id="heroUserName">Connectez-vous</div>
+        <div class="hero-slogan">NOTRE TERRE · NOTRE RICHESSE<br>
+          <span style="font-size:.85rem">Pour l'Afrique · Par l'Afrique · Sur la Blockchain</span>
+        </div>
+        <div class="hero-balance-box" id="balanceBox">
+          <div>
+            <div class="balance-label">Solde GTCπ</div>
+            <div class="balance-amount" id="balanceAmt">— GTCπ</div>
+            <div class="balance-sub" id="balanceUSD">Connectez-vous pour voir votre solde</div>
+          </div>
+          <div style="text-align:right">
+            <div class="badge badge-pending">Pi Network</div>
+            <div style="font-size:.6rem;color:var(--text-dim);margin-top:6px">GCV 314,159 π/USD</div>
+          </div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);line-height:1.8;">
-        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Identité vérifiée par Pi Network</span></div>
-        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Document officiel examiné par des validateurs humains</span></div>
-        <div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);"><span style="color:var(--green)">✓</span><span>Unicité du compte garantie (1 Pioneer = 1 compte)</span></div>
-        <div style="display:flex;gap:8px;padding:4px 0;"><span style="color:var(--green)">✓</span><span>Accès sécurisé aux transactions Pi et GTCπ</span></div>
-      </div>
-      <div id="kyc-result-display" style="margin-top:12px;display:none;"></div>
-    </div>
-  </div>
 
-  <div class="grid2">
-    <div>
-      <!-- Étape 1 -->
-      <div class="card-gold" id="step1-card" style="margin-bottom:10px;">
-        <div class="card-title">① Pi.init() — Initialisation SDK</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Connecte l'app au réseau Pi Network</div>
-        <div id="step1-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
-        <button class="btn btn-sm" id="btn-init" onclick="initSDK()">Initialiser SDK</button>
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="goTo('parcelles');showToast('📦 Mes Parcelles')">
+          <span class="q-icon">🗺️</span><span class="q-label">Parcelles</span>
+        </button>
+        <button class="quick-btn" onclick="goTo('paiements');showToast('💰 Paiements Pi')">
+          <span class="q-icon">💰</span><span class="q-label">Payer</span>
+        </button>
+        <button class="quick-btn" onclick="goTo('marche');showToast('🧺 Marché foncier')">
+          <span class="q-icon">🧺</span><span class="q-label">Marché</span>
+        </button>
+        <button class="quick-btn" onclick="openModal('nft');showToast('📜 Générer NFT')">
+          <span class="q-icon">📜</span><span class="q-label">NFT</span>
+        </button>
       </div>
 
-      <!-- Étape 2 : Auth + KYC -->
-      <div class="card" id="step2-card" style="margin-bottom:10px;opacity:0.5;">
-        <div class="card-title">② Pi.authenticate() — Auth & KYC</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Authentification Pioneer + vérification KYC automatique</div>
-        <div id="step2-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
-        <div id="kyc-inline-status" style="display:none;margin-bottom:8px;"></div>
-        <button class="btn btn-sm" id="btn-auth" onclick="authPi()" disabled>Authentifier + Vérifier KYC</button>
-      </div>
-
-      <!-- Étape 3 : Paiement -->
-      <div class="card" id="step3-card" style="opacity:0.5;">
-        <div class="card-title">③ Pi.createPayment() — Transaction</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Uniquement disponible pour les Pioneers KYC ✓</div>
-        <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MONTANT (π)</label>
-        <input class="inp" type="number" id="pay-amount" value="1" min="0.01" step="0.1" oninput="updateBurnPreview()"/>
-        <div style="font-size:9px;color:var(--gold);margin-bottom:8px;" id="burn-preview">Burn: 0.005 GTCπ · Net: 0.995 π</div>
-        <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MÉMO</label>
-        <input class="inp" id="pay-memo" value="Tokenisation GeoTerraChain QFS"/>
-        <div id="step3-result" style="font-size:10px;display:none;margin-bottom:8px;"></div>
-        <button class="btn btn-sm" id="btn-pay" onclick="payPiManuel()" disabled>Créer paiement Pi</button>
-      </div>
-    </div>
-
-    <div>
-      <div class="card" style="margin-bottom:10px;">
-        <div class="card-title">Console — logs en direct</div>
-        <div id="console-log" style="font-family:monospace;font-size:10px;min-height:220px;max-height:320px;overflow-y:auto;">
-          <span style="color:var(--muted)">// En attente de Pi.init()...</span>
+      <!-- Stats row -->
+      <div style="margin-top:16px">
+        <div class="section-head">Votre tableau de bord</div>
+        <div class="stat-row">
+          <div class="stat-cell">
+            <span class="stat-val" id="stat1">0</span>
+            <span class="stat-lbl">Parcelles</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val" id="stat2">0</span>
+            <span class="stat-lbl">NFT émis</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-val" id="stat3">0</span>
+            <span class="stat-lbl">Tx Pi</span>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Session Pioneer active</div>
-        <div id="session-info" style="font-size:11px;color:var(--muted);line-height:1.8;">Non connecté</div>
+
+      <!-- Recent activity -->
+      <div class="section-head" style="margin-top:8px">Activité récente</div>
+
+      <div class="activity-item" onclick="showToast('🗺️ Parcelle sécurisée')">
+        <div class="act-icon">🌾</div>
+        <div class="act-body">
+          <div class="act-title">Parcelle Agricole Bouaké</div>
+          <div class="act-sub">NFT #GTC-00247 · 2.4 ha · Côte d'Ivoire</div>
+        </div>
+        <div class="act-right">
+          <div class="act-val">4.2 GTCπ</div>
+          <div class="act-date">12 Jan 2025</div>
+        </div>
+      </div>
+
+      <div class="activity-item" onclick="showToast('🏡 Terrain résidentiel')">
+        <div class="act-icon">🏡</div>
+        <div class="act-body">
+          <div class="act-title">Terrain Résidentiel Abidjan</div>
+          <div class="act-sub">NFT #GTC-01089 · 480 m² · Cocody</div>
+        </div>
+        <div class="act-right">
+          <div class="act-val">1.8 LandPi</div>
+          <div class="act-date">3 Mar 2025</div>
+        </div>
+      </div>
+
+      <div class="activity-item" onclick="showToast('💧 Corridor écologique')">
+        <div class="act-icon">🌿</div>
+        <div class="act-body">
+          <div class="act-title">Forêt Communautaire Korhogo</div>
+          <div class="act-sub">NFT #GTC-00583 · 12 ha · Zone forestière</div>
+        </div>
+        <div class="act-right">
+          <div class="act-val">9.7 AgroPi</div>
+          <div class="act-date">28 Fév 2025</div>
+        </div>
+      </div>
+
+      <div class="activity-item" onclick="showToast('📣 Projet collectif')">
+        <div class="act-icon">📣</div>
+        <div class="act-body">
+          <div class="act-title">Construisons une école – Yamoussoukro</div>
+          <div class="act-sub">Don communautaire transparent · 47 contributeurs</div>
+        </div>
+        <div class="act-right">
+          <div class="act-val">0.5 GTCπ</div>
+          <div class="act-date">1 Mar 2025</div>
+        </div>
+      </div>
+
+      <div style="padding:20px 18px">
+        <button class="btn btn-outline btn-block" onclick="goTo('parcelles')">
+          Voir toutes mes parcelles →
+        </button>
       </div>
     </div>
+
+    <!-- ── PAGE PARCELLES ── -->
+    <div class="page" id="page-parcelles">
+      <div class="page-header">
+        <div class="page-tag">Foncier</div>
+        <h2 class="page-title">Mes <em>Parcelles</em></h2>
+        <p class="page-desc">Vos terrains sécurisés sur la blockchain Pi.</p>
+      </div>
+
+      <div style="padding:14px 18px 4px;display:flex;justify-content:flex-end">
+        <button class="btn btn-gold btn-sm" onclick="openModal('addParcel')">+ Ajouter</button>
+      </div>
+
+      <div class="parcel-card">
+        <div class="parcel-map-preview">
+          <span class="parcel-terrain-icon">🌾</span>
+          <div class="parcel-nft-badge">NFT #00247</div>
+          <div class="parcel-gps">7.5398°N · -5.5471°W</div>
+        </div>
+        <div class="parcel-info">
+          <div class="parcel-id">GTC-PARCEL · Côte d'Ivoire · Zone rurale</div>
+          <div class="parcel-name">Parcelle Agricole Bouaké</div>
+          <div class="parcel-meta">
+            <div class="parcel-meta-item"><strong>2.4 ha</strong> Superficie</div>
+            <div class="parcel-meta-item"><strong>Agricole</strong> Usage</div>
+            <div class="parcel-meta-item"><strong>3</strong> Lots</div>
+          </div>
+          <div class="parcel-footer">
+            <span class="parcel-value">4.2 GTCπ <span>≈ 1,319,468 USD</span></span>
+            <span class="badge badge-active">Certifié</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="parcel-card">
+        <div class="parcel-map-preview">
+          <span class="parcel-terrain-icon">🏡</span>
+          <div class="parcel-nft-badge">NFT #01089</div>
+          <div class="parcel-gps">5.3600°N · -4.0083°W</div>
+        </div>
+        <div class="parcel-info">
+          <div class="parcel-id">GTC-PARCEL · Abidjan · Zone périurbaine</div>
+          <div class="parcel-name">Terrain Résidentiel Cocody</div>
+          <div class="parcel-meta">
+            <div class="parcel-meta-item"><strong>480 m²</strong> Superficie</div>
+            <div class="parcel-meta-item"><strong>Résidentiel</strong> Usage</div>
+            <div class="parcel-meta-item"><strong>1</strong> Lot</div>
+          </div>
+          <div class="parcel-footer">
+            <span class="parcel-value">1.8 LandPi <span>≈ 565,486 USD</span></span>
+            <span class="badge badge-active">Certifié</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="parcel-card">
+        <div class="parcel-map-preview">
+          <span class="parcel-terrain-icon">🌿</span>
+          <div class="parcel-nft-badge">NFT #00583</div>
+          <div class="parcel-gps">9.4500°N · -5.6300°W</div>
+        </div>
+        <div class="parcel-info">
+          <div class="parcel-id">GTC-PARCEL · Korhogo · Zone forestière</div>
+          <div class="parcel-name">Forêt Communautaire Korhogo</div>
+          <div class="parcel-meta">
+            <div class="parcel-meta-item"><strong>12 ha</strong> Superficie</div>
+            <div class="parcel-meta-item"><strong>Forestier</strong> Usage</div>
+            <div class="parcel-meta-item"><strong>4</strong> Lots</div>
+          </div>
+          <div class="parcel-footer">
+            <span class="parcel-value">9.7 AgroPi <span>≈ 3,047,342 USD</span></span>
+            <span class="badge badge-pending">En cours</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE PAIEMENTS ── -->
+    <div class="page" id="page-paiements">
+      <div class="payment-header">
+        <div class="page-tag">Blockchain · Pi Network</div>
+        <h2 class="page-title" style="margin:0">Paiements <em>Pi</em></h2>
+        <div class="pi-balance-display">
+          <div class="pi-bal-label">Solde disponible</div>
+          <div class="pi-bal-amount" id="payBalAmt">— π</div>
+          <div class="pi-bal-usd" id="payBalUSD">GCV : 1 π = 314,159 USD</div>
+        </div>
+      </div>
+
+      <!-- Token selector -->
+      <div class="section-head">Sélectionner le token</div>
+      <div class="token-scroll">
+        <div class="token-pill selected" onclick="selectToken(this,'GTCπ')">
+          <span class="token-icon">🏗️</span>
+          <span class="token-symbol">GTCπ</span>
+          <span class="token-name">GeoTerraChain</span>
+        </div>
+        <div class="token-pill" onclick="selectToken(this,'LandPi')">
+          <span class="token-icon">🌍</span>
+          <span class="token-symbol">LandPi</span>
+          <span class="token-name">Foncier</span>
+        </div>
+        <div class="token-pill" onclick="selectToken(this,'AgroPi')">
+          <span class="token-icon">🌾</span>
+          <span class="token-symbol">AgroPi</span>
+          <span class="token-name">Agricole</span>
+        </div>
+        <div class="token-pill" onclick="selectToken(this,'SolarPi')">
+          <span class="token-icon">☀️</span>
+          <span class="token-symbol">SolarPi</span>
+          <span class="token-name">Solaire</span>
+        </div>
+        <div class="token-pill" onclick="selectToken(this,'ImmoπCI')">
+          <span class="token-icon">🏛️</span>
+          <span class="token-symbol">ImmoπCI</span>
+          <span class="token-name">Immobilier</span>
+        </div>
+      </div>
+
+      <!-- Payment form -->
+      <div class="pay-form">
+        <div class="section-head" style="padding:16px 0 10px">Envoyer un paiement</div>
+        <div class="input-group">
+          <label class="input-label">Montant (π)</label>
+          <input class="input-field" type="number" id="payAmount" placeholder="0.001" min="0.001" step="0.001"/>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Memo / Référence</label>
+          <input class="input-field" type="text" id="payMemo" placeholder="Paiement parcelle #00247"/>
+        </div>
+        <button class="btn btn-gold btn-block" style="margin-top:8px" onclick="initPiPayment()">
+          Payer avec Pi ⛓
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Transaction history -->
+      <div class="section-head" style="margin-top:4px">Historique des transactions</div>
+
+      <div class="tx-item">
+        <div class="tx-dir">⬆</div>
+        <div class="tx-body">
+          <div class="tx-memo">Certification parcelle #00247</div>
+          <div class="tx-date">12 Jan 2025 · 14:32</div>
+        </div>
+        <div class="tx-amount tx-out">−4.2 GTCπ</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-dir">⬇</div>
+        <div class="tx-body">
+          <div class="tx-memo">Héritage foncier reçu</div>
+          <div class="tx-date">3 Mar 2025 · 09:15</div>
+        </div>
+        <div class="tx-amount tx-in">+1.8 LandPi</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-dir">⬆</div>
+        <div class="tx-body">
+          <div class="tx-memo">Don – Projet école Yamoussoukro</div>
+          <div class="tx-date">1 Mar 2025 · 18:44</div>
+        </div>
+        <div class="tx-amount tx-out">−0.5 GTCπ</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-dir">⬇</div>
+        <div class="tx-body">
+          <div class="tx-memo">Vente lot agricole · AgroPi</div>
+          <div class="tx-date">22 Fév 2025 · 11:05</div>
+        </div>
+        <div class="tx-amount tx-in">+3.1 AgroPi</div>
+      </div>
+    </div>
+
+    <!-- ── PAGE MARCHE ── -->
+    <div class="page" id="page-marche">
+      <div class="page-header">
+        <div class="page-tag">Marché Foncier</div>
+        <h2 class="page-title">Marché <em>GeoTerra</em></h2>
+        <p class="page-desc">Acheter, vendre et louer des biens tokenisés en Afrique.</p>
+      </div>
+
+      <div class="market-filters">
+        <div class="filter-chip active" onclick="filterMarket(this)">Tout</div>
+        <div class="filter-chip" onclick="filterMarket(this)">Agricole</div>
+        <div class="filter-chip" onclick="filterMarket(this)">Résidentiel</div>
+        <div class="filter-chip" onclick="filterMarket(this)">Forestier</div>
+        <div class="filter-chip" onclick="filterMarket(this)">Diaspora</div>
+        <div class="filter-chip" onclick="filterMarket(this)">Lotissement</div>
+      </div>
+
+      <div class="listing-card" onclick="openModal('listing1')">
+        <div class="listing-thumb">🌾</div>
+        <div class="listing-body">
+          <div class="listing-type">Agricole · Vente</div>
+          <div class="listing-title">Lot agricole – Bouaké Nord</div>
+          <div class="listing-meta">1.2 ha · GPS certifié · NFT inclus</div>
+          <div class="listing-footer">
+            <span class="listing-price">2.1 GTCπ</span>
+            <span class="badge badge-active">Disponible</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="listing-card" onclick="openModal('listing2')">
+        <div class="listing-thumb">🏡</div>
+        <div class="listing-body">
+          <div class="listing-type">Résidentiel · Location</div>
+          <div class="listing-title">Villa – Marcory, Abidjan</div>
+          <div class="listing-meta">200 m² · 3 pièces · Meublée</div>
+          <div class="listing-footer">
+            <span class="listing-price">0.08 LandPi/mois</span>
+            <span class="badge badge-pending">Réservé</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="listing-card" onclick="openModal('listing3')">
+        <div class="listing-thumb">🌿</div>
+        <div class="listing-body">
+          <div class="listing-type">Forestier · Partenariat</div>
+          <div class="listing-title">Forêt classée – Korhogo</div>
+          <div class="listing-meta">8 ha · Corridor écologique · Zone sacrée</div>
+          <div class="listing-footer">
+            <span class="listing-price">5.5 AgroPi</span>
+            <span class="badge badge-active">Disponible</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="listing-card" onclick="openModal('listing4')">
+        <div class="listing-thumb">🌍</div>
+        <div class="listing-body">
+          <div class="listing-type">Diaspora · Héritage</div>
+          <div class="listing-title">Terrain familial – Yamoussoukro</div>
+          <div class="listing-meta">600 m² · Succession certifiée · QR Code</div>
+          <div class="listing-footer">
+            <span class="listing-price">1.4 GTCπ</span>
+            <span class="badge badge-draft">Sous-offre</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px 18px">
+        <button class="btn btn-outline btn-block" onclick="openModal('addListing')">
+          + Publier une annonce
+        </button>
+      </div>
+    </div>
+
+    <!-- ── PAGE PROFIL ── -->
+    <div class="page" id="page-profil">
+      <div class="profile-hero">
+        <div class="profile-avatar" id="profileAvatarBig">?</div>
+        <div class="profile-name" id="profileName">Non connecté</div>
+        <div class="profile-handle" id="profileHandle">@piuser · Pi Network</div>
+        <div class="profile-badges">
+          <span class="badge badge-active">Propriétaire certifié</span>
+          <span class="badge badge-pending">UEMOA</span>
+          <span class="badge badge-draft">GeoTerra Pioneer</span>
+        </div>
+      </div>
+
+      <div class="section-head">Mon compte</div>
+
+      <div class="menu-item" onclick="triggerLogin()">
+        <div class="menu-item-icon">🔐</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Authentification Pi</div>
+          <div class="menu-item-sub">Connectez-vous avec votre compte Pi Network</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="menu-item" onclick="showToast('🌍 Profil KYC foncier')">
+        <div class="menu-item-icon">🌍</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Profil foncier</div>
+          <div class="menu-item-sub">Pays, région, documents d'identité foncière</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="menu-item" onclick="showToast('📜 Mes certificats NFT')">
+        <div class="menu-item-icon">📜</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Mes certificats NFT</div>
+          <div class="menu-item-sub">3 certificats fonciers actifs</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="menu-item" onclick="showToast('🧬 Gestion de l\'héritage')">
+        <div class="menu-item-icon">🧬</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Héritage & succession</div>
+          <div class="menu-item-sub">Désigner vos héritiers fonciers</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="section-head" style="margin-top:8px">Paramètres</div>
+
+      <div class="menu-item" onclick="showToast('🌐 9 langues africaines disponibles')">
+        <div class="menu-item-icon">🌐</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Langue</div>
+          <div class="menu-item-sub">Français · العربية · Swahili · Hausa + 5</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="menu-item" onclick="showToast('🔔 Alertes activées')">
+        <div class="menu-item-icon">🔔</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Notifications</div>
+          <div class="menu-item-sub">Alertes NFT, litiges, paiements</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div class="menu-item" onclick="showToast('🛡️ Sécurité renforcée')">
+        <div class="menu-item-icon">🛡️</div>
+        <div class="menu-item-body">
+          <div class="menu-item-title">Sécurité & confidentialité</div>
+          <div class="menu-item-sub">Protection anti-usurpation activée</div>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </div>
+
+      <div style="padding:24px 18px;text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-dim);font-size:.9rem;line-height:1.6">
+          "La terre en main, partout, pour tous."<br>
+          <strong style="color:var(--gold);font-style:normal;font-family:'Cinzel',serif;font-size:.8rem">NOTRE TERRE · NOTRE RICHESSE</strong>
+        </div>
+        <div style="font-size:.6rem;color:rgba(168,144,96,.4);letter-spacing:.15em;text-transform:uppercase;margin-top:12px">
+          GeoTerraChain QFS v1.0.0 · Pi Network · @Hilaila
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottomnav">
+    <button class="nav-item active" onclick="goTo('home')">
+      <span class="nav-icon">🏠</span><span class="nav-label">Accueil</span>
+    </button>
+    <button class="nav-item" onclick="goTo('parcelles')">
+      <span class="nav-icon">🗺️</span><span class="nav-label">Parcelles</span>
+    </button>
+    <button class="nav-item" onclick="goTo('paiements')">
+      <span class="nav-icon">💰</span><span class="nav-label">Paiements</span>
+    </button>
+    <button class="nav-item" onclick="goTo('marche')">
+      <span class="nav-icon">🧺</span><span class="nav-label">Marché</span>
+    </button>
+    <button class="nav-item" onclick="goTo('profil')">
+      <span class="nav-icon">👤</span><span class="nav-label">Profil</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- FAB -->
+<button id="fab" onclick="openModal('addParcel')">+</button>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODAL OVERLAY -->
+<div id="modal-overlay" onclick="closeModal()">
+  <div id="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Action</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
-<!-- ═══ TOKENISER ═══ -->
-<div id="tab-tokeniser" class="tab">
-  <div class="sec-title">Tokenisation d'actif réel</div>
-  <div class="sec-sub">Créer un token LandPi — Réservé aux Pioneers KYC vérifiés ✓</div>
-
-  <!-- BLOCAGE KYC -->
-  <div id="kyc-block-tok" class="alert red" style="display:none;">
-    <div class="pill" style="background:var(--red)"></div>
-    <div><strong style="color:var(--red)">Accès refusé — KYC requis.</strong><br/>Connectez-vous via l'onglet <strong style="color:var(--gold)">π Connexion</strong> avec un compte Pioneer KYC vérifié pour accéder à la tokenisation.</div>
-  </div>
-
-  <div id="kyc-ok-tok" style="display:none;" class="alert green">
-    <div class="pill" style="background:var(--green)"></div>
-    <div id="kyc-ok-tok-text">✓ Pioneer KYC vérifié — Accès tokenisation autorisé</div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <div class="card-title">Données de la parcelle</div>
-      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">NOM DU BIEN</label>
-      <input class="inp" id="tok-nom" value="Parcelle Abidjan Nord"/>
-      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">SURFACE (ha)</label>
-      <input class="inp" id="tok-surface" type="number" value="2.5" min="0.1"/>
-      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">RÉGION</label>
-      <select id="tok-region">
-        <option>Côte d'Ivoire</option><option>Sénégal</option><option>Mali</option>
-        <option>Burkina Faso</option><option>Bénin</option><option>Togo</option>
-        <option>Niger</option><option>Guinée</option>
-      </select>
-      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">TYPE D'ACTIF</label>
-      <select id="tok-type">
-        <option>Agro business — Cultures vivrières (maïs, riz, manioc, igname)</option>
-        <option>Agro business — Cultures de rente (cacao, café, hévéa, palmier)</option>
-        <option>Agro business — Élevage et pastorale</option>
-        <option>Agro business — Aquaculture et pisciculture</option>
-        <option>Agro business — Agroforesterie et sylviculture</option>
-        <option>Agro business — Maraîchage et horticulture</option>
-        <option>Immobilier urbain</option>
-        <option>Commercial</option>
-        <option>Résidentiel</option>
-      </select>
-      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">PRIX (GTCπ)</label>
-      <input class="inp" id="tok-prix" type="number" value="100" min="1" oninput="updateBurnCalc()"/>
-
-      <!-- CALCUL BURN -->
-      <div class="card-gold" style="margin-bottom:10px;">
-        <div style="font-size:9px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">CALCUL ON-CHAIN</div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="color:var(--muted)">Prix brut</span><span id="tok-brut">100 GTCπ</span></div>
-        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;"><span style="color:var(--red)">Burn 0,5%</span><span id="tok-burn-val" style="color:var(--red)">− 0.5 GTCπ</span></div>
-        <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:bold;"><span style="color:var(--gold)">Net propriétaire</span><span id="tok-net-val" style="color:var(--gold)">99.5 GTCπ</span></div>
-      </div>
-
-      <!-- VÉRIFICATION KYC AVANT TOKENISATION -->
-      <div id="tok-kyc-check" style="margin-bottom:8px;padding:8px;border:1px solid var(--border);font-size:10px;"></div>
-
-      <button class="btn" onclick="tokeniser()" id="btn-tok">◈ Tokeniser la parcelle</button>
-    </div>
-
-    <div>
-      <div id="tok-result" style="display:none;" class="card-green">
-        <div class="card-title" style="color:var(--green)">✓ Parcelle tokenisée — on-chain</div>
-        <div id="tok-result-content" class="mono" style="font-size:9px;"></div>
-        <div style="margin-top:8px;" id="tok-tags"></div>
-        <button class="btn" style="margin-top:8px;" onclick="resetTok()">+ Nouvelle tokenisation</button>
-      </div>
-      <div class="card">
-        <div class="card-title">Historique (<span id="tok-count">0</span> tokenisations)</div>
-        <div id="tok-history" style="font-size:11px;color:var(--muted);">Aucune tokenisation encore.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MARKETPLACE ═══ -->
-<div id="tab-marketplace" class="tab">
-  <div class="sec-title">Marketplace de parcelles</div>
-  <div class="sec-sub">Parcelles tokenisées disponibles — Achat via Pi · KYC requis</div>
-
-  <div id="market-kyc-block" class="alert red" style="display:none;">
-    <div class="pill" style="background:var(--red)"></div>
-    <div><strong style="color:var(--red)">KYC requis pour acheter.</strong> Connectez-vous via <strong style="color:var(--gold)">π Connexion</strong>.</div>
-  </div>
-
-  <div class="grid2">
-    <div class="card-gold">
-      <div class="card-title">Parcelle pilote 1</div>
-      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Plantation Cacao — San-Pédro</div>
-      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 5.2 ha · Agroforestier · Côte d'Ivoire</div>
-      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">AgroPi-CAC</span><span class="tag blue">KYC requis</span></div>
-      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">250 GTCπ</div>
-      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 1.25 GTCπ · Net vendeur: 248.75 GTCπ</div>
-      <button class="btn" onclick="acheterParcelle('Plantation Cacao San-Pédro',250)">π Acheter — 250 GTCπ</button>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">Parcelle pilote 2</div>
-      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Villa Cocody — Abidjan</div>
-      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 0.8 ha · Immobilier urbain · Côte d'Ivoire</div>
-      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">LandPi-URB</span><span class="tag blue">KYC requis</span></div>
-      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">500 GTCπ</div>
-      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 2.5 GTCπ · Net vendeur: 497.5 GTCπ</div>
-      <button class="btn" onclick="acheterParcelle('Villa Cocody Abidjan',500)">π Acheter — 500 GTCπ</button>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">Parcelle pilote 3</div>
-      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Rizière NERICA — Yamoussoukro</div>
-      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 12 ha · Agricole · Côte d'Ivoire</div>
-      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">AgroPi-RIZ</span><span class="tag blue">KYC requis</span></div>
-      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">180 GTCπ</div>
-      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 0.9 GTCπ · Net vendeur: 179.1 GTCπ</div>
-      <button class="btn" onclick="acheterParcelle('Rizière NERICA Yamoussoukro',180)">π Acheter — 180 GTCπ</button>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">Parcelle pilote 4</div>
-      <div style="font-size:13px;color:var(--gold);margin-bottom:6px;">Terrain commercial — Bouaké</div>
-      <div style="font-size:11px;color:#A0A090;margin-bottom:8px;">Surface: 1.5 ha · Commercial · Côte d'Ivoire</div>
-      <div class="row" style="margin-bottom:8px;"><span class="tag green">● Disponible</span><span class="tag">LandPi-COM</span><span class="tag blue">KYC requis</span></div>
-      <div style="font-size:14px;color:var(--gold);font-weight:bold;margin-bottom:8px;">320 GTCπ</div>
-      <div style="font-size:9px;color:var(--red);margin-bottom:6px;">Burn: 1.6 GTCπ · Net vendeur: 318.4 GTCπ</div>
-      <button class="btn" onclick="acheterParcelle('Terrain commercial Bouaké',320)">π Acheter — 320 GTCπ</button>
-    </div>
-  </div>
-
-  <div id="market-result" style="display:none;" class="alert green">
-    <div class="pill" style="background:var(--green)"></div>
-    <div id="market-result-text"></div>
-  </div>
-</div>
-
-<!-- ═══ PORTEFEUILLE ═══ -->
-<div id="tab-portefeuille" class="tab">
-  <div class="sec-title">Mon portefeuille</div>
-  <div class="sec-sub">Actifs tokenisés · Transactions on-chain · Statut KYC</div>
-
-  <!-- KYC STATUS PORTEFEUILLE -->
-  <div id="pf-kyc-status" class="kyc-badge kyc-unknown" style="margin-bottom:12px;">
-    <span>◎</span>
-    <span id="pf-kyc-text">Connectez-vous pour voir votre statut KYC</span>
-  </div>
-
-  <div class="grid3">
-    <div class="card-gold">
-      <div class="card-title">Parcelles détenues</div>
-      <span class="kpi-val" id="pf-parcelles">0</span>
-      <span class="kpi-lbl">tokens LandPi</span>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">Valeur totale</div>
-      <span class="kpi-val" id="pf-valeur">0</span>
-      <span class="kpi-lbl">GTCπ</span>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">Transactions</div>
-      <span class="kpi-val" id="pf-txs">0</span>
-      <span class="kpi-lbl">on-chain confirmées</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Informations Pioneer</div>
-    <div id="pf-pioneer-info" style="font-size:11px;color:var(--muted);">Non connecté — connectez-vous pour voir vos informations.</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Historique des transactions</div>
-    <div id="pf-history" style="font-size:11px;color:var(--muted);">Aucune transaction encore.</div>
-  </div>
-</div>
-
-<!-- ═══ ASSISTANT IA ═══ -->
-<div id="tab-assistant" class="tab">
-  <div class="sec-title">Assistant IA GeoTerraChain</div>
-  <div class="sec-sub">Expert blockchain · Pi Network · Tokenisation RWA · UEMOA · KYC</div>
-
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
-    <button class="btn-ghost" onclick="askQuick('Comment tokeniser ma terre sur GeoTerraChain QFS ?')">Comment tokeniser ?</button>
-    <button class="btn-ghost" onclick="askQuick('Pourquoi le KYC est obligatoire pour tokeniser ?')">Pourquoi le KYC ?</button>
-    <button class="btn-ghost" onclick="askQuick('Comment fonctionne le burn déflationnaire de 0,5% du GTCπ ?')">Burn GTCπ ?</button>
-    <button class="btn-ghost" onclick="askQuick('Quels types de terres peut-on tokeniser en Côte d Ivoire ?')">Types de terres ?</button>
-    <button class="btn-ghost" onclick="askQuick('Comment vendre mes parcelles tokenisées sur le marketplace ?')">Vendre parcelles ?</button>
-  </div>
-
-  <div class="chat-box" id="chat-box">
-    <div class="msg">
-      <div class="msg-icon ai">◈</div>
-      <div class="msg-text">Bonjour ! Je suis l'assistant expert de GeoTerraChain QFS.
-
-Je peux vous aider sur :
-• Tokenisation de vos terres africaines (processus, documents)
-• Vérification KYC et son importance pour la sécurité
-• Le token GTCπ et le mécanisme burn déflationnaire
-• Pi Network, Stellar et la blockchain RWA
-• La réglementation foncière en zone UEMOA
-
-Posez votre question !</div>
-    </div>
-  </div>
-
-  <div class="row">
-    <input class="inp" id="chat-input" style="flex:1;margin-bottom:0;" placeholder="Question sur GeoTerraChain, KYC, Pi Network, tokenisation..." onkeydown="if(event.key==='Enter')sendChat()"/>
-    <button class="btn" style="width:auto;margin-top:0;padding:8px 16px;" onclick="sendChat()">Envoyer</button>
-  </div>
-</div>
-
-<!-- ═══ À PROPOS ═══ -->
-<div id="tab-apropos" class="tab">
-  <div class="sec-title">À propos de GeoTerraChain QFS</div>
-  <div class="sec-sub">Infrastructure Panafricaine d'Intelligence Territoriale · Agrobusiness · Gestion Foncière · Immobilier</div>
-
-  <div class="alert gold">
-    <div class="pill" style="background:var(--gold)"></div>
-    <div><strong style="color:var(--gold)">GeoTerraChain QFS</strong> est une plateforme blockchain panafricaine permettant de tokeniser, sécuriser et valoriser les actifs fonciers africains sur Pi Network. <em style="color:var(--gold-light)">Notre Terre · Notre Richesse.</em></div>
-  </div>
-
-  <!-- MISSION & VISION -->
-  <div class="grid2">
-    <div class="card-gold">
-      <div class="card-title">🌍 Notre Mission</div>
-      <p style="font-size:12px;color:#A0A090;line-height:1.8;">Permettre aux citoyens, agriculteurs, investisseurs et collectivités africaines de gérer, sécuriser, valoriser et financer leurs actifs fonciers grâce aux technologies blockchain, Web3 et Pi Network.</p>
-    </div>
-    <div class="card-gold">
-      <div class="card-title">🚀 Notre Vision</div>
-      <p style="font-size:12px;color:#A0A090;line-height:1.8;">Devenir le premier registre foncier numérique panafricain — une infrastructure stratégique pour les États, collectivités, investisseurs et Pioneers Pi Network à l'échelle continentale.</p>
-    </div>
-  </div>
-
-  <!-- 8 UTILITÉS -->
-  <div class="card">
-    <div class="card-title">◈ Les 8 Utilités de GeoTerraChain QFS</div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">1.</span>
-      <div><div style="font-size:12px;color:var(--text);">Sécurisation des droits fonciers</div><div style="font-size:10px;color:var(--muted);">Enregistrement permanent et immuable sur le ledger Stellar — impossible à falsifier</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">2.</span>
-      <div><div style="font-size:12px;color:var(--text);">Valorisation économique des actifs</div><div style="font-size:10px;color:var(--muted);">La terre tokenisée devient échangeable, vendable et utilisable comme garantie</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">3.</span>
-      <div><div style="font-size:12px;color:var(--text);">Accès au financement Web3</div><div style="font-size:10px;color:var(--muted);">Les propriétaires africains accèdent au financement participatif via Pi Network</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">4.</span>
-      <div><div style="font-size:12px;color:var(--text);">Traçabilité et transparence</div><div style="font-size:10px;color:var(--muted);">Chaque transaction est vérifiable publiquement — zéro corruption possible</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">5.</span>
-      <div><div style="font-size:12px;color:var(--text);">Inclusion financière des Pioneers Pi</div><div style="font-size:10px;color:var(--muted);">60M+ Pioneers utilisent leur Pi pour investir dans des actifs fonciers africains réels</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">6.</span>
-      <div><div style="font-size:12px;color:var(--text);">Intelligence territoriale SIG/GPS</div><div style="font-size:10px;color:var(--muted);">Cartographie numérique des terres avec coordonnées GPS et données cadastrales vérifiées</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">7.</span>
-      <div><div style="font-size:12px;color:var(--text);">Gouvernance communautaire GTCπ</div><div style="font-size:10px;color:var(--muted);">Les détenteurs de GTCπ participent aux décisions stratégiques de la plateforme</div></div>
-    </div>
-    <div style="display:flex;gap:10px;padding:8px 0;align-items:flex-start;">
-      <span style="color:var(--gold);font-size:11px;flex-shrink:0;width:20px;">8.</span>
-      <div><div style="font-size:12px;color:var(--text);">Mécanisme déflationnaire GTCπ</div><div style="font-size:10px;color:var(--muted);">0,5% brûlé à chaque tokenisation — supply réduite, valeur croissante pour tous les détenteurs</div></div>
-    </div>
-  </div>
-
-  <!-- ACTIFS ÉLIGIBLES -->
-  <div class="grid2">
-    <div class="card">
-      <div class="card-title">🌱 Agrobusiness éligible</div>
-      <div style="font-size:11px;color:#A0A090;line-height:2;">
-        ⬤ Cultures vivrières (maïs, riz, manioc, igname)<br/>
-        ⬤ Cultures de rente (cacao, café, hévéa, palmier)<br/>
-        ⬤ Élevage et pastoralisme<br/>
-        ⬤ Aquaculture et pisciculture<br/>
-        ⬤ Maraîchage et horticulture<br/>
-        ⬤ Agroforesterie et sylviculture
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">🏗 Immobilier éligible</div>
-      <div style="font-size:11px;color:#A0A090;line-height:2;">
-        ⬤ Terrains urbains et ruraux<br/>
-        ⬤ Résidences et villas<br/>
-        ⬤ Immeubles commerciaux<br/>
-        ⬤ Infrastructures industrielles<br/>
-        ⬤ Complexes touristiques<br/>
-        ⬤ Zones économiques spéciales
-      </div>
-    </div>
-  </div>
-
-  <!-- TECHNOLOGIE -->
-  <div class="card">
-    <div class="card-title">⬡ Stack Technologique</div>
-    <div class="grid3" style="margin-top:8px;margin-bottom:0;">
-      <div style="text-align:center;padding:10px;">
-        <div style="font-size:18px;margin-bottom:4px;">π</div>
-        <div style="font-size:10px;color:var(--gold);">Pi Network</div>
-        <div style="font-size:9px;color:var(--muted);">Pi SDK 2.0 · Mainnet</div>
-      </div>
-      <div style="text-align:center;padding:10px;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-        <div style="font-size:18px;margin-bottom:4px;">⬡</div>
-        <div style="font-size:10px;color:var(--gold);">Stellar Blockchain</div>
-        <div style="font-size:9px;color:var(--muted);">Ledger · Horizon API</div>
-      </div>
-      <div style="text-align:center;padding:10px;">
-        <div style="font-size:18px;margin-bottom:4px;">✓</div>
-        <div style="font-size:10px;color:var(--gold);">KYC Obligatoire</div>
-        <div style="font-size:9px;color:var(--muted);">Identité vérifiée</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ZONE GÉOGRAPHIQUE -->
-  <div class="card">
-    <div class="card-title">🌍 Zone Géographique</div>
-    <div style="font-size:12px;color:#A0A090;margin-bottom:10px;line-height:1.8;">Lancement prioritaire dans la zone <strong style="color:var(--gold)">UEMOA</strong> (8 pays), avec expansion vers l'Afrique de l'Ouest, puis l'ensemble du continent africain.</div>
-    <div>
-      <span class="tag">Côte d'Ivoire</span>
-      <span class="tag">Sénégal</span>
-      <span class="tag">Mali</span>
-      <span class="tag">Burkina Faso</span>
-      <span class="tag">Bénin</span>
-      <span class="tag">Togo</span>
-      <span class="tag">Niger</span>
-      <span class="tag">Guinée-Bissau</span>
-      <span class="tag" style="color:var(--muted);border-color:var(--muted);">+ 46 pays à venir</span>
-    </div>
-  </div>
-
-  <!-- LIENS DOCUMENTS -->
-  <div class="card-gold">
-    <div class="card-title">📄 Documents officiels</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
-      <a href="/vision.html" style="text-decoration:none;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--dark);padding:8px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;font-weight:bold;">🌍 Résumé Exécutif</a>
-      <a href="/litepaper.html" style="text-decoration:none;background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;">💼 Litepaper Investisseurs</a>
-      <a href="/guide.html" style="text-decoration:none;background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;">📖 Guide de Tokenisation</a>
-    </div>
-  </div>
-
-  <!-- SLOGAN FINAL -->
-  <div style="text-align:center;padding:24px;border:1px solid var(--gold-dark);margin-top:4px;">
-    <div style="font-size:10px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;">Slogan officiel</div>
-    <div style="font-size:18px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">NOTRE TERRE · NOTRE RICHESSE</div>
-    <div style="font-size:11px;color:var(--muted);font-style:italic;">« Sécuriser, Valoriser et Transformer les Actifs Africains grâce à la Blockchain, au Web3 et à l'Intelligence Territoriale. »</div>
-    <div style="font-size:10px;color:var(--muted);margin-top:12px;">Développé par <strong style="color:var(--gold)">@Hilaila</strong> · Côte d'Ivoire · Pi Network · 2026</div>
-  </div>
-</div>
-
-
-</div>
-
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT — Pi SDK + App Logic
+══════════════════════════════════════════ -->
 <script>
-// ═══════════════════════════════════════════
-// ÉTAT GLOBAL
-// ═══════════════════════════════════════════
-const STATE = {
-  sdkReady: false,
-  user: null,
-  kycVerified: false,
-  kycStatus: 'unknown', // unknown | verified | not_verified
-  tokenizations: JSON.parse(localStorage.getItem('gtc_tok')||'[]'),
-  transactions: JSON.parse(localStorage.getItem('gtc_txs')||'[]'),
-  stats: JSON.parse(localStorage.getItem('gtc_stats')||'{"tok":0,"gtcp":0,"burn":0}'),
+'use strict';
+
+/* ── Pi SDK INITIALISATION ── */
+const PI_SANDBOX = false; // → false pour Mainnet production
+
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL      = 'https://sicolzofbggvedhryfyt.supabase.co'
+const SUPABASE_ANON     = 'sb_publishable_1mhWzaSzauUOsSahkUGjlw_BIWtQ4AM'
+const FUNCTIONS_URL     = 'https://sicolzofbggvedhryfyt.supabase.co/functions/v1'
+const GCV_RATE          = 314159 // USD par π
+
+let piUser = null;
+let currentToken = 'GTCπ';
+
+
+function initPiSDK() {
+  try {
+    Pi.init({ version: "2.0", sandbox: PI_SANDBOX });
+    console.log('[GTC] Pi SDK initialisé — sandbox:', PI_SANDBOX);
+  } catch(e) {
+    console.warn('[GTC] Pi SDK non disponible (hors Pi Browser):', e.message);
+  }
+}
+
+/* ── AUTHENTIFICATION ── */
+async function triggerLogin() {
+  const pill = document.getElementById('user-pill');
+  pill.classList.add('loading');
+  try {
+    const authResult = await Pi.authenticate(
+      ['username', 'payments', 'wallet_address'],
+      onIncompletePaymentFound
+    );
+    piUser = authResult.user;
+    updateUserUI(piUser);
+    showToast('✅ Connecté : @' + piUser.username);
+    updateDashboardStats();
+  } catch(err) {
+    console.warn('[GTC] Auth Pi échouée:', err);
+    showToast('⚠️ Connexion Pi requise');
+    // Demo fallback
+    piUser = { username: 'DemoUser', uid: 'demo-001' };
+    updateUserUI(piUser);
+    updateDashboardStats();
+  } finally {
+    pill.classList.remove('loading');
+  }
+}
+
+function updateUserUI(user) {
+  const initial = user.username.charAt(0).toUpperCase();
+  document.getElementById('userAvatar').textContent = initial;
+  document.getElementById('userName').textContent = '@' + user.username;
+  document.getElementById('userStatus').textContent = 'Connecté ✓';
+  document.getElementById('heroUserName').textContent = user.username;
+  document.getElementById('heroGreeting').textContent = 'Bienvenue,';
+  document.getElementById('balanceAmt').textContent = '14.2 GTCπ';
+  document.getElementById('balanceUSD').textContent = '≈ 4,461,057 USD (GCV)';
+  document.getElementById('payBalAmt').textContent = '14.2 π';
+  document.getElementById('payBalUSD').textContent = 'GCV : 1 π = 314,159 USD · Solde : ≈ 4,461,057 USD';
+  document.getElementById('profileAvatarBig').textContent = initial;
+  document.getElementById('profileName').textContent = user.username;
+  document.getElementById('profileHandle').textContent = '@' + user.username + ' · Pi Network';
+}
+
+function updateDashboardStats() {
+  animateNum('stat1', 3);
+  animateNum('stat2', 3);
+  animateNum('stat3', 4);
+}
+
+function animateNum(id, target) {
+  let n = 0;
+  const el = document.getElementById(id);
+  const t = setInterval(() => {
+    n++;
+    el.textContent = n;
+    if (n >= target) clearInterval(t);
+  }, 150);
+}
+
+/* ── PAIEMENTS Pi ── */
+async function initPiPayment() {
+  const amount = parseFloat(document.getElementById('payAmount').value) || 0.001;
+  const memo = document.getElementById('payMemo').value || 'Paiement GeoTerraChain';
+
+  if (!piUser) {
+    showToast('⚠️ Connectez-vous d\'abord');
+    return;
+  }
+  if (amount <= 0) {
+    showToast('⚠️ Montant invalide');
+    return;
+  }
+
+  showToast('⛓ Initialisation du paiement Pi…');
+
+  const paymentData = {
+    amount: amount,
+    memo: memo,
+    metadata: {
+      app: 'GeoTerraChain QFS',
+      token: currentToken,
+      user: piUser.username,
+      timestamp: Date.now()
+    }
+  };
+
+  const paymentCallbacks = {
+    onReadyForServerApproval: (paymentId) => {
+      console.log('[GTC] Prêt approbation serveur:', paymentId);
+      showToast('🔐 Approbation en cours…');
+      // TODO: POST /api/payments/approve { paymentId }
+    },
+    onReadyForServerCompletion: (paymentId, txid) => {
+      console.log('[GTC] Paiement complété – TxID:', txid);
+      showToast('✅ Paiement confirmé sur la blockchain !');
+      document.getElementById('payAmount').value = '';
+      document.getElementById('payMemo').value = '';
+      // TODO: POST /api/payments/complete { paymentId, txid }
+    },
+    onCancel: (paymentId) => {
+      console.log('[GTC] Paiement annulé:', paymentId);
+      showToast('❌ Paiement annulé');
+    },
+    onError: (error, payment) => {
+      console.error('[GTC] Erreur paiement:', error);
+      showToast('⚠️ Erreur : ' + error.message);
+    }
+  };
+
+  try {
+    await Pi.createPayment(paymentData, paymentCallbacks);
+  } catch(e) {
+    console.warn('[GTC] Pi.createPayment non disponible (démo):', e.message);
+    showToast('💡 Démo : paiement simulé de ' + amount + ' π');
+  }
+}
+
+function onIncompletePaymentFound(payment) {
+  console.log('[GTC] Paiement incomplet trouvé:', payment);
+  showToast('⚠️ Paiement incomplet détecté – reprise en cours…');
+  // TODO: POST /api/payments/incomplete { payment }
+}
+
+/* ── NAVIGATION ── */
+const pageMap = {
+  home: 'page-home',
+  parcelles: 'page-parcelles',
+  paiements: 'page-paiements',
+  marche: 'page-marche',
+  profil: 'page-profil'
+};
+const navItems = document.querySelectorAll('.nav-item');
+const fab = document.getElementById('fab');
+
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  navItems.forEach(n => n.classList.remove('active'));
+
+  const target = document.getElementById(pageMap[page]);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+
+  const idx = Object.keys(pageMap).indexOf(page);
+  if (navItems[idx]) navItems[idx].classList.add('active');
+
+  // FAB only on Parcelles
+  if (page === 'parcelles') fab.classList.add('visible');
+  else fab.classList.remove('visible');
+}
+
+/* ── TOKEN SELECTOR ── */
+function selectToken(el, token) {
+  document.querySelectorAll('.token-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  currentToken = token;
+  showToast('Token sélectionné : ' + token);
+}
+
+/* ── MARKET FILTER ── */
+function filterMarket(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('🔍 Filtré : ' + el.textContent);
+}
+
+/* ── MODAL ── */
+const modalContents = {
+  nft: {
+    title: '📜 Générer un NFT Foncier',
+    body: `
+      <p style="font-family:'Cormorant Garamond',serif;color:var(--text-dim);font-size:1rem;line-height:1.6;margin-bottom:20px">
+        Certifiez votre terrain sur la blockchain Pi et obtenez un certificat foncier numérique avec QR Code unique.
+      </p>
+      <div class="input-group">
+        <label class="input-label">Nom de la parcelle</label>
+        <input class="input-field" placeholder="Parcelle familiale Bouaké"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Superficie (ha ou m²)</label>
+        <input class="input-field" type="number" placeholder="2.4"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Usage</label>
+        <input class="input-field" placeholder="Agricole · Résidentiel · Forestier…"/>
+      </div>
+      <button class="btn btn-gold btn-block" style="margin-top:8px" onclick="closeModal();showToast('🔗 NFT en cours de génération sur Pi Blockchain…')">
+        ⛓ Émettre le NFT
+      </button>`
+  },
+  addParcel: {
+    title: '🗺️ Ajouter une Parcelle',
+    body: `
+      <p style="font-family:'Cormorant Garamond',serif;color:var(--text-dim);font-size:1rem;line-height:1.6;margin-bottom:20px">
+        Enregistrez un nouveau terrain et sécurisez-le sur GeoTerraChain.
+      </p>
+      <div class="input-group">
+        <label class="input-label">Nom de la parcelle</label>
+        <input class="input-field" placeholder="Ex : Terrain Konan – Yamoussoukro"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Coordonnées GPS</label>
+        <input class="input-field" placeholder="7.5398°N, -5.5471°W"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Superficie</label>
+        <input class="input-field" placeholder="0.5 ha"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Valeur estimée (GTCπ)</label>
+        <input class="input-field" type="number" placeholder="1.5"/>
+      </div>
+      <button class="btn btn-gold btn-block" style="margin-top:8px" onclick="closeModal();showToast('✅ Parcelle enregistrée — NFT en attente de certification')">
+        Enregistrer la parcelle
+      </button>`
+  },
+  listing1: {
+    title: '🌾 Lot agricole – Bouaké Nord',
+    body: `
+      <div style="background:linear-gradient(135deg,rgba(27,94,32,.15),rgba(201,168,76,.05));padding:20px;margin-bottom:16px;text-align:center;font-size:2rem">🌾</div>
+      <div class="card-tag">Agricole · Vente directe · NFT inclus</div>
+      <div class="card-title">Lot agricole – Bouaké Nord</div>
+      <div style="font-size:.82rem;color:var(--text-dim);line-height:1.7;margin:10px 0 16px">
+        Superficie : <strong style="color:var(--text)">1.2 ha</strong><br>
+        GPS certifié : <strong style="color:var(--text)">7.69°N · -5.03°W</strong><br>
+        Sol : <strong style="color:var(--text)">Argilo-limoneux</strong><br>
+        Accès eau : <strong style="color:var(--text)">Puits + marigot</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid rgba(201,168,76,.1)">
+        <span style="font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold)">2.1 GTCπ</span>
+        <span style="font-size:.72rem;color:var(--text-dim)">≈ 659,734 USD</span>
+      </div>
+      <button class="btn btn-gold btn-block" style="margin-top:8px" onclick="closeModal();goTo('paiements');showToast('💰 Redirection vers paiement Pi')">
+        Acheter avec Pi ⛓
+      </button>`
+  },
+  addListing: {
+    title: '+ Publier une annonce',
+    body: `
+      <div class="input-group">
+        <label class="input-label">Type de bien</label>
+        <input class="input-field" placeholder="Agricole · Résidentiel · Forestier"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Titre de l'annonce</label>
+        <input class="input-field" placeholder="Ex : Terrain familial – Korhogo"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Prix (GTCπ)</label>
+        <input class="input-field" type="number" placeholder="2.0"/>
+      </div>
+      <button class="btn btn-gold btn-block" style="margin-top:8px" onclick="closeModal();showToast('📣 Annonce publiée sur le marché GeoTerra')">
+        Publier l'annonce
+      </button>`
+  }
 };
 
-const API_KEY = 'qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
-
-// ═══════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════
-function showTab(id, btn) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
-  // Refresh KYC display on tab switch
-  if(id==='tokeniser') refreshKYCTokeniser();
-  if(id==='marketplace') refreshKYCMarketplace();
+function openModal(key) {
+  const content = modalContents[key] || { title: 'GeoTerraChain', body: '<p style="color:var(--text-dim)">Fonctionnalité à venir.</p>' };
+  document.getElementById('modalTitle').textContent = content.title;
+  document.getElementById('modalBody').innerHTML = content.body;
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
-// ═══════════════════════════════════════════
-// KYC — CŒUR DE LA VÉRIFICATION
-// ═══════════════════════════════════════════
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
 
-// Vérifier KYC via l'API Pi /me avec l'access token
-async function verifyKYC(accessToken) {
-  addLog('→ Vérification KYC via API Pi /me...', '#9B59B6');
-  try {
-    const res = await fetch('https://api.minepi.com/v2/me', {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    });
-    if (!res.ok) {
-      addLog('⚠ API /me inaccessible — vérification offline', '#C9A84C');
-      // Si l'API est inaccessible depuis le browser (CORS),
-      // on fait confiance au fait que Pi.authenticate() a réussi
-      // car Pi SDK ne retourne que des users KYC
-      return { verified: true, source: 'pi-sdk-implicit' }; // KYC implicitement vérifié par Pi SDK
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── SPLASH SCREEN ── */
+function initSplash() {
+  const bar = document.getElementById('splashBar');
+  const msg = document.getElementById('splashMsg');
+  const msgs = [
+    'Initialisation Pi SDK…',
+    'Connexion blockchain Pi…',
+    'Chargement des parcelles…',
+    'Vérification NFT…',
+    'GeoTerraChain prêt ✓'
+  ];
+  let i = 0;
+  bar.style.width = '20%';
+
+  const interval = setInterval(() => {
+    i++;
+    bar.style.width = (20 + i * 16) + '%';
+    if (msgs[i]) msg.textContent = msgs[i];
+    if (i >= 4) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('splash').classList.add('hidden');
+      }, 400);
     }
-    const data = await res.json();
-    const verified = true; // Pi SDK garantit KYC à l'authentification
-    addLog(verified ? '✓ KYC vérifié via API Pi' : '✗ KYC non complété', verified ? '#2ECC71' : '#E74C3C');
-    return { verified, uid: data.uid, username: data.username, source: 'api' };
-  } catch(e) {
-    addLog('⚠ Vérification KYC: ' + e.message + ' — trust SDK', '#C9A84C');
-    // Pi.authenticate() ne fonctionne que pour les users KYC
-    // donc si l'auth réussit, le KYC est implicitement vérifié
-    return { verified: true, source: 'pi-sdk-implicit' }; // KYC implicitement vérifié par Pi SDK
-  }
+  }, 500);
 }
 
-function setKYCStatus(verified, username) {
-  STATE.kycVerified = verified;
-  STATE.kycStatus = verified ? 'verified' : 'not_verified';
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  initSplash();
+  initPiSDK();
 
-  // Header badge
-  const badge = document.getElementById('kyc-header-badge');
-  badge.textContent = verified ? 'KYC ✓' : 'KYC ✗';
-  badge.className = 'badge ' + (verified ? 'green' : 'red');
-
-  // Global status accueil
-  const globalStatus = document.getElementById('kyc-global-status');
-  const globalText = document.getElementById('kyc-global-text');
-  globalStatus.className = 'kyc-badge ' + (verified ? 'kyc-verified' : 'kyc-pending');
-  globalStatus.querySelector('span').textContent = verified ? '✓' : '✗';
-  globalText.textContent = verified
-    ? `KYC vérifié ✓ — ${username} — Accès complet autorisé`
-    : `KYC non complété ✗ — Accès tokenisation refusé`;
-
-  // Portefeuille
-  const pfKyc = document.getElementById('pf-kyc-status');
-  const pfKycText = document.getElementById('pf-kyc-text');
-  pfKyc.className = 'kyc-badge ' + (verified ? 'kyc-verified' : 'kyc-pending');
-  pfKycText.textContent = verified
-    ? `✓ Pioneer KYC vérifié — ${username} — Tokenisation autorisée`
-    : `✗ KYC non complété — Complétez votre KYC sur Pi Network`;
-
-  // Détail auth tab
-  const resultDisplay = document.getElementById('kyc-result-display');
-  resultDisplay.style.display = 'block';
-  resultDisplay.innerHTML = verified
-    ? `<div class="kyc-badge kyc-verified"><span>✓</span><span>Pioneer <strong>${username}</strong> — KYC vérifié par Pi Network — Accès GeoTerraChain QFS autorisé</span></div>`
-    : `<div class="kyc-badge kyc-pending"><span>✗</span><span>KYC non complété — Veuillez compléter votre vérification sur l'app Pi Network</span></div>`;
-
-  // Inline auth
-  const inline = document.getElementById('kyc-inline-status');
-  inline.style.display = 'block';
-  inline.innerHTML = verified
-    ? `<div class="tag green">✓ KYC Pi Network vérifié</div>`
-    : `<div class="tag red">✗ KYC non complété</div>`;
-
-  // Tokeniser check
-  document.getElementById('tok-kyc-check').innerHTML = verified
-    ? `<span style="color:var(--green)">✓ Pioneer ${username} KYC vérifié — Tokenisation autorisée</span>`
-    : `<span style="color:var(--red)">✗ KYC requis — Impossible de tokeniser sans vérification KYC</span>`;
-
-  refreshKYCTokeniser();
-  refreshKYCMarketplace();
-}
-
-function refreshKYCTokeniser() {
-  const block = document.getElementById('kyc-block-tok');
-  const ok = document.getElementById('kyc-ok-tok');
-  const okText = document.getElementById('kyc-ok-tok-text');
-  if (!STATE.user) {
-    block.style.display = 'flex';
-    ok.style.display = 'none';
-  } else if (STATE.kycVerified) {
-    block.style.display = 'none';
-    ok.style.display = 'flex';
-    okText.textContent = `✓ Pioneer ${STATE.user.username} KYC vérifié — Accès tokenisation autorisé`;
-  } else {
-    block.style.display = 'flex';
-    ok.style.display = 'none';
-  }
-}
-
-function refreshKYCMarketplace() {
-  const block = document.getElementById('market-kyc-block');
-  block.style.display = (!STATE.user || !STATE.kycVerified) ? 'flex' : 'none';
-}
-
-// ═══════════════════════════════════════════
-// PI SDK
-// ═══════════════════════════════════════════
-function addLog(msg, color) {
-  const log = document.getElementById('console-log');
-  const t = new Date().toLocaleTimeString('fr');
-  log.innerHTML += `<div style="color:${color||'#D8D0C0'};margin-bottom:2px;">[${t}] ${msg}</div>`;
-  log.scrollTop = log.scrollHeight;
-}
-
-async function initSDK() {
-  document.getElementById('btn-init').textContent = '◌ Init...';
-  addLog('Pi.init({version:"2.0",sandbox:false})...', '#C9A84C');
-  try {
-    await Pi.init({ version: '2.0', sandbox: false });
-    STATE.sdkReady = true;
-    addLog('✓ Pi SDK v2.0 — Mainnet', '#2ECC71');
-    document.getElementById('step1-result').textContent = '✓ Pi SDK v2.0 — Mainnet actif';
-    document.getElementById('step1-result').style.color = '#2ECC71';
-    document.getElementById('step1-result').style.display = 'block';
-    document.getElementById('step1-card').style.borderColor = '#2ECC71';
-    document.getElementById('step2-card').style.opacity = '1';
-    document.getElementById('btn-auth').disabled = false;
-    document.getElementById('btn-init').textContent = '✓ SDK Initialisé';
-    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
-    document.getElementById('sdk-badge').className = 'badge green';
-  } catch(e) {
-    addLog('✗ ' + e.message, '#E74C3C');
-    document.getElementById('btn-init').textContent = 'Réessayer';
-    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
-    document.getElementById('sdk-badge').className = 'badge red';
-  }
-}
-
-async function authPi() {
-  document.getElementById('btn-auth').textContent = '◌ Auth + KYC...';
-  addLog('Pi.authenticate(["username","payments"])...', '#C9A84C');
-  try {
-    const auth = await Pi.authenticate(['username','payments'], async (p) => {
-      addLog('Paiement incomplet: ' + p.identifier, '#C9A84C');
-    });
-
-    STATE.user = auth.user;
-    addLog('✓ Authentifié: ' + auth.user.username, '#2ECC71');
-    addLog('  uid: ' + auth.user.uid, '#555');
-
-    // VÉRIFICATION KYC
-    const kycResult = await verifyKYC(auth.accessToken);
-    setKYCStatus(kycResult.verified, auth.user.username);
-
-    addLog(kycResult.verified
-      ? '✓ KYC vérifié — accès complet autorisé'
-      : '✗ KYC non vérifié — accès tokenisation refusé', kycResult.verified ? '#2ECC71' : '#E74C3C');
-
-    // Mise à jour UI
-    document.getElementById('step2-result').textContent = `✓ ${auth.user.username} · KYC: ${kycResult.verified ? 'Vérifié ✓' : 'Non complété ✗'}`;
-    document.getElementById('step2-result').style.color = kycResult.verified ? '#2ECC71' : '#E74C3C';
-    document.getElementById('step2-result').style.display = 'block';
-    document.getElementById('step2-card').style.borderColor = kycResult.verified ? '#2ECC71' : '#E74C3C';
-    document.getElementById('step3-card').style.opacity = '1';
-    document.getElementById('btn-pay').disabled = false;
-    document.getElementById('btn-auth').textContent = '✓ ' + auth.user.username;
-    document.getElementById('user-badge').textContent = '● ' + auth.user.username;
-    document.getElementById('user-badge').className = 'badge green';
-
-    // Session info
-    document.getElementById('session-info').innerHTML = `
-      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">Username</span><span style="color:var(--gold)">${auth.user.username}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">UID</span><span style="color:var(--gold);font-family:monospace;font-size:10px;">${auth.user.uid}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);"><span style="color:var(--muted)">KYC</span><span style="${kycResult.verified?'color:var(--green)':'color:var(--red)'}">${kycResult.verified?'✓ Vérifié':'✗ Non complété'}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Réseau</span><span style="color:var(--gold)">Pi Mainnet</span></div>`;
-
-    // Portefeuille Pioneer info
-    document.getElementById('pf-pioneer-info').innerHTML = `
-      <div class="hist-item"><strong style="color:var(--gold)">${auth.user.username}</strong> · uid: ${auth.user.uid}</div>
-      <div class="hist-item">KYC: <span style="${kycResult.verified?'color:var(--green)':'color:var(--red)'}">${kycResult.verified?'✓ Vérifié par Pi Network':'✗ Non complété'}</span></div>
-      <div class="hist-item">Réseau: Pi Mainnet · Stellar</div>`;
-
-    updatePortefeuille();
-  } catch(e) {
-    addLog('✗ ' + e.message, '#E74C3C');
-    document.getElementById('btn-auth').textContent = 'Réessayer';
-  }
-}
-
-// ═══════════════════════════════════════════
-// PAIEMENTS PI
-// ═══════════════════════════════════════════
-async function approuver(paymentId) {
-  try {
-    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {
-      method: 'POST', headers: { 'Authorization': `Key ${API_KEY}` }
-    });
-    return r.ok;
-  } catch { return false; }
-}
-
-async function completer(paymentId, txid) {
-  try {
-    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`, {
-      method: 'POST',
-      headers: { 'Authorization': `Key ${API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ txid })
-    });
-    return r.ok;
-  } catch { return false; }
-}
-
-function creerPaiement(amount, memo, onSuccess, onFail) {
-  const burn = parseFloat((amount * 0.005).toFixed(6));
-  addLog(`Pi.createPayment({amount:${amount}, memo:"${memo}"})...`, '#C9A84C');
-  Pi.createPayment({
-    amount, memo,
-    metadata: { platform: 'GeoTerraChain QFS', token: 'GTCπ', burn, kycVerified: STATE.kycVerified }
-  }, {
-    onReadyForServerApproval: async (id) => {
-      addLog('→ Approbation serveur: ' + id.slice(0,16) + '...', '#C9A84C');
-      const ok = await approuver(id);
-      addLog(ok ? '✓ Approuvé' : '⚠ Approbation continuation', ok ? '#2ECC71' : '#C9A84C');
-    },
-    onReadyForServerCompletion: async (id, tx) => {
-      addLog('✓ TX confirmée: ' + tx.slice(0,20) + '...', '#2ECC71');
-      await completer(id, tx);
-      const payment = { id, tx, amount, memo, burn, net: amount - burn, timestamp: new Date().toISOString(), pioneer: STATE.user?.username };
-      STATE.transactions.push(payment);
-      STATE.stats.burn = parseFloat((STATE.stats.burn + burn).toFixed(6));
-      localStorage.setItem('gtc_txs', JSON.stringify(STATE.transactions));
-      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
-      updateStats();
-      updatePortefeuille();
-      if (onSuccess) onSuccess(payment);
-    },
-    onCancel: (id) => { addLog('Annulé: ' + id, '#555'); if(onFail) onFail(); },
-    onError: (err) => { addLog('✗ ' + (err.message||err), '#E74C3C'); if(onFail) onFail(); }
-  });
-}
-
-async function payPiManuel() {
-  if (!STATE.user) { addLog('✗ Non connecté', '#E74C3C'); return; }
-  if (!STATE.kycVerified) { addLog('✗ KYC requis pour effectuer des paiements', '#E74C3C'); return; }
-  const amount = parseFloat(document.getElementById('pay-amount').value);
-  const memo = document.getElementById('pay-memo').value;
-  document.getElementById('btn-pay').textContent = '◌ En cours...';
-  creerPaiement(amount, memo,
-    (pay) => {
-      document.getElementById('step3-result').textContent = `✓ TX: ${pay.tx.slice(0,24)}... · burn: ${pay.burn} GTCπ`;
-      document.getElementById('step3-result').style.color = '#2ECC71';
-      document.getElementById('step3-result').style.display = 'block';
-      document.getElementById('step3-card').style.borderColor = '#2ECC71';
-      document.getElementById('btn-pay').textContent = '✓ Paiement créé';
-    },
-    () => { document.getElementById('btn-pay').textContent = 'Réessayer'; }
-  );
-}
-
-// ═══════════════════════════════════════════
-// TOKENISATION
-// ═══════════════════════════════════════════
-function updateBurnCalc() {
-  const prix = parseFloat(document.getElementById('tok-prix').value)||0;
-  const burn = parseFloat((prix*0.005).toFixed(6));
-  const net = parseFloat((prix-burn).toFixed(6));
-  document.getElementById('tok-brut').textContent = prix + ' GTCπ';
-  document.getElementById('tok-burn-val').textContent = '− ' + burn + ' GTCπ';
-  document.getElementById('tok-net-val').textContent = net + ' GTCπ';
-}
-
-function updateBurnPreview() {
-  const amt = parseFloat(document.getElementById('pay-amount').value)||0;
-  const burn = parseFloat((amt*0.005).toFixed(6));
-  document.getElementById('burn-preview').textContent = `Burn: ${burn} GTCπ · Net: ${(amt-burn).toFixed(6)} π`;
-}
-
-async function tokeniser() {
-  if (!STATE.user) { refreshKYCTokeniser(); return; }
-  if (!STATE.kycVerified) {
-    addLog('✗ KYC requis pour tokeniser', '#E74C3C');
-    return;
-  }
-  const nom = document.getElementById('tok-nom').value;
-  const surface = document.getElementById('tok-surface').value;
-  const region = document.getElementById('tok-region').value;
-  const type = document.getElementById('tok-type').value;
-  const prix = parseFloat(document.getElementById('tok-prix').value);
-  const burn = parseFloat((prix*0.005).toFixed(6));
-  const net = parseFloat((prix-burn).toFixed(6));
-
-  document.getElementById('btn-tok').textContent = '◌ Tokenisation...';
-
-  creerPaiement(prix, 'Tokenisation: ' + nom,
-    (pay) => {
-      const token = {
-        id: 'LANDPI_' + Date.now(), nom,
-        surface: surface + ' ha', region, type,
-        prixGTCp: prix, burn, net,
-        proprio: STATE.user.username,
-        kycVerified: true,
-        txHash: pay.tx,
-        ledger: Math.floor(Math.random()*9999999)+40000000,
-        timestamp: new Date().toISOString(),
-        status: 'TOKENISÉ'
-      };
-      STATE.tokenizations.push(token);
-      STATE.stats.tok++;
-      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
-      localStorage.setItem('gtc_tok', JSON.stringify(STATE.tokenizations));
-      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
-
-      document.getElementById('tok-result').style.display = 'block';
-      document.getElementById('tok-result-content').textContent =
-        `ID        : ${token.id}\nNOM       : ${token.nom}\nSURFACE   : ${token.surface}\nTYPE      : ${token.type}\nRÉGION    : ${token.region}\nPROPRIO   : ${token.proprio}\nKYC       : ✓ Vérifié\nPRIX      : ${token.prixGTCp} GTCπ\nBURN 0.5% : − ${token.burn} GTCπ\nNET       : ${token.net} GTCπ\nLEDGER    : #${token.ledger}\nSTATUT    : ${token.status}\nTX HASH   : ${token.txHash}`;
-      document.getElementById('tok-tags').innerHTML = '<span class="tag green">● ON-CHAIN</span><span class="tag">GTCπ</span><span class="tag">LandPi</span><span class="tag blue">KYC ✓</span>';
-      document.getElementById('btn-tok').textContent = '+ Nouvelle tokenisation';
-      updateStats(); updatePortefeuille(); renderTokHistory();
-    },
-    () => { document.getElementById('btn-tok').textContent = '◈ Réessayer'; }
-  );
-}
-
-function resetTok() {
-  document.getElementById('tok-result').style.display = 'none';
-  document.getElementById('btn-tok').textContent = '◈ Tokeniser la parcelle';
-}
-
-function renderTokHistory() {
-  const el = document.getElementById('tok-history');
-  const count = STATE.tokenizations.length;
-  document.getElementById('tok-count').textContent = count;
-  if (!count) { el.textContent = 'Aucune tokenisation encore.'; return; }
-  el.innerHTML = STATE.tokenizations.slice().reverse().slice(0,5).map(t=>
-    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.nom}</span><span class="tag green">✓ KYC</span></div><div style="color:var(--muted);font-size:9px;">${t.surface} · ${t.region} · ${t.prixGTCp} GTCπ · burn ${t.burn}</div><div style="font-family:monospace;font-size:9px;color:#333;">${t.txHash?.slice(0,36)}...</div></div>`
-  ).join('');
-}
-
-// ═══════════════════════════════════════════
-// MARKETPLACE
-// ═══════════════════════════════════════════
-async function acheterParcelle(nom, prix) {
-  if (!STATE.user || !STATE.kycVerified) {
-    document.getElementById('market-kyc-block').style.display = 'flex';
-    return;
-  }
-  const res = document.getElementById('market-result');
-  const txt = document.getElementById('market-result-text');
-  txt.textContent = '◌ Paiement en cours pour ' + nom + '...';
-  res.style.display = 'flex';
-
-  creerPaiement(prix, 'Achat marketplace: ' + nom,
-    (pay) => {
-      STATE.stats.tok++;
-      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
-      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
-      txt.innerHTML = `✓ Achat confirmé — <strong style="color:var(--gold)">${nom}</strong> · ${prix} GTCπ · burn ${(prix*0.005).toFixed(4)} GTCπ · Pioneer KYC ✓`;
-      updateStats(); updatePortefeuille();
-    },
-    () => { txt.textContent = 'Transaction initiée — ' + nom; }
-  );
-}
-
-// ═══════════════════════════════════════════
-// STATS & PORTEFEUILLE
-// ═══════════════════════════════════════════
-function updateStats() {
-  document.getElementById('stat-tok').textContent = STATE.stats.tok;
-  document.getElementById('stat-gtcp').textContent = STATE.stats.gtcp.toFixed(2);
-  document.getElementById('stat-burn').textContent = STATE.stats.burn.toFixed(4);
-  const pct = parseFloat((STATE.stats.gtcp/3141592*100).toFixed(6));
-  document.getElementById('supply-used').textContent = STATE.stats.gtcp.toFixed(2) + ' / 3 141 592 GTCπ';
-  document.getElementById('supply-pct').textContent = pct + '%';
-  document.getElementById('supply-bar').style.width = Math.min(pct,100) + '%';
-}
-
-function updatePortefeuille() {
-  document.getElementById('pf-parcelles').textContent = STATE.tokenizations.length;
-  document.getElementById('pf-valeur').textContent = STATE.stats.gtcp.toFixed(2);
-  document.getElementById('pf-txs').textContent = STATE.transactions.length;
-  const hist = document.getElementById('pf-history');
-  if (!STATE.transactions.length) { hist.textContent = 'Aucune transaction encore.'; return; }
-  hist.innerHTML = STATE.transactions.slice().reverse().slice(0,8).map(t=>
-    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.memo}</span><span style="color:var(--green)">✓ ${t.amount} π</span></div><div style="color:var(--muted);font-size:9px;">burn: ${t.burn} GTCπ · Pioneer: ${t.pioneer||'?'} · ${t.timestamp?.slice(0,16)}</div></div>`
-  ).join('');
-}
-
-// ═══════════════════════════════════════════
-// ASSISTANT IA
-// ═══════════════════════════════════════════
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-  addChatMsg(msg, 'user');
-  addChatMsg('◌ Analyse...', 'ai', true);
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system: `Tu es l'assistant expert de GeoTerraChain QFS, plateforme africaine de tokenisation RWA sur Pi Network et Stellar. Tu connais : GTCπ (supply 3 141 592, burn 0.5%), KYC Pioneer Pi Network, tokenisation foncière, zone UEMOA, Côte d'Ivoire. Le KYC est obligatoire pour toute tokenisation. Réponds en français, de façon concise et pratique.`,
-        messages: [{ role: 'user', content: msg }]
-      })
-    });
-    const data = await res.json();
-    removeLastAiLoading();
-    addChatMsg(data.content?.[0]?.text || 'Erreur de réponse.', 'ai');
-  } catch(e) {
-    removeLastAiLoading();
-    addChatMsg('Erreur: ' + e.message, 'ai');
-  }
-}
-
-function askQuick(q) { document.getElementById('chat-input').value = q; sendChat(); }
-
-function addChatMsg(text, role, loading) {
-  const box = document.getElementById('chat-box');
-  const div = document.createElement('div');
-  div.className = 'msg' + (loading ? ' ai-loading' : '');
-  div.innerHTML = `<div class="msg-icon ${role}">${role==='ai'?'◈':'π'}</div><div class="msg-text${role==='user'?' user-bg':''}">${text}</div>`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function removeLastAiLoading() {
-  const el = document.querySelector('.ai-loading');
-  if (el) el.remove();
-}
-
-// ═══════════════════════════════════════════
-// INIT AU CHARGEMENT
-// ═══════════════════════════════════════════
-window.addEventListener('load', async () => {
-  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1800);
-  try {
-    await Pi.init({ version: '2.0', sandbox: false });
-    STATE.sdkReady = true;
-    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
-    document.getElementById('sdk-badge').className = 'badge green';
-    document.getElementById('btn-auth').disabled = false;
-    document.getElementById('step2-card').style.opacity = '1';
-    document.getElementById('step1-result').textContent = '✓ SDK auto-initialisé';
-    document.getElementById('step1-result').style.color = '#2ECC71';
-    document.getElementById('step1-result').style.display = 'block';
-    document.getElementById('step1-card').style.borderColor = '#2ECC71';
-    document.getElementById('btn-init').textContent = '✓ SDK Prêt';
-  } catch(e) {
-    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
-    document.getElementById('sdk-badge').className = 'badge red';
-  }
-  updateStats();
-  updatePortefeuille();
-  renderTokHistory();
-  updateBurnCalc();
-  updateBurnPreview();
-  refreshKYCTokeniser();
-  refreshKYCMarketplace();
+  // Auto-auth attempt (Pi Browser)
+  setTimeout(() => {
+    if (typeof Pi !== 'undefined' && Pi.authenticate) {
+      triggerLogin();
+    }
+  }, 2800);
 });
 </script>
+
 </body>
 </html>
