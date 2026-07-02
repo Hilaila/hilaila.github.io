@@ -617,6 +617,7 @@ const STATE = {
 };
 
 const API_KEY = 'qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
+const BACKEND_URL = 'https://gtc-backend-alpha.vercel.app';
 
 // ═══════════════════════════════════════════
 // NAVIGATION
@@ -770,8 +771,30 @@ async function authPi() {
   document.getElementById('btn-auth').textContent = '◌ Auth + KYC...';
   addLog('Pi.authenticate(["username","payments"])...', '#C9A84C');
   try {
-    const auth = await Pi.authenticate(['username','payments'], async (p) => {
-      addLog('Paiement incomplet: ' + p.identifier, '#C9A84C');
+    const auth = await Pi.authenticate(['username','payments'], async (payment) => {
+      addLog('⚠ Paiement incomplet détecté: ' + payment.identifier.slice(0,16) + '...', '#C9A84C');
+      // Résoudre automatiquement le paiement incomplet
+      try {
+        if (payment.transaction && payment.transaction.txid) {
+          // Le paiement a un txid — le compléter
+          addLog('→ Complétion du paiement incomplet...', '#C9A84C');
+          await completer(payment.identifier, payment.transaction.txid);
+          addLog('✓ Paiement incomplet complété', '#2ECC71');
+        } else {
+          // Pas de txid — annuler le paiement via backend
+          addLog('→ Annulation du paiement incomplet...', '#C9A84C');
+          const r = await fetch(`${BACKEND_URL}/api/cancel?paymentId=${payment.identifier}`, {
+            method: 'POST'
+          });
+          if (r.ok) {
+            addLog('✓ Paiement incomplet annulé — prêt pour nouveau paiement', '#2ECC71');
+          } else {
+            addLog('⚠ Annulation échouée — backend requis', '#C9A84C');
+          }
+        }
+      } catch(e) {
+        addLog('⚠ Résolution paiement incomplet: ' + e.message, '#C9A84C');
+      }
     });
 
     STATE.user = auth.user;
@@ -822,22 +845,37 @@ async function authPi() {
 // ═══════════════════════════════════════════
 async function approuver(paymentId) {
   try {
-    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {
-      method: 'POST', headers: { 'Authorization': `Key ${API_KEY}` }
+    const r = await fetch(`${BACKEND_URL}/api/approve?paymentId=${paymentId}`, {
+      method: 'POST'
     });
-    return r.ok;
-  } catch { return false; }
+    if (r.ok) {
+      addLog('✓ Approbation serveur réussie', '#2ECC71');
+      return true;
+    }
+    const err = await r.json().catch(() => ({}));
+    addLog('⚠ Approbation échouée: ' + (err.error || r.status), '#C9A84C');
+    return false;
+  } catch(e) {
+    addLog('⚠ Backend inaccessible — ' + e.message, '#E74C3C');
+    return false;
+  }
 }
 
 async function completer(paymentId, txid) {
   try {
-    const r = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`, {
-      method: 'POST',
-      headers: { 'Authorization': `Key ${API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ txid })
+    const r = await fetch(`${BACKEND_URL}/api/complete?paymentId=${paymentId}&txid=${txid}`, {
+      method: 'POST'
     });
-    return r.ok;
-  } catch { return false; }
+    if (r.ok) {
+      addLog('✓ Paiement complété via backend', '#2ECC71');
+      return true;
+    }
+    addLog('⚠ Complétion backend échouée', '#C9A84C');
+    return false;
+  } catch(e) {
+    addLog('⚠ Backend inaccessible — ' + e.message, '#E74C3C');
+    return false;
+  }
 }
 
 function creerPaiement(amount, memo, onSuccess, onFail) {
