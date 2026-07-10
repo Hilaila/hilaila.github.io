@@ -1771,4 +1771,401 @@ async function loadConvocations() {
       return;
     }
     list.innerHTML = CONV_CACHE.map(c => `
-      <div class="card-gold" style="margin-bottom:10px;cursor:pointer;" onc
+      <div class="card-gold" style="margin-bottom:10px;cursor:pointer;" onclick="openConvocation('${c.id}')">
+        <div class="card-title">${c.titre}</div>
+        <div style="font-size:11px;color:#A0A090;margin-bottom:4px;">📅 ${c.date} ${c.heure ? '· ' + c.heure : ''} ${c.lieu ? '· ' + c.lieu : ''}</div>
+        <div style="font-size:10px;color:var(--muted);">Réponse avant le ${c.dateLimiteReponse || '—'}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    loading.style.display = 'none';
+    list.innerHTML = `<div class="alert red"><div class="pill" style="background:var(--red)"></div><div>Impossible de charger les convocations : ${e.message}</div></div>`;
+  }
+}
+
+async function submitConvocation() {
+  if (!STATE.user || !STATE.accessToken) { alert('Connectez-vous via π Connexion.'); return; }
+  const body = {
+    titre: document.getElementById('cv-titre').value,
+    date: document.getElementById('cv-date').value,
+    heure: document.getElementById('cv-heure').value,
+    lieu: document.getElementById('cv-lieu').value,
+    ordreDuJour: document.getElementById('cv-ordre').value,
+    dirigeants: document.getElementById('cv-dirigeants').value.split(',').map(s=>s.trim()).filter(Boolean),
+    dateLimiteReponse: document.getElementById('cv-limite').value
+  };
+  if (!body.titre || !body.date) { alert('Titre et date obligatoires.'); return; }
+
+  document.getElementById('btn-cv-submit').textContent = '◌ Publication...';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=create`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    const res = document.getElementById('cv-create-result');
+    res.style.display = 'block';
+    if (r.ok) {
+      res.style.color = '#2ECC71';
+      res.textContent = '✓ Convocation publiée avec succès.';
+      document.getElementById('conv-create-view').style.display = 'none';
+      loadConvocations();
+    } else {
+      // Le serveur a refusé — c'est la vraie ligne de défense, pas le bouton masqué côté client.
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ ' + (data.error || 'Erreur inconnue');
+    }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+  document.getElementById('btn-cv-submit').textContent = '✓ Publier la convocation';
+}
+
+async function openConvocation(id) {
+  CURRENT_CONV = CONV_CACHE.find(c => c.id === id);
+  if (!CURRENT_CONV) return;
+
+  document.getElementById('conv-list-view').style.display = 'none';
+  document.getElementById('conv-detail-view').style.display = 'block';
+  document.getElementById('conv-response-result').style.display = 'none';
+  document.getElementById('presence-result').style.display = 'none';
+  document.getElementById('btn-presence-effective').textContent = '☐ Je confirme ma présence effective à cette rencontre';
+
+  document.getElementById('conv-detail-content').innerHTML = `
+    <strong style="color:var(--gold);">${CURRENT_CONV.titre}</strong><br/>
+    Date : ${CURRENT_CONV.date} ${CURRENT_CONV.heure || ''}<br/>
+    Lieu : ${CURRENT_CONV.lieu || '—'}<br/>
+    Ordre du jour : ${CURRENT_CONV.ordreDuJour || '—'}<br/>
+    Réponse attendue avant le : ${CURRENT_CONV.dateLimiteReponse || '—'}
+  `;
+
+  if (STATE.accessToken) {
+    fetch(`${BACKEND_URL}/api/convocations?action=viewed`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: id })
+    }).catch(()=>{});
+  }
+
+  // Affichage du panneau admin/secrétaire — indicatif seulement ; le serveur
+  // revérifie systématiquement le rôle réel via l'accessToken sur chaque appel.
+  const showAdminUi = STATE.user && UI_ADMIN_HINT.includes(STATE.user.username);
+  document.getElementById('conv-qr-block').style.display = showAdminUi ? 'block' : 'none';
+  document.getElementById('conv-status-block').style.display = showAdminUi ? 'block' : 'none';
+
+  if (showAdminUi) {
+    const checkinUrl = encodeURIComponent(`https://hilaila.github.io/?checkin=${id}`);
+    document.getElementById('conv-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${checkinUrl}`;
+    loadConvocationStatus();
+  }
+}
+
+function backToConvList() {
+  document.getElementById('conv-detail-view').style.display = 'none';
+  document.getElementById('conv-list-view').style.display = 'block';
+  CURRENT_CONV = null;
+}
+
+async function respondConvocation(reponse) {
+  if (!STATE.user || !STATE.accessToken) { alert('Connectez-vous via π Connexion pour répondre.'); return; }
+  if (!CURRENT_CONV) return;
+
+  if (reponse === 'absent') document.getElementById('conv-motif-block').style.display = 'block';
+  const motif = document.getElementById('conv-motif').value;
+
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=respond`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: CURRENT_CONV.id, reponse, motif })
+    });
+    const data = await r.json();
+    const res = document.getElementById('conv-response-result');
+    res.style.display = 'block';
+    if (r.ok) {
+      res.style.color = reponse === 'present' ? '#2ECC71' : '#E74C3C';
+      res.textContent = reponse === 'present'
+        ? `✓ Présence confirmée — ${STATE.user.username}`
+        : `✕ Absence enregistrée — ${STATE.user.username}${motif ? ' (' + motif + ')' : ''}`;
+    } else {
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ ' + (data.error || 'Erreur lors de l\'enregistrement.');
+    }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+}
+
+async function confirmPresenceEffective() {
+  if (!STATE.user || !STATE.accessToken) { alert('Connectez-vous via π Connexion pour confirmer votre présence.'); return; }
+  if (!CURRENT_CONV) return;
+
+  try {
+    // Le hash et l'heure d'arrivée sont désormais calculés par le SERVEUR,
+    // sur la base de son horloge propre — un client ne peut donc pas
+    // avancer ou reculer artificiellement l'heure de son pointage.
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=confirmPresence`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: CURRENT_CONV.id })
+    });
+    const data = await r.json();
+    const res = document.getElementById('presence-result');
+    res.style.display = 'block';
+    if (r.ok) {
+      const statutLabel = data.record.statut === 'retard' ? `RETARD (+${data.record.retardMinutes} min)` : 'à l\'heure';
+      document.getElementById('btn-presence-effective').textContent = '✓ Présence effective confirmée';
+      res.style.color = data.record.statut === 'retard' ? '#C9A84C' : '#2ECC71';
+      res.textContent = `ID pointage : ${data.record.uid}\nStatut : ${statutLabel}\nHash : ${data.record.hash.slice(0,32)}...\nHorodatage serveur : ${data.record.confirmedAt}`;
+      if (UI_ADMIN_HINT.includes(STATE.user.username)) loadConvocationStatus();
+    } else {
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ ' + (data.error || 'inconnue'); // ex: fenêtre de pointage fermée, ou registre verrouillé
+    }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+}
+
+async function loadConvocationStatus() {
+  if (!CURRENT_CONV || !STATE.accessToken) return;
+  const table = document.getElementById('conv-status-table');
+  table.innerHTML = '<div style="color:var(--muted);">Chargement...</div>';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=status&id=${CURRENT_CONV.id}`, {
+      headers: authHeaders()
+    });
+    const data = await r.json();
+    if (!r.ok) { table.innerHTML = `<div style="color:var(--red);">✗ ${data.error}</div>`; return; }
+
+    const membres = CURRENT_CONV.dirigeants.length ? CURRENT_CONV.dirigeants : Object.values(data.vues||{}).map(v=>v.username);
+    if (!membres.length) { table.innerHTML = '<div style="color:var(--muted);">Aucun dirigeant renseigné pour cette convocation.</div>'; return; }
+
+    const findByUsername = (obj, username) => Object.values(obj || {}).find(v => v.username === username);
+
+    table.innerHTML = membres.map(m => {
+      const vu = findByUsername(data.vues, m);
+      const rep = findByUsername(data.reponses, m);
+      const pres = findByUsername(data.presences, m);
+      let repLabel = 'En attente', repClass = '';
+      if (rep?.reponse === 'present') { repLabel = 'Présent'; repClass = 'green'; }
+      else if (rep?.reponse === 'absent') { repLabel = 'Absent'; repClass = 'red'; }
+      else if (rep?.reponse === 'excuse') { repLabel = 'Excusé'; repClass = 'blue'; }
+      let presLabel = '—', presClass = '';
+      if (pres?.statut === 'retard') { presLabel = `Retard +${pres.retardMinutes}min`; presClass = ''; }
+      else if (pres?.statut === 'present_manuel') { presLabel = 'Pointé (manuel)'; presClass = 'green'; }
+      else if (pres?.statut === 'a_l_heure') { presLabel = 'Pointé'; presClass = 'green'; }
+      return `
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);align-items:center;flex-wrap:wrap;gap:4px;">
+          <span style="color:var(--gold);">${m}</span>
+          <span class="tag ${vu?'green':'red'}">${vu?'Vu':'Non lu'}</span>
+          <span class="tag ${repClass}">${repLabel}</span>
+          <span class="tag ${presClass}">${presLabel}</span>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    table.innerHTML = `<div style="color:var(--red);">Erreur : ${e.message}</div>`;
+  }
+}
+
+async function manualCheckin() {
+  if (!STATE.accessToken || !CURRENT_CONV) return;
+  const targetUsername = document.getElementById('conv-manual-name').value.trim();
+  if (!targetUsername) { alert('Entrez le nom du dirigeant.'); return; }
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=manualCheckin`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: CURRENT_CONV.id, targetUsername })
+    });
+    const data = await r.json();
+    const res = document.getElementById('conv-admin-action-result');
+    res.style.display = 'block';
+    res.style.color = r.ok ? '#2ECC71' : '#E74C3C';
+    res.textContent = r.ok ? `✓ Présence de ${targetUsername} validée manuellement.` : '✗ ' + (data.error || 'Erreur');
+    if (r.ok) { document.getElementById('conv-manual-name').value = ''; loadConvocationStatus(); }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+}
+
+async function markExcused() {
+  if (!STATE.accessToken || !CURRENT_CONV) return;
+  const targetUsername = document.getElementById('conv-excuse-name').value.trim();
+  const motif = document.getElementById('conv-excuse-motif').value.trim();
+  if (!targetUsername) { alert('Entrez le nom du dirigeant.'); return; }
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=markExcused`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: CURRENT_CONV.id, targetUsername, motif })
+    });
+    const data = await r.json();
+    const res = document.getElementById('conv-admin-action-result');
+    res.style.display = 'block';
+    res.style.color = r.ok ? '#2ECC71' : '#E74C3C';
+    res.textContent = r.ok ? `✓ ${targetUsername} marqué(e) excusé(e).` : '✗ ' + (data.error || 'Erreur');
+    if (r.ok) { document.getElementById('conv-excuse-name').value=''; document.getElementById('conv-excuse-motif').value=''; loadConvocationStatus(); }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+}
+
+async function closeRegister() {
+  if (!STATE.accessToken || !CURRENT_CONV) return;
+  if (!confirm('Clôturer définitivement ce registre ? Aucune modification ne sera plus possible ensuite.')) return;
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=close`, {
+      method:'POST', headers: authHeaders(),
+      body: JSON.stringify({ convocationId: CURRENT_CONV.id })
+    });
+    const data = await r.json();
+    const res = document.getElementById('conv-close-result');
+    res.style.display = 'block';
+    if (r.ok) {
+      res.style.color = '#2ECC71';
+      res.textContent = `✓ REGISTRE FINALISÉ ET VERROUILLÉ\nPar : ${data.cloture.closedByUsername}\nLe : ${data.cloture.closedAt}\nEmpreinte SHA-256 : ${data.cloture.hash}`;
+    } else {
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ ' + (data.error || 'Erreur');
+    }
+  } catch(e) {
+    alert('Erreur réseau : ' + e.message);
+  }
+}
+
+// ═══════════════════════════════════════════
+// MARKETPLACE
+// ═══════════════════════════════════════════
+async function acheterParcelle(nom, prix) {
+  if (!STATE.user || !STATE.kycVerified) {
+    document.getElementById('market-kyc-block').style.display = 'flex';
+    return;
+  }
+  const res = document.getElementById('market-result');
+  const txt = document.getElementById('market-result-text');
+  txt.textContent = '◌ Paiement en cours pour ' + nom + '...';
+  res.style.display = 'flex';
+
+  creerPaiement(prix, 'Achat marketplace: ' + nom,
+    (pay) => {
+      STATE.stats.tok++;
+      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
+      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
+      txt.innerHTML = `✓ Achat confirmé — <strong style="color:var(--gold)">${nom}</strong> · ${prix} GTCπ · burn ${(prix*0.005).toFixed(4)} GTCπ · Pioneer KYC ✓`;
+      updateStats(); updatePortefeuille();
+    },
+    () => { txt.textContent = 'Transaction initiée — ' + nom; }
+  );
+}
+
+// ═══════════════════════════════════════════
+// STATS & PORTEFEUILLE
+// ═══════════════════════════════════════════
+function updateStats() {
+  document.getElementById('stat-tok').textContent = STATE.stats.tok;
+  document.getElementById('stat-gtcp').textContent = STATE.stats.gtcp.toFixed(2);
+  document.getElementById('stat-burn').textContent = STATE.stats.burn.toFixed(4);
+  const pct = parseFloat((STATE.stats.gtcp/3141592*100).toFixed(6));
+  document.getElementById('supply-used').textContent = STATE.stats.gtcp.toFixed(2) + ' / 3 141 592 GTCπ';
+  document.getElementById('supply-pct').textContent = pct + '%';
+  document.getElementById('supply-bar').style.width = Math.min(pct,100) + '%';
+}
+
+function updatePortefeuille() {
+  document.getElementById('pf-parcelles').textContent = STATE.tokenizations.length;
+  document.getElementById('pf-valeur').textContent = STATE.stats.gtcp.toFixed(2);
+  document.getElementById('pf-txs').textContent = STATE.transactions.length;
+  const hist = document.getElementById('pf-history');
+  if (!STATE.transactions.length) { hist.textContent = 'Aucune transaction encore.'; return; }
+  hist.innerHTML = STATE.transactions.slice().reverse().slice(0,8).map(t=>
+    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.memo}</span><span style="color:var(--green)">✓ ${t.amount} π</span></div><div style="color:var(--muted);font-size:9px;">burn: ${t.burn} GTCπ · Pioneer: ${t.pioneer||'?'} · ${t.timestamp?.slice(0,16)}</div></div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════
+// ASSISTANT IA
+// ═══════════════════════════════════════════
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addChatMsg(msg, 'user');
+  addChatMsg('◌ Analyse...', 'ai', true);
+  try {
+    // Appel via le backend Vercel : la clé Anthropic ne quitte jamais le serveur.
+    const res = await fetch(`${BACKEND_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    removeLastAiLoading();
+    if (res.ok) {
+      addChatMsg(data.text || 'Erreur de réponse.', 'ai');
+    } else {
+      addChatMsg('Assistant indisponible : ' + (data.error || 'erreur inconnue'), 'ai');
+    }
+  } catch(e) {
+    removeLastAiLoading();
+    addChatMsg('Erreur: ' + e.message, 'ai');
+  }
+}
+
+function askQuick(q) { document.getElementById('chat-input').value = q; sendChat(); }
+
+function addChatMsg(text, role, loading) {
+  const box = document.getElementById('chat-box');
+  const div = document.createElement('div');
+  div.className = 'msg' + (loading ? ' ai-loading' : '');
+  div.innerHTML = `<div class="msg-icon ${role}">${role==='ai'?'◈':'π'}</div><div class="msg-text${role==='user'?' user-bg':''}">${text}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function removeLastAiLoading() {
+  const el = document.querySelector('.ai-loading');
+  if (el) el.remove();
+}
+
+// ═══════════════════════════════════════════
+// INIT AU CHARGEMENT
+// ═══════════════════════════════════════════
+window.addEventListener('load', async () => {
+  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1800);
+  try {
+    await Pi.init({ version: '2.0', sandbox: false });
+    STATE.sdkReady = true;
+    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
+    document.getElementById('sdk-badge').className = 'badge green';
+    document.getElementById('btn-auth').disabled = false;
+    document.getElementById('step2-card').style.opacity = '1';
+    document.getElementById('step1-result').textContent = '✓ SDK auto-initialisé';
+    document.getElementById('step1-result').style.color = '#2ECC71';
+    document.getElementById('step1-result').style.display = 'block';
+    document.getElementById('step1-card').style.borderColor = '#2ECC71';
+    document.getElementById('btn-init').textContent = '✓ SDK Prêt';
+  } catch(e) {
+    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
+    document.getElementById('sdk-badge').className = 'badge red';
+  }
+  updateStats();
+  updatePortefeuille();
+  renderTokHistory();
+  updateBurnCalc();
+  updateBurnPreview();
+  refreshKYCTokeniser();
+  refreshKYCMarketplace();
+
+  // Pointage via QR Code : ?checkin=CONV_ID ouvre directement la convocation concernée
+  const params = new URLSearchParams(window.location.search);
+  const checkinId = params.get('checkin');
+  if (checkinId) {
+    document.querySelectorAll('.nav-btn').forEach(b=>{ if(b.textContent.includes('Convocations')) b.click(); });
+    await loadConvocations();
+    openConvocation(checkinId);
+  }
+});
+</script>
+<footer style="text-align:center;padding:20px;font-size:9px;color:var(--muted);border-top:1px solid var(--border);margin-top:20px;line-height:1.8;">
+  © 2026 GeoTerraChain QFS. Tous droits réservés.<br/>
+  GeoTerraChain QFS, son identité visuelle, ses contenus, ses documents et ses développements sont protégés.<br/>
+  Toute reproduction ou exploitation non autorisée est interdite.
+</footer>
+</body>
+</html>
