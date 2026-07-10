@@ -109,6 +109,9 @@ select{background:#050505;border:1px solid var(--gold-dark);color:var(--text);pa
   <button class="nav-btn" onclick="showTab('tokeniser',this)">◈ Tokeniser</button>
   <button class="nav-btn" onclick="showTab('marketplace',this)">◆ Marketplace</button>
   <button class="nav-btn" onclick="showTab('portefeuille',this)">◇ Portefeuille</button>
+  <button class="nav-btn" onclick="showTab('registre',this)">🌐 Registre</button>
+  <button class="nav-btn" onclick="showTab('dossiers',this)">📁 Dossier Foncier</button>
+  <button class="nav-btn" onclick="showTab('convocations',this)">📩 Convocations</button>
   <button class="nav-btn" onclick="showTab('assistant',this)">◎ Assistant</button>
   <button class="nav-btn" onclick="showTab('apropos',this)">ℹ À propos</button>
   <a class="nav-btn" href="/guide.html" style="text-decoration:none;">📖 Guide</a>
@@ -421,6 +424,309 @@ select{background:#050505;border:1px solid var(--gold-dark);color:var(--text);pa
   </div>
 </div>
 
+<!-- ═══ REGISTRE PUBLIC PARTAGÉ ═══ -->
+<div id="tab-registre" class="tab">
+  <div class="sec-title">Registre public GeoTerraChain</div>
+  <div class="sec-sub">Toutes les tokenisations de tous les Pioneers · Registre partagé en temps réel</div>
+
+  <div id="registre-loading" class="alert gold">
+    <div class="pill" style="background:var(--gold)"></div>
+    <div>Chargement du registre partagé depuis le serveur...</div>
+  </div>
+
+  <div id="registre-error" class="alert red" style="display:none;">
+    <div class="pill" style="background:var(--red)"></div>
+    <div id="registre-error-text">Impossible de charger le registre public pour le moment.</div>
+  </div>
+
+  <div id="registre-content" style="display:none;">
+    <div class="grid3">
+      <div class="card-gold">
+        <div class="card-title">Tokenisations totales</div>
+        <span class="kpi-val" id="reg-count">0</span>
+        <span class="kpi-lbl">tous Pioneers confondus</span>
+      </div>
+      <div class="card-gold">
+        <div class="card-title">GTCπ engagés</div>
+        <span class="kpi-val" id="reg-gtcp">0</span>
+        <span class="kpi-lbl">communauté entière</span>
+      </div>
+      <div class="card-gold">
+        <div class="card-title">GTCπ brûlés</div>
+        <span class="kpi-val" id="reg-burn">0</span>
+        <span class="kpi-lbl">supply déflationnaire</span>
+      </div>
+    </div>
+
+    <div class="row" style="justify-content:space-between;margin-bottom:8px;">
+      <div class="card-title" style="margin-bottom:0;">Toutes les parcelles tokenisées</div>
+      <button class="btn-ghost" onclick="loadRegistre()">↻ Actualiser</button>
+    </div>
+
+    <div id="registre-list"></div>
+  </div>
+</div>
+
+<!-- ═══ DOSSIER FONCIER (RÉFÉRENTIEL) ═══ -->
+<div id="tab-dossiers" class="tab">
+  <div class="sec-title">Référentiel foncier — Dossiers & vérification</div>
+  <div class="sec-sub">Modes d'acquisition · Précision géospatiale · Niveaux N0-N7</div>
+
+  <div class="alert gold">
+    <div class="pill" style="background:var(--gold)"></div>
+    <div>GeoTerraChain QFS ne délivre pas de titre foncier et ne remplace pas le Cadastre, les notaires, les géomètres-experts, les autorités coutumières ou les juridictions. Ce module sécurise, horodate et trace les dossiers — un dépôt ne vaut jamais preuve juridique de propriété.</div>
+  </div>
+
+  <!-- SOUS-NAVIGATION -->
+  <div class="row" style="margin-bottom:12px;">
+    <button class="btn-ghost" onclick="showDossierView('create')" id="dv-btn-create">+ Nouveau dossier</button>
+    <button class="btn-ghost" onclick="showDossierView('mine')" id="dv-btn-mine">📂 Mes dossiers</button>
+    <button class="btn-ghost" onclick="showDossierView('public')" id="dv-btn-public">🌍 Registre public</button>
+    <button class="btn-ghost" id="dv-btn-admin" style="display:none;" onclick="showDossierView('admin')">🔎 Tous (vérificateur)</button>
+  </div>
+
+  <!-- VUE : CRÉATION -->
+  <div id="dv-create" class="dv-view">
+    <div class="card-gold">
+      <div class="card-title">Identification du bien</div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MODE D'ACQUISITION</label>
+      <select id="df-mode">
+        <option value="achat_vente">Achat / vente</option>
+        <option value="succession_heritage">Succession / héritage</option>
+        <option value="donation">Donation</option>
+        <option value="attribution_administrative">Attribution administrative</option>
+        <option value="droit_coutumier_rural">Droit coutumier rural</option>
+        <option value="certificat_foncier_rural">Certificat foncier rural</option>
+        <option value="titre_foncier">Immatriculation / titre foncier</option>
+        <option value="bail_emphyteotique">Bail emphytéotique / longue durée</option>
+        <option value="partage_copropriete">Partage familial / copropriété</option>
+        <option value="decision_judiciaire">Décision judiciaire / vente judiciaire</option>
+        <option value="autre_a_verifier">Autre droit déclaré — à vérifier</option>
+      </select>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">TITULAIRE DÉCLARÉ</label>
+      <input class="inp" id="df-titulaire" placeholder="Nom complet du titulaire"/>
+
+      <div class="grid2">
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">RÉGION</label><input class="inp" id="df-region" placeholder="Région"/></div>
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">DÉPARTEMENT</label><input class="inp" id="df-departement" placeholder="Département"/></div>
+      </div>
+      <div class="grid2">
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">COMMUNE / SOUS-PRÉFECTURE *</label><input class="inp" id="df-commune" placeholder="Commune"/></div>
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">VILLAGE / QUARTIER</label><input class="inp" id="df-village" placeholder="Village / quartier"/></div>
+      </div>
+      <div class="grid2">
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">RÉFÉRENCE PARCELLE</label><input class="inp" id="df-reference" placeholder="Réf. cadastrale si connue"/></div>
+        <div><label style="font-size:9px;color:var(--muted);letter-spacing:2px;">SUPERFICIE DÉCLARÉE</label><input class="inp" id="df-superficie" placeholder="ex : 2.5 ha"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📍 Localisation géospatiale</div>
+      <button class="btn-ghost" onclick="localiserAppareil()" id="btn-geoloc">📍 Localiser avec mon téléphone</button>
+      <div id="geoloc-result" style="font-size:11px;margin-top:8px;display:none;"></div>
+      <p style="font-size:9px;color:var(--muted);margin-top:8px;">Un smartphone plafonne réalistement à un niveau <strong>G1/G2</strong> (localisation terrain, plusieurs mètres de précision) — jamais une délimitation juridique. Les niveaux G3 à G5 exigent un relevé GNSS professionnel RTK/NRTK ou un géomètre-expert, ajouté ultérieurement par un vérificateur habilité.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pièces justificatives</div>
+      <select id="df-doctype" style="margin-bottom:8px;">
+        <option value="acte_vente">Acte de vente / promesse de vente</option>
+        <option value="piece_identite">Pièce d'identité</option>
+        <option value="attestation_coutumiere">Attestation coutumière / villageoise</option>
+        <option value="certificat_foncier">Certificat foncier</option>
+        <option value="titre_foncier_doc">Copie du titre foncier</option>
+        <option value="plan_localisation">Plan de localisation / plan cadastral</option>
+        <option value="acte_deces">Acte de décès</option>
+        <option value="acte_partage">Acte de partage / donation</option>
+        <option value="decision_justice">Décision de justice</option>
+        <option value="autre_doc">Autre document</option>
+      </select>
+      <input type="file" id="df-file-input" accept="image/*,.pdf" style="color:var(--text);font-size:11px;margin-bottom:8px;width:100%;"/>
+      <button class="btn-ghost" onclick="ajouterPieceEnAttente()">+ Ajouter cette pièce au dossier</button>
+      <div id="df-pieces-liste" style="margin-top:8px;font-size:10px;color:var(--muted);">Aucune pièce ajoutée pour l'instant.</div>
+    </div>
+
+    <div class="card">
+      <label class="row" style="font-size:11px;margin-bottom:8px;"><input type="checkbox" id="df-exactitude" style="margin-right:8px;"/> Je déclare l'exactitude des informations fournies.</label>
+      <label class="row" style="font-size:11px;"><input type="checkbox" id="df-consentement" style="margin-right:8px;"/> Je consens au traitement de ces données par GeoTerraChain QFS.</label>
+    </div>
+
+    <div id="df-create-result" style="font-size:11px;display:none;margin-bottom:8px;"></div>
+    <button class="btn" onclick="creerDossier()" id="btn-df-submit">✓ Soumettre le dossier</button>
+  </div>
+
+  <!-- VUE : MES DOSSIERS -->
+  <div id="dv-mine" class="dv-view" style="display:none;">
+    <div id="dv-mine-list"></div>
+  </div>
+
+  <!-- VUE : REGISTRE PUBLIC -->
+  <div id="dv-public" class="dv-view" style="display:none;">
+    <div id="dv-public-list"></div>
+  </div>
+
+  <!-- VUE : ADMIN / VÉRIFICATEUR -->
+  <div id="dv-admin" class="dv-view" style="display:none;">
+    <div id="dv-admin-list"></div>
+  </div>
+
+  <!-- VUE : DÉTAIL D'UN DOSSIER -->
+  <div id="dv-detail" class="dv-view" style="display:none;">
+    <button class="btn-ghost" style="margin-bottom:10px;" onclick="backToDossierList()">← Retour</button>
+    <div class="card-gold">
+      <div class="card-title">Dossier <span id="dvd-id"></span></div>
+      <div id="dvd-content" style="font-size:12px;line-height:2;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pièces justificatives</div>
+      <div id="dvd-documents"></div>
+    </div>
+    <div id="dvd-admin-block" class="card" style="display:none;">
+      <div class="card-title">Changer le niveau de vérification</div>
+      <select id="dvd-nouveau-statut">
+        <option value="N1">N1 — Déposé</option>
+        <option value="N2">N2 — À compléter</option>
+        <option value="N3">N3 — En vérification</option>
+        <option value="N4">N4 — Vérification documentaire</option>
+        <option value="N5">N5 — Vérification administrative</option>
+        <option value="N6">N6 — Actif éligible à étude</option>
+        <option value="N7">N7 — Rejeté / Litigieux</option>
+      </select>
+      <input class="inp" id="dvd-motif" placeholder="Motif de la décision"/>
+      <button class="btn" onclick="changerStatutDossier()">✓ Appliquer le changement</button>
+      <div id="dvd-status-result" style="font-size:10px;margin-top:8px;display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONVOCATIONS & PRÉSENCES (GOUVERNANCE) ═══ -->
+<div id="tab-convocations" class="tab">
+  <div class="sec-title">Gouvernance — Convocations & Présences</div>
+  <div class="sec-sub">Réunions institutionnelles · Confirmations officielles · Registre numérique sécurisé</div>
+
+  <!-- VUE LISTE -->
+  <div id="conv-list-view">
+    <div id="conv-admin-bar" style="display:none;margin-bottom:10px;">
+      <button class="btn" onclick="toggleCreateConvocation()">📩 Nouvelle convocation</button>
+      <button class="btn-ghost" onclick="toggleSuspensionPanel()" style="margin-top:6px;">🔒 Gestion des comptes</button>
+    </div>
+
+    <!-- GESTION DES SUSPENSIONS (Président Fondateur uniquement) -->
+    <div id="suspension-panel" class="card" style="display:none;margin-bottom:14px;">
+      <div class="card-title">Suspension de compte Pioneer</div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">UID PI DU COMPTE</label>
+      <input class="inp" id="susp-uid" placeholder="uid Pi Network exact"/>
+      <div class="row">
+        <button class="btn" style="width:auto;flex:1;background:linear-gradient(135deg,#8B1A1A,#E74C3C);" onclick="suspendreCompte()">🔒 Suspendre</button>
+        <button class="btn" style="width:auto;flex:1;background:linear-gradient(135deg,#1B5E20,#2ECC71);" onclick="reactiverCompte()">✓ Réactiver</button>
+      </div>
+      <div id="susp-result" style="font-size:11px;margin-top:8px;display:none;"></div>
+      <div class="sep"></div>
+      <div class="card-title">Comptes actuellement suspendus</div>
+      <button class="btn-ghost" onclick="chargerComptesSuspendus()">↻ Actualiser la liste</button>
+      <div id="susp-list" style="font-size:11px;margin-top:8px;"></div>
+    </div>
+
+    <!-- FORMULAIRE DE CRÉATION (Admin uniquement) -->
+    <div id="conv-create-view" class="card-gold" style="display:none;margin-bottom:14px;">
+      <div class="card-title">Créer une convocation officielle</div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">TITRE DE LA RÉUNION</label>
+      <input class="inp" id="cv-titre" placeholder="Conseil de direction GeoTerraChain QFS"/>
+      <div class="grid2">
+        <div>
+          <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">DATE</label>
+          <input class="inp" id="cv-date" type="date"/>
+        </div>
+        <div>
+          <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">HEURE</label>
+          <input class="inp" id="cv-heure" type="time"/>
+        </div>
+      </div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">LIEU / LIEN VISIOCONFÉRENCE</label>
+      <input class="inp" id="cv-lieu" placeholder="Abidjan / Réunion hybride"/>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">ORDRE DU JOUR</label>
+      <input class="inp" id="cv-ordre" placeholder="Validation de la feuille de route institutionnelle"/>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">DIRIGEANTS CONCERNÉS (séparés par virgule)</label>
+      <input class="inp" id="cv-dirigeants" placeholder="Hilaila, Secrétaire général, Responsable foncier"/>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">DATE LIMITE DE RÉPONSE</label>
+      <input class="inp" id="cv-limite" type="date"/>
+      <div id="cv-create-result" style="font-size:11px;display:none;margin-bottom:8px;"></div>
+      <button class="btn" onclick="submitConvocation()" id="btn-cv-submit">✓ Publier la convocation</button>
+    </div>
+
+    <div id="conv-loading" class="alert gold">
+      <div class="pill" style="background:var(--gold)"></div>
+      <div>Chargement des convocations...</div>
+    </div>
+    <div id="conv-list"></div>
+  </div>
+
+  <!-- VUE DÉTAIL D'UNE CONVOCATION -->
+  <div id="conv-detail-view" style="display:none;">
+    <button class="btn-ghost" style="margin-bottom:10px;" onclick="backToConvList()">← Retour à la liste</button>
+
+    <div class="card-gold" style="margin-bottom:12px;">
+      <div class="card-title">📩 Convocation officielle</div>
+      <div id="conv-detail-content" style="font-size:12px;color:var(--text);line-height:2;"></div>
+    </div>
+
+    <!-- RÉPONSE À LA CONVOCATION -->
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">Votre réponse</div>
+      <div id="conv-motif-block" style="display:none;margin-bottom:8px;">
+        <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">MOTIF D'ABSENCE (optionnel)</label>
+        <input class="inp" id="conv-motif" placeholder="Empêchement professionnel..."/>
+      </div>
+      <div class="row">
+        <button class="btn" style="width:auto;flex:1;background:linear-gradient(135deg,#1B5E20,#2ECC71);" onclick="respondConvocation('present')">✓ Je confirme ma présence</button>
+        <button class="btn" style="width:auto;flex:1;background:linear-gradient(135deg,#8B1A1A,#E74C3C);" onclick="respondConvocation('absent')">✕ Je ne serai pas présent(e)</button>
+      </div>
+      <div id="conv-response-result" style="font-size:11px;margin-top:8px;display:none;"></div>
+    </div>
+
+    <!-- PRÉSENCE EFFECTIVE LE JOUR J -->
+    <div class="card-green" style="margin-bottom:12px;">
+      <div class="card-title" style="color:var(--green);">Présence effective (jour de la réunion)</div>
+      <p style="font-size:11px;color:#A0A090;margin-bottom:8px;">À utiliser uniquement le jour de la rencontre, sur place ou en visioconférence.</p>
+      <button class="btn" onclick="confirmPresenceEffective()" id="btn-presence-effective">☐ Je confirme ma présence effective à cette rencontre</button>
+      <div id="presence-result" style="font-size:10px;margin-top:8px;display:none;font-family:monospace;"></div>
+    </div>
+
+    <!-- QR CODE DE POINTAGE (affiché uniquement pour l'admin/secrétaire) -->
+    <div id="conv-qr-block" class="card" style="display:none;margin-bottom:12px;text-align:center;">
+      <div class="card-title">QR Code de pointage sur place</div>
+      <img id="conv-qr-img" src="" style="width:180px;height:180px;margin:8px auto;display:block;border:4px solid var(--gold-dark);"/>
+      <p style="font-size:10px;color:var(--muted);">Valable uniquement de 30 min avant à 2h après le début — vérifié par le serveur, quel que soit le moyen d'accès au lien.</p>
+    </div>
+
+    <!-- TABLEAU DE SUIVI (admin/secrétaire uniquement — accès vérifié serveur) -->
+    <div id="conv-status-block" class="card" style="display:none;">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px;">
+        <div class="card-title" style="margin-bottom:0;">Tableau de suivi des dirigeants</div>
+        <button class="btn-ghost" onclick="loadConvocationStatus()">↻ Actualiser</button>
+      </div>
+      <div id="conv-status-table" style="font-size:10px;margin-bottom:12px;"></div>
+
+      <div class="sep"></div>
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;">POINTAGE MANUEL (membre sans téléphone)</label>
+      <input class="inp" id="conv-manual-name" placeholder="Nom exact du dirigeant"/>
+      <button class="btn-ghost" onclick="manualCheckin()">✓ Valider sa présence manuellement</button>
+
+      <label style="font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:8px;display:block;">MARQUER EXCUSÉ</label>
+      <input class="inp" id="conv-excuse-name" placeholder="Nom exact du dirigeant"/>
+      <input class="inp" id="conv-excuse-motif" placeholder="Motif de l'absence excusée"/>
+      <button class="btn-ghost" onclick="markExcused()">✓ Marquer excusé</button>
+
+      <div id="conv-admin-action-result" style="font-size:10px;margin-top:8px;display:none;"></div>
+
+      <div class="sep"></div>
+      <button class="btn-ghost" onclick="window.print()">🖨 Imprimer / Exporter en PDF</button>
+      <button class="btn" style="background:linear-gradient(135deg,#8B1A1A,#E74C3C);margin-top:8px;" onclick="closeRegister()">🔒 Clôturer et verrouiller le registre</button>
+      <div id="conv-close-result" style="font-size:10px;margin-top:8px;display:none;font-family:monospace;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ ASSISTANT IA ═══ -->
 <div id="tab-assistant" class="tab">
   <div class="sec-title">Assistant IA GeoTerraChain</div>
@@ -616,7 +922,10 @@ const STATE = {
   stats: JSON.parse(localStorage.getItem('gtc_stats')||'{"tok":0,"gtcp":0,"burn":0}'),
 };
 
-const API_KEY = 'qoegkcwhwcsptufen8vtsaj4bn7yolssuiqcsq0ccqfisnqeczcvt5zvs8lamqxf';
+// Note de sécurité : l'ancienne constante API_KEY exposant la clé Pi Network
+// en clair dans le code du navigateur a été supprimée. Toute clé secrète
+// doit rester exclusivement côté serveur (voir variables d'environnement
+// Vercel : PI_API_KEY, ANTHROPIC_API_KEY, UPSTASH_REDIS_REST_TOKEN).
 const BACKEND_URL = 'https://gtc-backend-alpha.vercel.app';
 
 // ═══════════════════════════════════════════
@@ -630,6 +939,9 @@ function showTab(id, btn) {
   // Refresh KYC display on tab switch
   if(id==='tokeniser') refreshKYCTokeniser();
   if(id==='marketplace') refreshKYCMarketplace();
+  if(id==='registre') loadRegistre();
+  if(id==='convocations') { document.getElementById('conv-admin-bar').style.display = (STATE.user && STATE.user.username==='Hilaila') ? 'block':'none'; loadConvocations(); }
+  if(id==='dossiers') { document.getElementById('dv-btn-admin').style.display = (STATE.user && STATE.user.username==='Hilaila') ? 'inline-block':'none'; showDossierView('create'); }
 }
 
 // ═══════════════════════════════════════════
@@ -783,7 +1095,7 @@ async function authPi() {
         } else {
           // Pas de txid — annuler le paiement via backend
           addLog('→ Annulation du paiement incomplet...', '#C9A84C');
-          const r = await fetch(`${BACKEND_URL}/api/cancel?paymentId=${payment.identifier}`, {
+          const r = await fetch(`${BACKEND_URL}/api/pi-payment?action=cancel&paymentId=${payment.identifier}`, {
             method: 'POST'
           });
           if (r.ok) {
@@ -798,8 +1110,31 @@ async function authPi() {
     });
 
     STATE.user = auth.user;
+    STATE.accessToken = auth.accessToken; // requis pour toute action de gouvernance vérifiée serveur
     addLog('✓ Authentifié: ' + auth.user.username, '#2ECC71');
     addLog('  uid: ' + auth.user.uid, '#555');
+
+    // Établit une session courte durée (30 min) auprès du backend — évite de
+    // rappeler Pi Network à chaque action tout en restant révocable à tout
+    // moment (compte suspendu = session refusée dès la prochaine vérification).
+    try {
+      const sessionRes = await fetch(`${BACKEND_URL}/api/verify-pi-token`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + auth.accessToken, 'Content-Type': 'application/json' }
+      });
+      const sessionData = await sessionRes.json();
+      if (sessionRes.ok && sessionData.success) {
+        STATE.sessionToken = sessionData.access_token;
+        STATE.sessionExpiresAt = Date.now() + sessionData.expires_in_seconds * 1000;
+        STATE.role = sessionData.user.role;
+        sessionStorage.setItem('gtcqfs_session', sessionData.access_token);
+        addLog(`✓ Session établie — rôle : ${sessionData.user.role}`, '#2ECC71');
+      } else {
+        addLog('⚠ ' + (sessionData.message || 'Session non établie — compte peut-être suspendu'), '#E74C3C');
+      }
+    } catch(e) {
+      addLog('⚠ Session backend indisponible : ' + e.message, '#C9A84C');
+    }
 
     // VÉRIFICATION KYC
     const kycResult = await verifyKYC(auth.accessToken);
@@ -845,7 +1180,7 @@ async function authPi() {
 // ═══════════════════════════════════════════
 async function approuver(paymentId) {
   try {
-    const r = await fetch(`${BACKEND_URL}/api/approve?paymentId=${paymentId}`, {
+    const r = await fetch(`${BACKEND_URL}/api/pi-payment?action=approve&paymentId=${paymentId}`, {
       method: 'POST'
     });
     if (r.ok) {
@@ -863,7 +1198,7 @@ async function approuver(paymentId) {
 
 async function completer(paymentId, txid) {
   try {
-    const r = await fetch(`${BACKEND_URL}/api/complete?paymentId=${paymentId}&txid=${txid}`, {
+    const r = await fetch(`${BACKEND_URL}/api/pi-payment?action=complete&paymentId=${paymentId}&txid=${txid}`, {
       method: 'POST'
     });
     if (r.ok) {
@@ -984,6 +1319,16 @@ async function tokeniser() {
       document.getElementById('tok-tags').innerHTML = '<span class="tag green">● ON-CHAIN</span><span class="tag">GTCπ</span><span class="tag">LandPi</span><span class="tag blue">KYC ✓</span>';
       document.getElementById('btn-tok').textContent = '+ Nouvelle tokenisation';
       updateStats(); updatePortefeuille(); renderTokHistory();
+
+      // Envoi vers le registre PUBLIC PARTAGÉ (visible par tous les Pioneers, sur tous les appareils)
+      fetch(`${BACKEND_URL}/api/tokenizations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(token)
+      }).then(r => {
+        if (r.ok) addLog('✓ Tokenisation ajoutée au registre public', '#2ECC71');
+        else addLog('⚠ Registre public indisponible — tokenisation restée locale', '#C9A84C');
+      }).catch(e => addLog('⚠ Registre public inaccessible: ' + e.message, '#C9A84C'));
     },
     () => { document.getElementById('btn-tok').textContent = '◈ Réessayer'; }
   );
@@ -1005,129 +1350,425 @@ function renderTokHistory() {
 }
 
 // ═══════════════════════════════════════════
-// MARKETPLACE
+// REGISTRE PUBLIC PARTAGÉ (visible par tous les Pioneers)
 // ═══════════════════════════════════════════
-async function acheterParcelle(nom, prix) {
-  if (!STATE.user || !STATE.kycVerified) {
-    document.getElementById('market-kyc-block').style.display = 'flex';
+async function loadRegistre() {
+  const loading = document.getElementById('registre-loading');
+  const errorBox = document.getElementById('registre-error');
+  const content = document.getElementById('registre-content');
+  loading.style.display = 'flex';
+  errorBox.style.display = 'none';
+  content.style.display = 'none';
+
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/tokenizations`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+
+    document.getElementById('reg-count').textContent = data.count || 0;
+    document.getElementById('reg-gtcp').textContent = (data.totalGTCp || 0).toFixed(2);
+    document.getElementById('reg-burn').textContent = (data.totalBurn || 0).toFixed(4);
+
+    const list = document.getElementById('registre-list');
+    if (!data.tokenizations || !data.tokenizations.length) {
+      list.innerHTML = '<div class="card" style="color:var(--muted);font-size:11px;">Aucune tokenisation dans le registre public pour le moment. Soyez le premier !</div>';
+    } else {
+      list.innerHTML = data.tokenizations.map(t => `
+        <div class="card" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <div style="font-size:13px;color:var(--gold);">${t.nom || '—'}</div>
+            <span class="tag green">✓ KYC</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">${t.surface || '—'} · ${t.region || '—'} · ${t.type || ''}</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;">
+            <span style="color:#A0A090;">Pioneer: <strong style="color:var(--gold)">${t.proprio || '?'}</strong></span>
+            <span style="color:var(--gold);">${t.prixGTCp || 0} GTCπ</span>
+          </div>
+          <div style="font-family:monospace;font-size:9px;color:#444;margin-top:4px;word-break:break-all;">${(t.txHash || '').slice(0,48)}...</div>
+        </div>
+      `).join('');
+    }
+
+    loading.style.display = 'none';
+    content.style.display = 'block';
+  } catch (e) {
+    loading.style.display = 'none';
+    errorBox.style.display = 'flex';
+    document.getElementById('registre-error-text').textContent =
+      'Impossible de charger le registre public : ' + e.message;
+  }
+}
+
+// ═══════════════════════════════════════════
+// RÉFÉRENTIEL FONCIER — DOSSIERS
+// ═══════════════════════════════════════════
+let DOSSIER_GEOLOC = null; // { latitude, longitude, precisionHorizontaleCm, dateHeureMesureUTC }
+let PIECES_EN_ATTENTE = []; // [{ filename, docType, base64 }]
+let CURRENT_DOSSIER = null;
+
+function showDossierView(view) {
+  document.querySelectorAll('.dv-view').forEach(v => v.style.display = 'none');
+  document.getElementById('dv-' + view).style.display = 'block';
+  if (view === 'mine') loadMesDossiers();
+  if (view === 'public') loadDossiersPublics();
+  if (view === 'admin') loadTousDossiers();
+}
+
+function localiserAppareil() {
+  const res = document.getElementById('geoloc-result');
+  res.style.display = 'block';
+  res.style.color = '#C9A84C';
+  res.textContent = '◌ Localisation en cours...';
+
+  if (!navigator.geolocation) {
+    res.style.color = '#E74C3C';
+    res.textContent = '✗ Géolocalisation non disponible sur ce navigateur.';
     return;
   }
-  const res = document.getElementById('market-result');
-  const txt = document.getElementById('market-result-text');
-  txt.textContent = '◌ Paiement en cours pour ' + nom + '...';
-  res.style.display = 'flex';
 
-  creerPaiement(prix, 'Achat marketplace: ' + nom,
-    (pay) => {
-      STATE.stats.tok++;
-      STATE.stats.gtcp = parseFloat((STATE.stats.gtcp+prix).toFixed(6));
-      localStorage.setItem('gtc_stats', JSON.stringify(STATE.stats));
-      txt.innerHTML = `✓ Achat confirmé — <strong style="color:var(--gold)">${nom}</strong> · ${prix} GTCπ · burn ${(prix*0.005).toFixed(4)} GTCπ · Pioneer KYC ✓`;
-      updateStats(); updatePortefeuille();
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude, accuracy } = position.coords;
+      const precisionCm = Math.round(accuracy * 100); // mètres → centimètres
+      // Classement honnête : ≤ 500 m (50000 cm) = G2 (localisation terrain), au-delà = G1 (pré-localisation)
+      const niveauReel = precisionCm <= 50000 ? 'G2' : 'G1';
+
+      DOSSIER_GEOLOC = {
+        latitude, longitude,
+        precisionHorizontaleCm: precisionCm,
+        dateHeureMesureUTC: new Date().toISOString(),
+        niveauG: niveauReel
+      };
+
+      res.style.color = '#2ECC71';
+      res.innerHTML = `✓ Position capturée — Niveau <strong>${niveauReel}</strong><br/>Latitude: ${latitude.toFixed(6)} · Longitude: ${longitude.toFixed(6)}<br/>Précision estimée : ${(precisionCm/100).toFixed(1)} m (${precisionCm} cm)`;
     },
-    () => { txt.textContent = 'Transaction initiée — ' + nom; }
+    (error) => {
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ Localisation refusée ou indisponible : ' + error.message;
+    },
+    { enableHighAccuracy: true, timeout: 15000 }
   );
 }
 
-// ═══════════════════════════════════════════
-// STATS & PORTEFEUILLE
-// ═══════════════════════════════════════════
-function updateStats() {
-  document.getElementById('stat-tok').textContent = STATE.stats.tok;
-  document.getElementById('stat-gtcp').textContent = STATE.stats.gtcp.toFixed(2);
-  document.getElementById('stat-burn').textContent = STATE.stats.burn.toFixed(4);
-  const pct = parseFloat((STATE.stats.gtcp/3141592*100).toFixed(6));
-  document.getElementById('supply-used').textContent = STATE.stats.gtcp.toFixed(2) + ' / 3 141 592 GTCπ';
-  document.getElementById('supply-pct').textContent = pct + '%';
-  document.getElementById('supply-bar').style.width = Math.min(pct,100) + '%';
+function ajouterPieceEnAttente() {
+  const fileInput = document.getElementById('df-file-input');
+  const docType = document.getElementById('df-doctype').value;
+  const file = fileInput.files[0];
+  if (!file) { alert('Sélectionnez un fichier.'); return; }
+  if (file.size > 2 * 1024 * 1024) { alert('Fichier trop volumineux (max 2 Mo).'); return; }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    // FileReader.readAsDataURL renvoie "data:...;base64,XXXX" — on ne garde que la partie encodée.
+    const base64 = reader.result.split(',')[1];
+    PIECES_EN_ATTENTE.push({ filename: file.name, docType, base64, mimeType: file.type || 'application/octet-stream' });
+    renderPiecesEnAttente();
+    fileInput.value = '';
+  };
+  reader.readAsDataURL(file);
 }
 
-function updatePortefeuille() {
-  document.getElementById('pf-parcelles').textContent = STATE.tokenizations.length;
-  document.getElementById('pf-valeur').textContent = STATE.stats.gtcp.toFixed(2);
-  document.getElementById('pf-txs').textContent = STATE.transactions.length;
-  const hist = document.getElementById('pf-history');
-  if (!STATE.transactions.length) { hist.textContent = 'Aucune transaction encore.'; return; }
-  hist.innerHTML = STATE.transactions.slice().reverse().slice(0,8).map(t=>
-    `<div class="hist-item"><div style="display:flex;justify-content:space-between;"><span style="color:var(--gold)">${t.memo}</span><span style="color:var(--green)">✓ ${t.amount} π</span></div><div style="color:var(--muted);font-size:9px;">burn: ${t.burn} GTCπ · Pioneer: ${t.pioneer||'?'} · ${t.timestamp?.slice(0,16)}</div></div>`
+function renderPiecesEnAttente() {
+  const el = document.getElementById('df-pieces-liste');
+  if (!PIECES_EN_ATTENTE.length) { el.textContent = 'Aucune pièce ajoutée pour l\'instant.'; return; }
+  el.innerHTML = PIECES_EN_ATTENTE.map((p, i) =>
+    `<div style="padding:3px 0;">📎 ${p.filename} (${p.docType}) <span style="color:var(--red);cursor:pointer;" onclick="retirerPiece(${i})">✕</span></div>`
   ).join('');
 }
+function retirerPiece(i) { PIECES_EN_ATTENTE.splice(i, 1); renderPiecesEnAttente(); }
 
-// ═══════════════════════════════════════════
-// ASSISTANT IA
-// ═══════════════════════════════════════════
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-  addChatMsg(msg, 'user');
-  addChatMsg('◌ Analyse...', 'ai', true);
+async function creerDossier() {
+  if (!STATE.user || !STATE.accessToken) { alert('Connectez-vous via π Connexion.'); return; }
+
+  const exactitude = document.getElementById('df-exactitude').checked;
+  const consentement = document.getElementById('df-consentement').checked;
+  if (!exactitude || !consentement) { alert('La déclaration d\'exactitude et le consentement sont obligatoires.'); return; }
+
+  const commune = document.getElementById('df-commune').value.trim();
+  const titulaire = document.getElementById('df-titulaire').value.trim();
+  if (!commune || !titulaire) { alert('Titulaire et commune sont obligatoires.'); return; }
+
+  const body = {
+    modeAcquisition: document.getElementById('df-mode').value,
+    titulaireDeclare: titulaire,
+    pays: 'Côte d\'Ivoire',
+    region: document.getElementById('df-region').value,
+    departement: document.getElementById('df-departement').value,
+    commune, village: document.getElementById('df-village').value,
+    referenceParcelle: document.getElementById('df-reference').value,
+    superficieDeclaree: document.getElementById('df-superficie').value,
+    declarationExactitude: true, consentementTraitement: true
+  };
+  if (DOSSIER_GEOLOC) {
+    body.latitude = DOSSIER_GEOLOC.latitude;
+    body.longitude = DOSSIER_GEOLOC.longitude;
+    body.precisionHorizontaleCm = DOSSIER_GEOLOC.precisionHorizontaleCm;
+    body.dateHeureMesureUTC = DOSSIER_GEOLOC.dateHeureMesureUTC;
+    body.methodeReleve = 'smartphone';
+  }
+
+  document.getElementById('btn-df-submit').textContent = '◌ Soumission...';
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system: `Tu es l'assistant expert de GeoTerraChain QFS, plateforme africaine de tokenisation RWA sur Pi Network et Stellar. Tu connais : GTCπ (supply 3 141 592, burn 0.5%), KYC Pioneer Pi Network, tokenisation foncière, zone UEMOA, Côte d'Ivoire. Le KYC est obligatoire pour toute tokenisation. Réponds en français, de façon concise et pratique.`,
-        messages: [{ role: 'user', content: msg }]
-      })
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=create`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify(body)
     });
-    const data = await res.json();
-    removeLastAiLoading();
-    addChatMsg(data.content?.[0]?.text || 'Erreur de réponse.', 'ai');
+    const data = await r.json();
+    const res = document.getElementById('df-create-result');
+    res.style.display = 'block';
+
+    if (r.ok) {
+      const dossierId = data.dossier.id;
+      // Upload séquentiel des pièces en attente, rattachées au nouveau dossier
+      for (const piece of PIECES_EN_ATTENTE) {
+        const upRes = await fetch(`${BACKEND_URL}/api/documents?action=upload`, {
+          method: 'POST', headers: authHeaders(),
+          body: JSON.stringify({ dossierId, filename: piece.filename, docType: piece.docType, contentBase64: piece.base64, mimeType: piece.mimeType })
+        });
+        const upData = await upRes.json();
+        if (upRes.ok) {
+          await fetch(`${BACKEND_URL}/api/dossiers?action=attachDocument`, {
+            method: 'POST', headers: authHeaders(),
+            body: JSON.stringify({ id: dossierId, docId: upData.docId })
+          });
+        }
+      }
+      res.style.color = '#2ECC71';
+      res.textContent = `✓ Dossier ${dossierId} créé — Niveau ${data.dossier.niveauG} · Statut N1 (Déposé) · ${PIECES_EN_ATTENTE.length} pièce(s) jointe(s)`;
+      PIECES_EN_ATTENTE = []; renderPiecesEnAttente(); DOSSIER_GEOLOC = null;
+      document.getElementById('geoloc-result').style.display = 'none';
+    } else {
+      res.style.color = '#E74C3C';
+      res.textContent = '✗ ' + (data.error || 'Erreur inconnue');
+    }
   } catch(e) {
-    removeLastAiLoading();
-    addChatMsg('Erreur: ' + e.message, 'ai');
+    alert('Erreur réseau : ' + e.message);
   }
+  document.getElementById('btn-df-submit').textContent = '✓ Soumettre le dossier';
 }
 
-function askQuick(q) { document.getElementById('chat-input').value = q; sendChat(); }
+const STATUT_LABELS = { N0:'Brouillon', N1:'Déposé', N2:'À compléter', N3:'En vérification', N4:'Vérif. documentaire', N5:'Vérif. administrative', N6:'Éligible à étude', N7:'Rejeté / Litigieux' };
+const STATUT_COLORS = { N0:'', N1:'blue', N2:'', N3:'blue', N4:'blue', N5:'blue', N6:'green', N7:'red' };
 
-function addChatMsg(text, role, loading) {
-  const box = document.getElementById('chat-box');
-  const div = document.createElement('div');
-  div.className = 'msg' + (loading ? ' ai-loading' : '');
-  div.innerHTML = `<div class="msg-icon ${role}">${role==='ai'?'◈':'π'}</div><div class="msg-text${role==='user'?' user-bg':''}">${text}</div>`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function removeLastAiLoading() {
-  const el = document.querySelector('.ai-loading');
-  if (el) el.remove();
-}
-
-// ═══════════════════════════════════════════
-// INIT AU CHARGEMENT
-// ═══════════════════════════════════════════
-window.addEventListener('load', async () => {
-  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1800);
+async function loadMesDossiers() {
+  const el = document.getElementById('dv-mine-list');
+  if (!STATE.accessToken) { el.innerHTML = '<div class="card" style="color:var(--muted);">Connectez-vous pour voir vos dossiers.</div>'; return; }
+  el.innerHTML = '<div style="color:var(--muted);">Chargement...</div>';
   try {
-    await Pi.init({ version: '2.0', sandbox: false });
-    STATE.sdkReady = true;
-    document.getElementById('sdk-badge').textContent = '● Pi SDK v2.0 ✓';
-    document.getElementById('sdk-badge').className = 'badge green';
-    document.getElementById('btn-auth').disabled = false;
-    document.getElementById('step2-card').style.opacity = '1';
-    document.getElementById('step1-result').textContent = '✓ SDK auto-initialisé';
-    document.getElementById('step1-result').style.color = '#2ECC71';
-    document.getElementById('step1-result').style.display = 'block';
-    document.getElementById('step1-card').style.borderColor = '#2ECC71';
-    document.getElementById('btn-init').textContent = '✓ SDK Prêt';
-  } catch(e) {
-    document.getElementById('sdk-badge').textContent = '● Hors Pi Browser';
-    document.getElementById('sdk-badge').className = 'badge red';
-  }
-  updateStats();
-  updatePortefeuille();
-  renderTokHistory();
-  updateBurnCalc();
-  updateBurnPreview();
-  refreshKYCTokeniser();
-  refreshKYCMarketplace();
-});
-</script>
-</body>
-</html>
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=mine`, { headers: authHeaders() });
+    const data = await r.json();
+    const dossiers = data.dossiers || [];
+    if (!dossiers.length) { el.innerHTML = '<div class="card" style="color:var(--muted);">Aucun dossier créé pour l\'instant.</div>'; return; }
+    el.innerHTML = dossiers.map(d => `
+      <div class="card-gold" style="margin-bottom:8px;cursor:pointer;" onclick="ouvrirDossier('${d.id}')">
+        <div class="card-title">${d.id}</div>
+        <div style="font-size:11px;color:#A0A090;">${d.modeAcquisition} · ${d.commune} · Niveau ${d.niveauG}</div>
+        <span class="tag ${STATUT_COLORS[d.statut]}">${d.statut} — ${STATUT_LABELS[d.statut]}</span>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div style="color:var(--red);">Erreur : ${e.message}</div>`; }
+}
+
+async function loadDossiersPublics() {
+  const el = document.getElementById('dv-public-list');
+  el.innerHTML = '<div style="color:var(--muted);">Chargement...</div>';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=listPublic`);
+    const data = await r.json();
+    const dossiers = data.dossiers || [];
+    if (!dossiers.length) { el.innerHTML = '<div class="card" style="color:var(--muted);">Aucun dossier public pour l\'instant.</div>'; return; }
+    el.innerHTML = dossiers.map(d => `
+      <div class="card" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;"><strong style="color:var(--gold);">${d.id}</strong><span class="tag ${STATUT_COLORS[d.statut]}">${d.statut}</span></div>
+        <div style="font-size:11px;color:#A0A090;">${d.modeAcquisition} · ${d.region || ''} ${d.commune} · Niveau ${d.niveauG}</div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div style="color:var(--red);">Erreur : ${e.message}</div>`; }
+}
+
+async function loadTousDossiers() {
+  const el = document.getElementById('dv-admin-list');
+  el.innerHTML = '<div style="color:var(--muted);">Chargement...</div>';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=listAll`, { headers: authHeaders() });
+    const data = await r.json();
+    if (!r.ok) { el.innerHTML = `<div style="color:var(--red);">✗ ${data.error}</div>`; return; }
+    const dossiers = data.dossiers || [];
+    if (!dossiers.length) { el.innerHTML = '<div class="card" style="color:var(--muted);">Aucun dossier.</div>'; return; }
+    el.innerHTML = dossiers.map(d => `
+      <div class="card-gold" style="margin-bottom:8px;cursor:pointer;" onclick="ouvrirDossier('${d.id}')">
+        <div class="card-title">${d.id}</div>
+        <div style="font-size:11px;color:#A0A090;">${d.titulaireDeclare} · ${d.commune} · Niveau ${d.niveauG}</div>
+        <span class="tag ${STATUT_COLORS[d.statut]}">${d.statut} — ${STATUT_LABELS[d.statut]}</span>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div style="color:var(--red);">Erreur : ${e.message}</div>`; }
+}
+
+async function ouvrirDossier(id) {
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=detail&id=${id}`, { headers: authHeaders() });
+    const data = await r.json();
+    if (!r.ok) { alert('✗ ' + data.error); return; }
+    CURRENT_DOSSIER = data.dossier;
+
+    document.querySelectorAll('.dv-view').forEach(v => v.style.display = 'none');
+    document.getElementById('dv-detail').style.display = 'block';
+    document.getElementById('dvd-id').textContent = CURRENT_DOSSIER.id;
+    document.getElementById('dvd-content').innerHTML = `
+      Mode d'acquisition : <strong style="color:var(--gold);">${CURRENT_DOSSIER.modeAcquisition}</strong><br/>
+      Titulaire déclaré : ${CURRENT_DOSSIER.titulaireDeclare}<br/>
+      Localisation : ${CURRENT_DOSSIER.commune}, ${CURRENT_DOSSIER.region || '—'}<br/>
+      Coordonnées : ${CURRENT_DOSSIER.latitude ?? '—'}, ${CURRENT_DOSSIER.longitude ?? '—'}<br/>
+      Précision : ${CURRENT_DOSSIER.precisionHorizontaleCm ?? '—'} cm — Niveau ${CURRENT_DOSSIER.niveauG}<br/>
+      Statut : <span class="tag ${STATUT_COLORS[CURRENT_DOSSIER.statut]}">${CURRENT_DOSSIER.statut} — ${STATUT_LABELS[CURRENT_DOSSIER.statut]}</span>
+    `;
+
+    const docsEl = document.getElementById('dvd-documents');
+    const dr = await fetch(`${BACKEND_URL}/api/documents?action=listMeta&dossierId=${id}`, { headers: authHeaders() });
+    const docsData = await dr.json();
+    const docs = docsData.documents || [];
+    docsEl.innerHTML = !docs.length ? 'Aucune pièce déposée.' : docs.map(d => `
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;">
+        <span>📎 ${d.filename} (${d.docType})</span>
+        <span class="btn-ghost" style="cursor:pointer;" onclick="consulterDocument('${d.docId}','${id}','${d.mimeType||'application/octet-stream'}','${d.filename}')">Voir (5 min)</span>
+      </div>`).join('');
+
+    const isAdminUi = STATE.user && UI_ADMIN_HINT.includes(STATE.user.username);
+    document.getElementById('dvd-admin-block').style.display = isAdminUi ? 'block' : 'none';
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+function backToDossierList() {
+  document.getElementById('dv-detail').style.display = 'none';
+  document.getElementById('dv-mine').style.display = 'block';
+  CURRENT_DOSSIER = null;
+}
+
+async function consulterDocument(docId, dossierId, mimeType, filename) {
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/documents?action=requestAccess`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ docId, dossierId })
+    });
+    const data = await r.json();
+    if (!r.ok) { alert('✗ ' + data.error); return; }
+    const viewRes = await fetch(`${BACKEND_URL}/api/documents?action=view&ticket=${data.ticket}`);
+    const viewData = await viewRes.json();
+    if (!viewRes.ok) { alert('✗ ' + viewData.error); return; }
+
+    const dataUri = `data:${mimeType};base64,${viewData.contentBase64}`;
+    const win = window.open();
+    if (!win) { alert('Autorisez les pop-ups pour consulter ce document.'); return; }
+
+    if (mimeType && mimeType.startsWith('image/')) {
+      win.document.write(`<title>${filename}</title><body style="margin:0;background:#111;"><img src="${dataUri}" style="max-width:100%;display:block;margin:auto;"/></body>`);
+    } else if (mimeType === 'application/pdf') {
+      win.document.write(`<title>${filename}</title><embed src="${dataUri}" type="application/pdf" width="100%" height="100%" style="position:fixed;top:0;left:0;border:none;"/>`);
+    } else {
+      win.document.write(`<title>${filename}</title><body style="font-family:sans-serif;padding:20px;">Type de fichier non prévisualisable directement.<br/><a href="${dataUri}" download="${filename}">Télécharger ${filename}</a></body>`);
+    }
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+async function changerStatutDossier() {
+  if (!CURRENT_DOSSIER) return;
+  const statut = document.getElementById('dvd-nouveau-statut').value;
+  const motif = document.getElementById('dvd-motif').value;
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/dossiers?action=updateStatus`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ id: CURRENT_DOSSIER.id, statut, motif })
+    });
+    const data = await r.json();
+    const res = document.getElementById('dvd-status-result');
+    res.style.display = 'block';
+    res.style.color = r.ok ? '#2ECC71' : '#E74C3C';
+    res.textContent = r.ok ? `✓ Statut mis à jour : ${statut}` : '✗ ' + (data.error || 'Erreur');
+    if (r.ok) ouvrirDossier(CURRENT_DOSSIER.id);
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+// ═══════════════════════════════════════════
+// GOUVERNANCE — CONVOCATIONS & PRÉSENCES
+// Le navigateur affiche l'interface, le SERVEUR décide des autorisations.
+// STATE.accessToken (délivré par Pi Network) est envoyé sur chaque action
+// sensible ; le backend le vérifie auprès de api.minepi.com/v2/me avant
+// d'autoriser quoi que ce soit. Les vérifications ci-dessous côté client
+// ne sont que des raccourcis d'affichage, jamais une sécurité réelle.
+// ═══════════════════════════════════════════
+const UI_ADMIN_HINT = ['Hilaila']; // affichage uniquement — le serveur revérifie tout
+let CONV_CACHE = [];
+let CURRENT_CONV = null;
+
+function authHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (STATE.accessToken) h['Authorization'] = 'Bearer ' + STATE.accessToken;
+  return h;
+}
+
+function toggleCreateConvocation() {
+  const v = document.getElementById('conv-create-view');
+  v.style.display = (v.style.display === 'none') ? 'block' : 'none';
+}
+
+function toggleSuspensionPanel() {
+  const v = document.getElementById('suspension-panel');
+  v.style.display = (v.style.display === 'none') ? 'block' : 'none';
+  if (v.style.display === 'block') chargerComptesSuspendus();
+}
+
+async function suspendreCompte() {
+  const targetUid = document.getElementById('susp-uid').value.trim();
+  if (!targetUid) { alert('Entrez un uid Pi.'); return; }
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/suspend-user?action=suspend`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ targetUid })
+    });
+    const data = await r.json();
+    const res = document.getElementById('susp-result');
+    res.style.display = 'block';
+    res.style.color = r.ok ? '#2ECC71' : '#E74C3C';
+    res.textContent = r.ok ? `✓ Compte ${targetUid} suspendu.` : '✗ ' + (data.error || 'Erreur');
+    if (r.ok) { document.getElementById('susp-uid').value = ''; chargerComptesSuspendus(); }
+  } catch(e) { alert('Erreur réseau : ' + e.message); }
+}
+
+async function reactiverCompte() {
+  const targetUid = document.getElementById('susp-uid').value.trim();
+  if (!targetUid) { alert('Entrez un uid Pi.'); return; }
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/suspend-user?action=unsuspend`, {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ targetUid })
+    });
+    const data = await r.json();
+    const res = document.getElementById('susp-result');
+    res.style.display = 'block';
+    res.style.color = r.ok ? '#2ECC71' : '#E74C3C';
+    res.textContent = r.ok ? `✓ Compte ${targetUid} réactivé.` : '✗ ' + (data.error || 'Erreur');
+    if (r.ok) { document.getElementById('susp-uid').value = ''; chargerComptesSuspendus(); }
+  } catch(e) { alert('Erreur réseau : ' + e.message); }
+}
+
+async function chargerComptesSuspendus() {
+  const el = document.getElementById('susp-list');
+  el.textContent = 'Chargement...';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/suspend-user?action=list`, { headers: authHeaders() });
+    const data = await r.json();
+    if (!r.ok) { el.innerHTML = `<span style="color:var(--red);">✗ ${data.error}</span>`; return; }
+    const uids = data.suspended || [];
+    el.innerHTML = !uids.length ? 'Aucun compte suspendu.' : uids.map(u => `<div style="padding:2px 0;font-family:monospace;">🔒 ${u}</div>`).join('');
+  } catch(e) { el.innerHTML = `<span style="color:var(--red);">Erreur : ${e.message}</span>`; }
+}
+
+async function loadConvocations() {
+  const loading = document.getElementById('conv-loading');
+  const list = document.getElementById('conv-list');
+  loading.style.display = 'flex';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/convocations?action=list`);
+    const data = await r.json();
+    CONV_CACHE = data.convocations || [];
+    loading.style.display = 'none';
+    if (!CONV_CACHE.length) {
+      list.innerHTML = '<div class="card" style="color:var(--muted);font-size:11px;">Aucune convocation publiée pour le moment.</div>';
+      return;
+    }
+    list.innerHTML = CONV_CACHE.map(c => `
+      <div class="card-gold" style="margin-bottom:10px;cursor:pointer;" onc
