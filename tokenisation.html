@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>GeoTerraChain QFS — Tokenisation Foncière</title>
+
+<!-- =========================================================
+     PI SDK
+     ========================================================= -->
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<!-- =========================================================
+     POLICES
+     ========================================================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet">
+
+<style>
+
+:root {
+    --bg: #050505;
+    --bg-soft: #0b0b0b;
+    --card: rgba(18,18,18,.88);
+
+    --gold: #d9a441;
+    --gold-light: #f3ca6c;
+    --gold-dark: #8d6720;
+
+    --white: #f7f7f7;
+    --muted: #9b9b9b;
+
+    --green: #32d583;
+    --red: #ff5d5d;
+    --blue: #5aa7ff;
+
+    --border: rgba(217,164,65,.25);
+    --border-soft: rgba(255,255,255,.08);
+
+    --shadow: 0 20px 60px rgba(0,0,0,.45);
+
+    --radius: 18px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% -20%, rgba(217,164,65,.13), transparent 40%),
+        linear-gradient(180deg, #050505 0%, #090909 100%);
+    color: var(--white);
+    font-family: Inter, Arial, sans-serif;
+    line-height: 1.5;
+}
+
+.app {
+    width: 100%;
+    max-width: 1180px;
+    margin: auto;
+    padding: 20px 14px 50px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    background: linear-gradient(135deg, var(--gold), #8b631b);
+    color: #000;
+    font-size: 24px;
+    font-weight: 900;
+    box-shadow: 0 8px 25px rgba(217,164,65,.18);
+}
+
+.brand-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.brand-subtitle {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(217,164,65,.06);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    margin-bottom: 22px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(217,164,65,.11), rgba(255,255,255,.025));
+    box-shadow: var(--shadow);
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    right: -100px;
+    top: -100px;
+    border-radius: 50%;
+    background: rgba(217,164,65,.09);
+    filter: blur(20px);
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(25px, 5vw, 42px);
+    line-height: 1.1;
+    margin-bottom: 10px;
+}
+
+.hero h1 span {
+    color: var(--gold-light);
+}
+
+.hero p {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.progress-container {
+    margin-bottom: 24px;
+}
+
+.progress {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.step {
+    position: relative;
+    min-width: 0;
+    text-align: center;
+}
+
+.step-number {
+    width: 38px;
+    height: 38px;
+    margin: auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 50%;
+    background: #101010;
+    color: #777;
+    font-size: 12px;
+    font-weight: 800;
+    transition: .25s ease;
+}
+
+.step-label {
+    margin-top: 7px;
+    color: #777;
+    font-size: 9px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.step.active .step-number {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #000;
+    box-shadow: 0 0 20px rgba(217,164,65,.28);
+}
+
+.step.active .step-label {
+    color: var(--gold-light);
+}
+
+.step.completed .step-number {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.step.completed .step-label {
+    color: #aaa;
+}
+
+.card {
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    background: linear-gradient(145deg, rgba(25,25,25,.94), rgba(11,11,11,.94));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 22px 22px 15px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.card-header h2 {
+    font-size: 20px;
+}
+
+.card-header p {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.card-body {
+    padding: 22px;
+}
+
+.step-panel {
+    display: none;
+}
+
+.step-panel.active {
+    display: block;
+    animation: fadeIn .25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pi-box {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    min-height: 290px;
+    padding: 30px;
+}
+
+.pi-symbol {
+    width: 80px;
+    height: 80px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f4d477, #a77721);
+    color: #000;
+    font-size: 45px;
+    font-weight: 900;
+    box-shadow: 0 0 40px rgba(217,164,65,.2);
+}
+
+.pi-box h3 {
+    font-size: 20px;
+    margin-bottom: 7px;
+}
+
+.pi-box p {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.btn {
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: #151515;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    border-color: var(--gold);
+    color: #080808;
+    box-shadow: 0 10px 30px rgba(217,164,65,.16);
+}
+
+.btn-danger {
+    border-color: rgba(255,93,93,.3);
+    color: #ff8d8d;
+}
+
+.btn-location {
+    border-color: rgba(90,167,255,.3);
+    color: #8cc4ff;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.actions-right {
+    display: flex;
+    gap: 10px;
+}
+
+.alert {
+    display: flex;
+    gap: 10px;
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    font-size: 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.025);
+}
+
+.alert.warning {
+    border-color: rgba(217,164,65,.25);
+    color: #eacb83;
+}
+
+.alert.success {
+    border-color: rgba(50,213,131,.25);
+    color: #78e8ad;
+}
+
+.alert.error {
+    border-color: rgba(255,93,93,.3);
+    color: #ff9292;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    color: #d0d0d0;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.required {
+    color: var(--gold-light);
+}
+
+input, select, textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 11px;
+    background: rgba(0,0,0,.42);
+    color: white;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border .2s ease, box-shadow .2s ease;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+select option {
+    background: #111;
+    color: white;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: rgba(217,164,65,.6);
+    box-shadow: 0 0 0 3px rgba(217,164,65,.08);
+}
+
+input::placeholder, textarea::placeholder {
+    color: #5f5f5f;
+}
+
+.location-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 8px;
+}
+
+.map-preview {
+    min-height: 190px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    border: 1px dashed rgba(217,164,65,.3);
+    border-radius: 14px;
+    background: radial-gradient(circle at center, rgba(217,164,65,.08), transparent 65%);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.coordinates {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.coordinate-box {
+    padding: 12px;
+    border-radius: 11px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.coordinate-box small {
+    display: block;
+    color: #777;
+    font-size: 9px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.coordinate-box strong {
+    font-size: 12px;
+    color: var(--gold-light);
+}
+
+.document-drop {
+    padding: 30px;
+    text-align: center;
+    border: 1px dashed rgba(217,164,65,.35);
+    border-radius: 15px;
+    background: rgba(217,164,65,.025);
+    cursor: pointer;
+}
+
+.document-drop strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.document-drop span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.file-list {
+    margin-top: 12px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 13px;
+    margin-top: 7px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.025);
+    font-size: 11px;
+}
+
+.burn-dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.metric {
+    padding: 17px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    background: rgba(255,255,255,.025);
+}
+
+.metric-label {
+    color: #777;
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+.metric-value {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.metric-value.gold {
+    color: var(--gold-light);
+}
+
+.metric-value.red {
+    color: #ff8b8b;
+}
+
+.burn-formula {
+    padding: 18px;
+    border: 1px solid rgba(217,164,65,.18);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(217,164,65,.06), transparent);
+    text-align: center;
+}
+
+.burn-formula strong {
+    display: block;
+    font-size: 18px;
+    color: var(--gold-light);
+    margin-bottom: 5px;
+}
+
+.burn-formula span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.summary {
+    display: grid;
+    gap: 9px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    font-size: 12px;
+}
+
+.summary-row span:first-child {
+    color: #777;
+}
+
+.summary-row span:last-child {
+    text-align: right;
+    color: #eee;
+    font-weight: 600;
+}
+
+.locked {
+    opacity: .5;
+    pointer-events: none;
+}
+
+.lock-message {
+    text-align: center;
+    padding: 30px 15px;
+    color: var(--muted);
+}
+
+.lock-icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.footer {
+    padding: 28px 10px 0;
+    text-align: center;
+    color: #626262;
+    font-size: 10px;
+    letter-spacing: .4px;
+}
+
+.footer strong {
+    color: #999;
+}
+
+.toast-container {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    z-index: 9999;
+    display: grid;
+    gap: 8px;
+    width: min(360px, calc(100vw - 30px));
+}
+
+.toast {
+    padding: 13px 15px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    background: rgba(15,15,15,.96);
+    box-shadow: 0 15px 40px rgba(0,0,0,.45);
+    font-size: 12px;
+    animation: toastIn .25s ease;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.toast.success {
+    border-color: rgba(50,213,131,.3);
+}
+
+.toast.error {
+    border-color: rgba(255,93,93,.3);
+}
+
+.loader {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,.2);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 720px) {
+    .app { padding: 14px 10px 35px; }
+    .header { align-items: flex-start; }
+    .status { font-size: 9px; }
+    .hero { padding: 21px; }
+    .hero h1 { font-size: 27px; }
+    .progress { gap: 2px; }
+    .step-number { width: 31px; height: 31px; font-size: 10px; }
+    .step-label { font-size: 7px; }
+    .card-body, .card-header { padding: 17px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: auto; }
+    .burn-dashboard { grid-template-columns: 1fr; }
+    .coordinates { grid-template-columns: 1fr; }
+    .actions { flex-direction: column-reverse; }
+    .actions-right { width: 100%; }
+    .actions-right .btn, .actions > .btn { width: 100%; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div class="brand">
+            <div class="logo">π</div>
+            <div>
+                <div class="brand-title">GeoTerraChain QFS</div>
+                <div class="brand-subtitle">Immobilier Foncier · Excellence Nationale</div>
+            </div>
+        </div>
+        <div class="status">
+            <span class="status-dot"></span>
+            PI MAINNET
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Module de <span>Tokenisation Foncière</span></h1>
+        <p>
+            Transformez votre actif foncier en dossier numérique
+            vérifiable et préparez sa tokenisation en GTCπ.
+            Authentification Pi obligatoire avant toute soumission.
+        </p>
+    </section>
+
+    <div class="progress-container">
+        <div class="progress">
+            <div class="step active" data-step-indicator="1">
+                <div class="step-number">1</div>
+                <div class="step-label">Connexion</div>
+            </div>
+            <div class="step" data-step-indicator="2">
+                <div class="step-number">2</div>
+                <div class="step-label">Identité</div>
+            </div>
+            <div class="step" data-step-indicator="3">
+                <div class="step-number">3</div>
+                <div class="step-label">Actif</div>
+            </div>
+            <div class="step" data-step-indicator="4">
+                <div class="step-number">4</div>
+                <div class="step-label">Localisation</div>
+            </div>
+            <div class="step" data-step-indicator="5">
+                <div class="step-number">5</div>
+                <div class="step-label">Documents</div>
+            </div>
+            <div class="step" data-step-indicator="6">
+                <div class="step-number">6</div>
+                <div class="step-label">Burn 0,5%</div>
+            </div>
+            <div class="step" data-step-indicator="7">
+                <div class="step-number">7</div>
+                <div class="step-label">Soumission</div>
+            </div>
+        </div>
+    </div>
+
+    <main class="card">
+
+        <section class="step-panel active" data-step="1">
+            <div class="card-header">
+                <h2>1. Accès Pioneer</h2>
+                <p>Authentification sécurisée avec Pi Network.</p>
+            </div>
+            <div class="card-body">
+                <div class="pi-box">
+                    <div class="pi-symbol">π</div>
+                    <h3 id="piStatus">Connexion Pi en cours…</h3>
+                    <p>
+                        La tokenisation reste verrouillée tant que
+                        le backend n'a pas confirmé votre identité Pi.
+                    </p>
+                    <button class="btn btn-primary" id="piLoginBtn" type="button">π Connexion</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="2">
+            <div class="card-header">
+                <h2>2. Vérification d'identité</h2>
+                <p>L'identité Pi doit être confirmée par le serveur.</p>
+            </div>
+            <div class="card-body">
+
+                <div id="kycAlert" class="alert warning">
+                    🔐 Vérification de l'identité en cours…
+                </div>
+
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Pioneer</span>
+                        <span id="pioneerName">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>UID Pi</span>
+                        <span id="pioneerUid">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Identité backend</span>
+                        <span id="kycStatus">Non confirmée</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Accès tokenisation</span>
+                        <span id="tokenizationAccess">Verrouillé</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(1)">← Retour</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" id="verifyKycBtn" type="button">
+                            Vérifier mon identité
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="3">
+            <div class="card-header">
+                <h2>3. Formulaire réel de l'actif</h2>
+                <p>Enregistrez les informations essentielles du bien.</p>
+            </div>
+            <div class="card-body">
+
+                <form id="assetForm">
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>Type <span class="required">*</span></label>
+                            <select id="assetType" required>
+                                <option value="">Sélectionner</option>
+                                <option value="terrain_agricole">Terrain agricole</option>
+                                <option value="terrain_rural">Terrain rural</option>
+                                <option value="terrain_urbain">Terrain urbain</option>
+                                <option value="immobilier">Immobilier</option>
+                                <option value="agro_pastoral">Agro-pastoral</option>
+                                <option value="mine">Mine</option>
+                                <option value="energie">Énergie</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nom / référence <span class="required">*</span></label>
+                            <input id="assetReference" type="text" placeholder="Ex : TER-ABJ-0001" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pays <span class="required">*</span></label>
+                            <select id="country" required>
+                                <option value="">Sélectionner</option>
+                                <option>Côte d'Ivoire</option>
+                                <option>Bénin</option>
+                                <option>Burkina Faso</option>
+                                <option>Guinée-Bissau</option>
+                                <option>Mali</option>
+                                <option>Niger</option>
+                                <option>Sénégal</option>
+                                <option>Togo</option>
+                                <option>Ghana</option>
+                                <option>Gabon</option>
+                                <option>Cameroun</option>
+                                <option>RDC</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Région / district <span class="required">*</span></label>
+                            <input id="region" type="text" placeholder="Région ou district" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ville / commune <span class="required">*</span></label>
+                            <input id="city" type="text" placeholder="Ville ou commune" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Localité / village</label>
+                            <input id="locality" type="text" placeholder="Village, quartier, localité">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Superficie (ha) <span class="required">*</span></label>
+                            <input id="area" type="number" min="0.0001" step="0.0001" placeholder="Ex : 10.50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Statut de propriété <span class="required">*</span></label>
+                            <select id="ownershipStatus" required>
+                                <option value="">Sélectionner</option>
+                                <option value="titre_foncier">Titre foncier</option>
+                                <option value="certificat_foncier">Certificat foncier</option>
+                                <option value="attestation">Attestation</option>
+                                <option value="coutumier">Droit coutumier</option>
+                                <option value="bail">Bail / concession</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input id="latitude" type="number" step="any" placeholder="Ex : 5.3364">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input id="longitude" type="number" step="any" placeholder="Ex : -4.0267">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Valeur estimée</label>
+                            <input id="estimatedValue" type="number" min="0" step="0.01" placeholder="Valeur estimée">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Unité</label>
+                            <select id="valueUnit">
+                                <option value="USD">USD</option>
+                                <option value="XOF">XOF</option>
+                                <option value="EUR">EUR</option>
+                                <option value="PI">Pi</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre cible de GTCπ <span class="required">*</span></label>
+                            <input id="gtcSupply" type="number" min="1" step="1" placeholder="Ex : 1000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lien document foncier</label>
+                            <input id="documentUrl" type="url" placeholder="https://...">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Description <span class="required">*</span></label>
+                            <textarea id="description" placeholder="Décrivez l'actif, sa situation, son usage et tout élément utile à la vérification." required></textarea>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(2)">← Retour</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" type="button" onclick="validateAssetAndNext()">Continuer →</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="4">
+            <div class="card-header">
+                <h2>4. Localisation de l'actif</h2>
+                <p>Géolocalisez précisément le terrain ou l'actif.</p>
+            </div>
+            <div class="card-body">
+
+                <div class="alert warning">
+                    📍 Les coordonnées doivent correspondre à
+                    l'emplacement réel de l'actif déclaré.
+                </div>
+
+                <div class="location-actions">
+                    <button class="btn btn-location" type="button" id="useLocationBtn">📍 Utiliser ma position</button>
+                    <button class="btn" type="button" onclick="showLocation()">Afficher la localisation</button>
+                </div>
+
+                <div class="map-preview" id="mapPreview">
+                    Les coordonnées de l'actif apparaîtront ici.
+                </div>
+
+                <div class="coordinates">
+                    <div class="coordinate-box">
+                        <small>Latitude</small>
+                        <strong id="displayLat">—</strong>
+                    </div>
+                    <div class="coordinate-box">
+                        <small>Longitude</small>
+                        <strong id="displayLng">—</strong>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(3)">← Retour</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" type="button" onclick="validateLocationAndNext()">Confirmer localisation →</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="5">
+            <div class="card-header">
+                <h2>5. Documents fonciers</h2>
+                <p>Ajoutez les pièces nécessaires à la vérification.</p>
+            </div>
+            <div class="card-body">
+
+                <div class="alert warning">
+                    📄 Les documents doivent être authentiques,
+                    lisibles et liés à l'actif déclaré.
+                </div>
+
+                <label class="document-drop" for="documents">
+                    <strong>📎 Ajouter les documents</strong>
+                    <span>PDF, JPG, PNG — sélection locale avant transmission au backend</span>
+                </label>
+
+                <input id="documents" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple hidden>
+
+                <div class="file-list" id="fileList"></div>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(4)">← Retour</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" type="button" onclick="validateDocumentsAndNext()">Continuer →</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="6">
+            <div class="card-header">
+                <h2>6. Burn 0,5 %</h2>
+                <p>Calcul automatique de la quantité destinée au mécanisme de burn.</p>
+            </div>
+            <div class="card-body">
+
+                <div class="burn-dashboard">
+                    <div class="metric">
+                        <div class="metric-label">Offre</div>
+                        <div class="metric-value gold" id="offerMetric">0 GTCπ</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Burn 0,5 %</div>
+                        <div class="metric-value red" id="burnMetric">0 GTCπ</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Offre nette</div>
+                        <div class="metric-value" id="netMetric">0 GTCπ</div>
+                    </div>
+                </div>
+
+                <div class="burn-formula">
+                    <strong id="burnFormula">0 × 0,005 = 0 GTCπ</strong>
+                    <span>Le backend doit recalculer cette valeur avant validation définitive.</span>
+                </div>
+
+                <div class="alert success" style="margin-top:15px;">
+                    ✓ Le calcul affiché est effectué avec une précision
+                    décimale déterministe côté navigateur.
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(5)">← Retour</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" type="button" onclick="confirmBurnAndNext()">Confirmer le calcul →</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="step-panel" data-step="7">
+            <div class="card-header">
+                <h2>7. Soumission</h2>
+                <p>Vérifiez votre demande avant transmission.</p>
+            </div>
+            <div class="card-body">
+
+                <div id="submissionAlert" class="alert warning">
+                    Vérifiez attentivement les informations
+                    avant de soumettre.
+                </div>
+
+                <div class="summary">
+                    <div class="summary-row"><span>Type</span><span id="summaryType">—</span></div>
+                    <div class="summary-row"><span>Référence</span><span id="summaryReference">—</span></div>
+                    <div class="summary-row"><span>Pays</span><span id="summaryCountry">—</span></div>
+                    <div class="summary-row"><span>Région / district</span><span id="summaryRegion">—</span></div>
+                    <div class="summary-row"><span>Ville / commune</span><span id="summaryCity">—</span></div>
+                    <div class="summary-row"><span>Localité</span><span id="summaryLocality">—</span></div>
+                    <div class="summary-row"><span>Superficie</span><span id="summaryArea">—</span></div>
+                    <div class="summary-row"><span>Statut propriété</span><span id="summaryOwnership">—</span></div>
+                    <div class="summary-row"><span>Latitude</span><span id="summaryLat">—</span></div>
+                    <div class="summary-row"><span>Longitude</span><span id="summaryLng">—</span></div>
+                    <div class="summary-row"><span>Valeur estimée</span><span id="summaryValue">—</span></div>
+                    <div class="summary-row"><span>Offre GTCπ</span><span id="summaryOffer">—</span></div>
+                    <div class="summary-row"><span>Burn 0,5 %</span><span id="summaryBurn">—</span></div>
+                    <div class="summary-row"><span>Offre nette</span><span id="summaryNet">—</span></div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="button" onclick="goToStep(6)">← Modifier</button>
+                    <div class="actions-right">
+                        <button class="btn btn-primary" id="submitBtn" type="button" onclick="submitTokenization()">
+                            ◈ SOUMETTRE À LA TOKENISATION
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <section class="card" style="margin-top:18px;">
+        <div class="card-body">
+            <div id="resultBox" class="lock-message">
+                <div class="lock-icon">🔒</div>
+                <strong>Aucune demande.</strong>
+                <div style="margin-top:6px;">Complétez les 7 étapes pour créer une demande.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+        <div class="card-header">
+            <h2>Ce que ce module fait réellement</h2>
+        </div>
+        <div class="card-body">
+            <p style="color:#999; font-size:12px; line-height:1.8;">
+                Le formulaire valide l'identité Pi auprès du backend,
+                collecte les données de l'actif, calcule exactement
+                0,5 % de l'offre GTCπ et enregistre une demande de tokenisation.
+                <br><br>
+                La conformité KYC documentaire complète est appliquée par
+                Pi Network lui-même au moment du paiement Mainnet : Pi Network
+                refuse la transaction si le Pioneer n'a pas de KYC validé côté Pi.
+                <br><br>
+                La création d'un token réellement on-chain nécessite
+                ensuite le mécanisme d'émission GTCπ déployé,
+                contrôlé et vérifié côté serveur.
+            </p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <strong>GeoTerraChain QFS</strong>
+        · PI NETWORK · NOTRE TERRE · NOTRE RICHESSE
+    </footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+
+/* ============================================================
+   CONFIGURATION
+   ============================================================
+
+   Backend réel : geoterrachain-qfs-vercel.vercel.app
+
+   Routes utilisées :
+
+   POST /api/pi-auth               → confirme l'identité Pi (uid, username)
+   POST /api/tokenization-identity → confirme l'identité Pi pour ce module
+   POST /api/tokenization/submit   → (à créer) enregistre la demande
+
+   Le backend doit :
+   - vérifier accessToken auprès de Pi ;
+   - vérifier l'identité ;
+   - recalculer le burn ;
+   - enregistrer la demande ;
+   - empêcher les doublons ;
+   - ne jamais faire confiance aux valeurs envoyées
+     uniquement par le navigateur.
+
+   La conformité KYC documentaire est appliquée par Pi Network
+   lui-même au moment du paiement Mainnet (pas d'endpoint KYC
+   public séparé n'existe côté Pi pour les apps tierces).
+
+   ============================================================ */
+
+const CONFIG = {
+
+    API_BASE_URL:
+        "https://geoterrachain-qfs-vercel.vercel.app",
+
+    PI_SANDBOX:
+        false,
+
+    PI_SCOPES: [
+        "username",
+        "payments"
+    ],
+
+    BURN_RATE:
+        0.005,
+
+    TOKEN_SYMBOL:
+        "GTCπ"
+
+};
+
+
+const state = {
+
+    currentStep: 1,
+    piAuthenticated: false,
+    piUser: null,
+    accessToken: null,
+    kycVerified: false,
+    files: [],
+
+    location: {
+        latitude: null,
+        longitude: null
+    },
+
+    burn: {
+        offer: 0,
+        amount: 0,
+        net: 0
+    },
+
+    submissionId: null
+
+};
+
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+
+function showToast(message, type = "success") {
+
+    const container = $("toastContainer");
+    const toast = document.createElement("div");
+
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => { toast.remove(); }, 4000);
+
+}
+
+
+function setAlert(element, message, type) {
+
+    if (!element) return;
+
+    element.className = `alert ${type}`;
+    element.textContent = message;
+
+}
+
+
+function goToStep(step) {
+
+    if (step < 1 || step > 7) return;
+
+    if (step >= 3 && !state.kycVerified) {
+
+        showToast(
+            "La tokenisation reste verrouillée tant que l'identité Pi n'est pas confirmée par le backend.",
+            "error"
+        );
+
+        step = 2;
+    }
+
+    state.currentStep = step;
+
+    document.querySelectorAll(".step-panel").forEach(panel => {
+        panel.classList.toggle("active", Number(panel.dataset.step) === step);
+    });
+
+    document.querySelectorAll("[data-step-indicator]").forEach(indicator => {
+        const number = Number(indicator.dataset.stepIndicator);
+        indicator.classList.toggle("active", number === step);
+        indicator.classList.toggle("completed", number < step);
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (step === 6) calculateBurn();
+    if (step === 7) buildSummary();
+
+}
+
+
+function initializePi() {
+
+    const status = $("piStatus");
+
+    try {
+
+        if (typeof window.Pi === "undefined") {
+            status.textContent = "Pi SDK indisponible";
+            showToast("Le Pi SDK n'est pas disponible dans cet environnement.", "error");
+            return;
+        }
+
+        Pi.init({ version: "2.0", sandbox: CONFIG.PI_SANDBOX });
+
+        status.textContent = "Pi prêt — connexion requise";
+
+    } catch (error) {
+
+        console.error("Pi init error:", error);
+        status.textContent = "Erreur d'initialisation Pi";
+
+    }
+
+}
+
+
+async function authenticatePi() {
+
+    const button = $("piLoginBtn");
+    const status = $("piStatus");
+
+    if (typeof window.Pi === "undefined") {
+        showToast("Pi SDK indisponible.", "error");
+        return;
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<span class="loader"></span>Connexion…';
+    status.textContent = "Authentification Pi en cours…";
+
+    try {
+
+        const authResult = await Pi.authenticate(CONFIG.PI_SCOPES, onIncompletePaymentFound);
+
+        if (!authResult || !authResult.user || !authResult.accessToken) {
+            throw new Error("Réponse Pi invalide.");
+        }
+
+        state.piAuthenticated = true;
+        state.piUser = authResult.user;
+        state.accessToken = authResult.accessToken;
+
+        $("pioneerName").textContent = authResult.user.username || "Pioneer";
+        $("pioneerUid").textContent = authResult.user.uid || "—";
+
+        status.textContent = `Connecté : @${authResult.user.username || "Pioneer"}`;
+
+        showToast("Connexion Pi réussie.", "success");
+
+        await verifyBackendIdentity();
+
+    } catch (error) {
+
+        console.error("Pi authentication error:", error);
+
+        state.piAuthenticated = false;
+        state.accessToken = null;
+
+        status.textContent = "Connexion Pi non confirmée";
+
+        showToast(error.message || "Connexion Pi annulée ou impossible.", "error");
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "π Connexion";
+
+    }
+
+}
+
+
+function onIncompletePaymentFound(payment) {
+    console.log("Paiement Pi incomplet :", payment);
+}
+
+
+/* ============================================================
+   VERIFICATION IDENTITE BACKEND (remplace l'ancien flux KYC)
+   ============================================================
+
+   Il n'existe pas d'endpoint Pi public permettant à une app
+   tierce d'interroger un statut KYC documentaire à l'avance.
+   Cette fonction confirme l'identité Pi réelle (uid, username)
+   via le backend, qui appelle lui-même api.minepi.com/v2/me.
+
+   La conformité KYC complète est appliquée par Pi Network au
+   moment du paiement Mainnet.
+
+   ============================================================ */
+
+async function verifyBackendIdentity() {
+
+    if (!state.accessToken) return;
+
+    setAlert($("kycAlert"), "Vérification de l'identité auprès du backend…", "warning");
+
+    $("verifyKycBtn").disabled = true;
+
+    try {
+
+        const response = await fetch(
+            `${CONFIG.API_BASE_URL}/api/tokenization-identity`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ accessToken: state.accessToken })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.identityConfirmed) {
+            throw new Error(data.error || data.message || "Le backend n'a pas confirmé l'identité Pi.");
+        }
+
+        state.kycVerified = true;
+
+        $("kycStatus").textContent = "✓ Confirmée";
+        $("kycStatus").style.color = "var(--green)";
+
+        $("tokenizationAccess").textContent = "✓ Autorisé";
+        $("tokenizationAccess").style.color = "var(--green)";
+
+        setAlert(
+            $("kycAlert"),
+            "✓ Identité Pi confirmée par le backend. La conformité KYC documentaire est appliquée par Pi Network au moment du paiement. Tokenisation déverrouillée.",
+            "success"
+        );
+
+        showToast("Identité Pi confirmée.", "success");
+
+        goToStep(3);
+
+    } catch (error) {
+
+        console.error("Backend verification error:", error);
+
+        state.kycVerified = false;
+
+        $("kycStatus").textContent = "Non confirmée";
+        $("tokenizationAccess").textContent = "Verrouillé";
+
+        setAlert(
+            $("kycAlert"),
+            error.message || "Le backend n'a pas pu confirmer votre identité Pi. La tokenisation reste verrouillée.",
+            "error"
+        );
+
+        goToStep(2);
+
+    } finally {
+
+        $("verifyKycBtn").disabled = false;
+
+    }
+
+}
+
+
+function validateAssetAndNext() {
+
+    const form = $("assetForm");
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const offer = Number($("gtcSupply").value);
+
+    if (!Number.isFinite(offer) || offer <= 0) {
+        showToast("Le nombre cible de GTCπ doit être supérieur à zéro.", "error");
+        return;
+    }
+
+    calculateBurn();
+    goToStep(4);
+
+}
+
+
+$("useLocationBtn").addEventListener("click", useCurrentLocation);
+
+
+function useCurrentLocation() {
+
+    if (!navigator.geolocation) {
+        showToast("La géolocalisation n'est pas supportée par cet appareil.", "error");
+        return;
+    }
+
+    const button = $("useLocationBtn");
+
+    button.disabled = true;
+    button.textContent = "📍 Localisation…";
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            state.location.latitude = lat;
+            state.location.longitude = lng;
+
+            $("latitude").value = lat.toFixed(8);
+            $("longitude").value = lng.toFixed(8);
+
+            updateLocationDisplay();
+
+            showToast("Position récupérée.", "success");
+
+            button.disabled = false;
+            button.textContent = "📍 Utiliser ma position";
+
+        },
+
+        error => {
+
+            console.error("Geolocation error:", error);
+
+            showToast("Impossible de récupérer votre position.", "error");
+
+            button.disabled = false;
+            button.textContent = "📍 Utiliser ma position";
+
+        },
+
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+
+    );
+
+}
+
+
+function updateLocationDisplay() {
+
+    const lat = Number($("latitude").value);
+    const lng = Number($("longitude").value);
+
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+
+        state.location.latitude = lat;
+        state.location.longitude = lng;
+
+        $("displayLat").textContent = lat.toFixed(8);
+        $("displayLng").textContent = lng.toFixed(8);
+
+        $("mapPreview").innerHTML = `
+            <div>
+                <strong style="color:#f3ca6c;">📍 Actif localisé</strong>
+                <br><br>
+                Latitude : ${lat.toFixed(8)}
+                <br>
+                Longitude : ${lng.toFixed(8)}
+            </div>
+            `;
+
+    }
+
+}
+
+
+function showLocation() {
+
+    updateLocationDisplay();
+
+    const lat = state.location.latitude;
+    const lng = state.location.longitude;
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        showToast("Aucune coordonnée valide.", "error");
+        return;
+    }
+
+    window.open(
+        `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat)}&mlon=${encodeURIComponent(lng)}#map=17/${encodeURIComponent(lat)}/${encodeURIComponent(lng)}`,
+        "_blank"
+    );
+
+}
+
+
+function validateLocationAndNext() {
+
+    updateLocationDisplay();
+
+    const lat = state.location.latitude;
+    const lng = state.location.longitude;
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        showToast("Veuillez renseigner ou récupérer les coordonnées de l'actif.", "error");
+        return;
+    }
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showToast("Les coordonnées GPS sont invalides.", "error");
+        return;
+    }
+
+    goToStep(5);
+
+}
+
+
+$("documents").addEventListener("change", event => {
+    state.files = Array.from(event.target.files);
+    displayFiles();
+});
+
+
+function displayFiles() {
+
+    const container = $("fileList");
+    container.innerHTML = "";
+
+    if (!state.files.length) return;
+
+    state.files.forEach((file) => {
+
+        const item = document.createElement("div");
+        item.className = "file-item";
+
+        const size = formatFileSize(file.size);
+
+        item.innerHTML = `
+            <span>📄 ${escapeHtml(file.name)}</span>
+            <span style="color:#777;">${size}</span>
+            `;
+
+        container.appendChild(item);
+
+    });
+
+}
+
+
+function formatFileSize(bytes) {
+
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function validateDocumentsAndNext() {
+
+    const url = $("documentUrl").value.trim();
+
+    if (!url && state.files.length === 0) {
+        showToast("Ajoutez au moins un document ou un lien vers le document foncier.", "error");
+        return;
+    }
+
+    goToStep(6);
+
+}
+
+
+function calculateBurn() {
+
+    const offer = Number($("gtcSupply").value);
+
+    if (!Number.isFinite(offer) || offer <= 0) {
+        state.burn = { offer: 0, amount: 0, net: 0 };
+        updateBurnUI();
+        return;
+    }
+
+    const burn = offer * CONFIG.BURN_RATE;
+    const net = offer - burn;
+
+    state.burn = { offer: offer, amount: burn, net: net };
+
+    updateBurnUI();
+
+}
+
+
+function formatNumber(number) {
+    return Number(number).toLocaleString("fr-FR", { maximumFractionDigits: 8 });
+}
+
+
+function updateBurnUI() {
+
+    $("offerMetric").textContent = `${formatNumber(state.burn.offer)} ${CONFIG.TOKEN_SYMBOL}`;
+    $("burnMetric").textContent = `${formatNumber(state.burn.amount)} ${CONFIG.TOKEN_SYMBOL}`;
+    $("netMetric").textContent = `${formatNumber(state.burn.net)} ${CONFIG.TOKEN_SYMBOL}`;
+
+    $("burnFormula").textContent =
+        `${formatNumber(state.burn.offer)} × 0,005 = ${formatNumber(state.burn.amount)} ${CONFIG.TOKEN_SYMBOL}`;
+
+}
+
+
+function confirmBurnAndNext() {
+
+    calculateBurn();
+
+    if (state.burn.offer <= 0) {
+        showToast("L'offre GTCπ est invalide.", "error");
+        return;
+    }
+
+    goToStep(7);
+
+}
+
+
+function buildSummary() {
+
+    const type = $("assetType").value;
+    const reference = $("assetReference").value;
+    const country = $("country").value;
+    const region = $("region").value;
+    const city = $("city").value;
+    const locality = $("locality").value;
+    const area = $("area").value;
+    const ownership = $("ownershipStatus").value;
+    const lat = $("latitude").value;
+    const lng = $("longitude").value;
+    const estimatedValue = $("estimatedValue").value;
+    const valueUnit = $("valueUnit").value;
+
+    $("summaryType").textContent = type || "—";
+    $("summaryReference").textContent = reference || "—";
+    $("summaryCountry").textContent = country || "—";
+    $("summaryRegion").textContent = region || "—";
+    $("summaryCity").textContent = city || "—";
+    $("summaryLocality").textContent = locality || "—";
+    $("summaryArea").textContent = area ? `${area} ha` : "—";
+    $("summaryOwnership").textContent = ownership || "—";
+    $("summaryLat").textContent = lat || "—";
+    $("summaryLng").textContent = lng || "—";
+    $("summaryValue").textContent = estimatedValue ? `${formatNumber(estimatedValue)} ${valueUnit}` : "—";
+
+    calculateBurn();
+
+    $("summaryOffer").textContent = `${formatNumber(state.burn.offer)} ${CONFIG.TOKEN_SYMBOL}`;
+    $("summaryBurn").textContent = `${formatNumber(state.burn.amount)} ${CONFIG.TOKEN_SYMBOL}`;
+    $("summaryNet").textContent = `${formatNumber(state.burn.net)} ${CONFIG.TOKEN_SYMBOL}`;
+
+}
+
+
+function buildPayload() {
+
+    calculateBurn();
+
+    return {
+
+        version: "GTC-TOKENIZATION-1.0",
+        network: "Pi Mainnet",
+        token: CONFIG.TOKEN_SYMBOL,
+
+        pi: {
+            uid: state.piUser?.uid || null,
+            username: state.piUser?.username || null,
+            accessToken: state.accessToken || null
+        },
+
+        identity: {
+            confirmedByBackend: state.kycVerified
+        },
+
+        asset: {
+            type: $("assetType").value,
+            reference: $("assetReference").value.trim(),
+            country: $("country").value,
+            region: $("region").value.trim(),
+            city: $("city").value.trim(),
+            locality: $("locality").value.trim(),
+            areaHa: Number($("area").value),
+            ownershipStatus: $("ownershipStatus").value,
+            latitude: Number($("latitude").value),
+            longitude: Number($("longitude").value),
+            estimatedValue: $("estimatedValue").value ? Number($("estimatedValue").value) : null,
+            valueUnit: $("valueUnit").value,
+            targetGtcPi: state.burn.offer,
+            documentUrl: $("documentUrl").value.trim(),
+            description: $("description").value.trim()
+        },
+
+        tokenomics: {
+            targetOffer: state.burn.offer,
+            burnRate: CONFIG.BURN_RATE,
+            burnAmount: state.burn.amount,
+            netOffer: state.burn.net
+        },
+
+        documents: state.files.map(file => ({
+            name: file.name,
+            type: file.type,
+            size: file.size
+        }))
+
+    };
+
+}
+
+
+function validateBeforeSubmit() {
+
+    if (!state.piAuthenticated) {
+        return { valid: false, message: "Connexion Pi requise." };
+    }
+
+    if (!state.kycVerified) {
+        return { valid: false, message: "Identité Pi non confirmée par le backend." };
+    }
+
+    const form = $("assetForm");
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return { valid: false, message: "Certaines informations de l'actif sont manquantes." };
+    }
+
+    const lat = Number($("latitude").value);
+    const lng = Number($("longitude").value);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return { valid: false, message: "Les coordonnées GPS sont obligatoires." };
+    }
+
+    if (!state.files.length && !$("documentUrl").value.trim()) {
+        return { valid: false, message: "Un document foncier est requis." };
+    }
+
+    if (state.burn.offer <= 0) {
+        return { valid: false, message: "L'offre GTCπ est invalide." };
+    }
+
+    return { valid: true };
+
+}
+
+
+async function submitTokenization() {
+
+    const validation = validateBeforeSubmit();
+
+    if (!validation.valid) {
+        setAlert($("submissionAlert"), validation.message, "error");
+        showToast(validation.message, "error");
+        return;
+    }
+
+    const button = $("submitBtn");
+
+    button.disabled = true;
+    button.innerHTML = '<span class="loader"></span>Transmission…';
+
+    setAlert($("submissionAlert"), "Transmission sécurisée de la demande au backend…", "warning");
+
+    try {
+
+        const payload = buildPayload();
+
+        const response = await fetch(
+            `${CONFIG.API_BASE_URL}/api/tokenization/submit`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || data.error || "Le serveur a refusé la demande.");
+        }
+
+        state.submissionId = data.requestId || data.id || null;
+
+        setAlert($("submissionAlert"), "✓ Demande enregistrée avec succès.", "success");
+
+        $("resultBox").innerHTML = `
+            <div class="lock-icon" style="color:var(--green);">✓</div>
+            <strong>Demande de tokenisation enregistrée</strong>
+            <div style="margin-top:8px; color:#999; font-size:11px;">
+                ${state.submissionId ? `Référence : ${escapeHtml(state.submissionId)}` : "Référence générée par le backend."}
+            </div>
+            <div style="margin-top:8px; color:#777; font-size:10px;">
+                État : EN ATTENTE DE VÉRIFICATION
+            </div>
+            `;
+
+        showToast("Demande de tokenisation enregistrée.", "success");
+
+    } catch (error) {
+
+        console.error("Tokenization submission error:", error);
+
+        setAlert($("submissionAlert"), error.message || "Erreur lors de la soumission.", "error");
+        showToast(error.message || "Impossible d'enregistrer la demande.", "error");
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "◈ SOUMETTRE À LA TOKENISATION";
+
+    }
+
+}
+
+
+$("piLoginBtn").addEventListener("click", authenticatePi);
+$("verifyKycBtn").addEventListener("click", verifyBackendIdentity);
+$("gtcSupply").addEventListener("input", calculateBurn);
+$("latitude").addEventListener("input", updateLocationDisplay);
+$("longitude").addEventListener("input", updateLocationDisplay);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    initializePi();
+    updateBurnUI();
+});
+
+</script>
+
+</body>
+</html>
