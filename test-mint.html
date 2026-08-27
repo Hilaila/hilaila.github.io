@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test isolé — Route mint.js</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; background:#0a0a0a; color:#eee; padding:20px; max-width:600px; margin:auto; }
+  h1 { color:#d9a441; font-size:16px; }
+  button { margin-top:14px; width:100%; padding:14px; background:#d9a441; border:none; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; }
+  button:disabled { opacity:0.4; }
+  #log { margin-top:20px; padding:14px; background:#111; border-radius:8px; font-size:12px; white-space:pre-wrap; word-break:break-all; min-height:60px; border:1px solid #333; }
+  .ok { color:#78e8ad; }
+  .err { color:#ff9292; }
+  .warn { color:#eacb83; }
+</style>
+</head>
+<body>
+
+<h1>🧪 Test isolé — POST /api/tokenization/mint</h1>
+<p style="font-size:12px;color:#888;">
+  Cet outil teste uniquement la route backend, indépendamment du parcours complet de tokenisation.
+  Il faut d'abord se connecter avec Pi pour obtenir un accessToken valide.
+</p>
+
+<button id="loginBtn">1. Se connecter avec Pi</button>
+<button id="testBtn" disabled>2. Tester le mint (montant test)</button>
+
+<div id="log">En attente…</div>
+
+<script>
+const API_BASE = "https://geoterrachain-qfs-vercel.vercel.app";
+let accessToken = null;
+
+const log = (msg, cls) => {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = msg;
+  el.appendChild(line);
+};
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  document.getElementById('log').innerHTML = '';
+  try {
+    if (typeof window.Pi === 'undefined') {
+      throw new Error('Pi SDK indisponible — ouvrez cette page dans Pi Browser.');
+    }
+    Pi.init({ version: '2.0', sandbox: false });
+    log('Authentification Pi en cours…', 'warn');
+    const auth = await Pi.authenticate(['username'], () => {});
+    accessToken = auth.accessToken;
+    log('✓ Connecté : @' + (auth.user.username || 'Pioneer'), 'ok');
+    log('UID : ' + auth.user.uid, 'ok');
+    document.getElementById('testBtn').disabled = false;
+  } catch (e) {
+    log('✗ Erreur connexion : ' + e.message, 'err');
+  }
+});
+
+document.getElementById('testBtn').addEventListener('click', async () => {
+  if (!accessToken) return;
+  const btn = document.getElementById('testBtn');
+  btn.disabled = true;
+  log('Appel de ' + API_BASE + '/api/tokenization/mint …', 'warn');
+  try {
+    const response = await fetch(API_BASE + '/api/tokenization/mint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        accessToken: accessToken,
+        requestId: 'TEST-MINT-' + Date.now(),
+        amount: 10
+      })
+    });
+    const data = await response.json();
+    log('Statut HTTP : ' + response.status, response.ok ? 'ok' : 'err');
+    log(JSON.stringify(data, null, 2), response.ok ? 'ok' : 'err');
+    if (data.explorerUrl) {
+      log('Voir sur Stellar Expert : ' + data.explorerUrl, 'ok');
+    }
+  } catch (e) {
+    log('✗ Erreur réseau : ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+
+</body>
+</html>
