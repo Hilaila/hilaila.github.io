@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pourquoi GeoTerraChain QFS ?</title>
+<meta name="description" content="Pourquoi GeoTerraChainQFS existe : pour les gouvernants, les institutions, les populations, les Pioneers et la diaspora africaine.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #050505;
+    --gold: #d9a441;
+    --gold-light: #f3ca6c;
+    --gold-dark: #8d6720;
+    --white: #f7f7f7;
+    --muted: #9b9b9b;
+    --green: #32d583;
+    --red: #ff5d5d;
+    --blue: #5aa7ff;
+    --purple: #a78bfa;
+    --border: rgba(217,164,65,.25);
+    --border-soft: rgba(255,255,255,.08);
+    --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% -10%, rgba(217,164,65,.13), transparent 45%), linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    color: var(--white);
+    font-family: Inter, Arial, sans-serif;
+    line-height: 1.5;
+}
+.wrap { width: 100%; max-width: 1100px; margin: auto; padding: 0 18px 60px; }
+
+header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,5,5,.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+}
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; max-width: 1100px; margin: auto; padding-left:18px; padding-right:18px; }
+.nav-links { display: none; gap: 20px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.nav-links a { color: var(--muted); text-decoration: none; }
+.nav-links a:hover { color: var(--gold-light); }
+@media (min-width: 900px) { .nav-links { display: flex; } }
+.logo-row img { height: 38px; width: auto; }
+.back-home { font-size: 11px; font-weight: 700; color: var(--muted); text-decoration: none; border: 1px solid rgba(255,255,255,.1); padding: 8px 12px; border-radius: 10px; white-space: nowrap; }
+.back-home:hover { color: var(--gold-light); border-color: var(--border); }
+
+.hero-intro { padding: 60px 0 30px; text-align: center; }
+.hero-intro .eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); font-weight: 800; }
+.hero-intro h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 900; margin-top: 12px; letter-spacing: -1px; color: var(--white); }
+.hero-intro p { max-width: 680px; margin: 18px auto 0; color: var(--gold); font-size: 14px; line-height: 1.8; font-weight: 600; }
+.stars-red { color: #b8102a; font-weight: 900; }
+
+.challenge-box {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: linear-gradient(145deg, rgba(217,164,65,.07), rgba(255,255,255,.01));
+    padding: 26px; margin: 30px 0; text-align: center;
+}
+.challenge-box p { font-size: 13.5px; color: var(--gold); font-weight: 600; line-height: 1.8; max-width: 700px; margin: 0 auto; }
+.challenge-box p strong { color: var(--gold-light); }
+
+/* AUDIENCE TABS */
+.audience-tabs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 40px 0 30px; }
+.audience-tab {
+    font-size: 11.5px; font-weight: 700; padding: 10px 16px; border-radius: 999px;
+    border: 1px solid var(--border-soft); background: rgba(255,255,255,.02); color: var(--muted);
+    cursor: pointer; transition: .15s ease;
+}
+.audience-tab.active { color: #080808; background: linear-gradient(135deg, var(--gold-light), var(--gold)); border-color: var(--gold); }
+
+.audience-panel { display: none; }
+.audience-panel.active { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px);} to { opacity:1; transform:translateY(0);} }
+
+.audience-card {
+    border: 1px solid var(--border-soft); border-radius: 20px;
+    background: linear-gradient(145deg, rgba(25,25,25,.92), rgba(11,11,11,.92));
+    padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.audience-icon { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; margin-bottom: 18px; }
+.audience-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.audience-card .tagline { font-size: 13px; color: var(--gold-light); font-weight: 700; margin-bottom: 18px; }
+.audience-card p { font-size: 13px; color: #cfcfcf; line-height: 1.8; margin-bottom: 14px; }
+.audience-card p:last-of-type { margin-bottom: 0; }
+
+.bridge-diagram {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
+    margin: 20px 0 4px; font-size: 12px; font-weight: 700;
+}
+.bridge-node { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: rgba(217,164,65,.06); color: var(--gold-light); }
+.bridge-arrow { color: var(--muted); }
+
+.pilot-note {
+    margin-top: 20px; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid var(--border); background: rgba(217,164,65,.05);
+    font-size: 11.5px; color: #eacb83; line-height: 1.7;
+}
+
+.cta-row { text-align: center; margin-top: 50px; }
+.btn-cta { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; padding: 14px 24px; border-radius: 12px; text-decoration: none; background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: #080808; }
+
+footer { border-top: 1px solid var(--border-soft); padding: 30px 0; margin-top: 40px; text-align: center; }
+footer .copy { font-size: 10.5px; color: #666; }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="nav">
+        <a href="index.html" class="logo-row"><img src="logo-final-complet.png" alt="GeoTerraChain QFS"></a>
+        <nav class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="index.html#actifs">Explorer</a>
+            <a href="investissement.html">Investir</a>
+            <a href="tokenisation.html">Tokeniser</a>
+            <a href="guide.html">Guide &amp; Aide</a>
+            <a href="investissement.html?tab=institution">Vérification</a>
+        </nav>
+        <a href="index.html" class="back-home">← Accueil</a>
+    </div>
+</header>
+
+<div class="wrap">
+
+    <div class="hero-intro">
+        <div class="eyebrow">Notre terre · Notre richesse</div>
+        <h1>Pourquoi GeoTerraChain QFS ?</h1>
+        <p>GeoTerraChainQFS existe pour construire une infrastructure numérique panafricaine capable de relier les territoires, les actifs réels, les données, les institutions, les populations, les Pioneers et la diaspora afin de mieux structurer et valoriser la richesse africaine.</p>
+        <p><span class="stars-red">★★★</span> permet de tokeniser un actif personnel, de participer au financement fractionné d'un projet, ou de soumettre un document — chaque action étant rattachée à un compte authentifié et traçable. L'objectif est de créer un pont numérique. C'est notre raison d'être.</p>
+        <p>L'Afrique possède un patrimoine considérable : terres agricoles, foncier, immobilier, énergie, ressources naturelles et projets économiques.</p>
+    </div>
+
+    <div class="challenge-box">
+        <p>
+            <span class="stars-red">★★★</span>Le défi n'est pas uniquement de posséder ces actifs.<br>
+            Le défi est de pouvoir les <strong>identifier, documenter, géolocaliser, structurer, vérifier, valoriser</strong> et les rendre accessibles à travers une infrastructure numérique moderne.
+        </p>
+    </div>
+
+    <!-- AUDIENCE TABS -->
+    <div class="audience-tabs">
+        <div class="audience-tab active" data-target="gouvernants" onclick="switchAudience('gouvernants')">🏛️ Gouvernants</div>
+        <div class="audience-tab" data-target="institutions" onclick="switchAudience('institutions')">🏦 Institutions</div>
+        <div class="audience-tab" data-target="populations" onclick="switchAudience('populations')">🌍 Populations</div>
+        <div class="audience-tab" data-target="pioneers" onclick="switchAudience('pioneers')">π Pioneers</div>
+        <div class="audience-tab" data-target="diaspora" onclick="switchAudience('diaspora')">✈️ Diaspora africaine</div>
+    </div>
+
+    <!-- GOUVERNANTS -->
+    <div class="audience-panel active" id="panel-gouvernants">
+        <div class="audience-card">
+            <div class="audience-icon" style="background:rgba(90,167,255,.12); color:var(--blue);">🏛️</div>
+            <h2>Pour les gouvernants</h2>
+            <div class="tagline">Une infrastructure de traçabilité, pas un contournement de l'État</div>
+            <p>GeoTerraChainQFS ne cherche pas à remplacer les administrations foncières ou les cadres réglementaires existants. Il propose une couche numérique de traçabilité et de structuration des actifs réels, qui peut appuyer les efforts de modernisation cadastrale et de formalisation économique déjà engagés dans plusieurs pays.</p>
+            <p>Chaque déclaration d'actif est horodatée, géolocalisée et vérifiable — une base de données utile pour orienter les politiques publiques en matière d'investissement, de foncier ou de financement participatif, dans le respect du cadre légal de chaque juridiction.</p>
+            <div class="pilot-note">⚠️ Aucune reconnaissance juridique automatique n'est conférée par la plateforme. Toute valeur légale d'un enregistrement dépend de sa reconnaissance par l'autorité compétente concernée.</div>
+        </div>
+    </div>
+
+    <!-- INSTITUTIONS -->
+    <div class="audience-panel" id="panel-institutions">
+        <div class="audience-card">
+            <div class="audience-icon" style="background:rgba(50,213,131,.12); color:var(--green);">🏦</div>
+            <h2>Pour les institutions</h2>
+            <div class="tagline">Un rôle actif de vérification et de confiance</div>
+            <p>Banques, coopératives, ONG de développement et cabinets juridiques peuvent devenir des institutions partenaires au sein de l'écosystème, chargées de vérifier l'authenticité des documents fonciers soumis par les porteurs de projet.</p>
+            <p>Ce rôle de tiers de confiance est déjà techniquement opérationnel dans la plateforme : chaque document soumis passe par un examen avant toute validation, avec traçabilité complète de la décision.</p>
+            <p>Les institutions financières peuvent également explorer, une fois le cadre réglementaire clarifié, la structuration de véhicules d'investissement légalement reconnus autour des projets hébergés sur la plateforme.</p>
+        </div>
+    </div>
+
+    <!-- POPULATIONS -->
+    <div class="audience-panel" id="panel-populations">
+        <div class="audience-card">
+            <div class="audience-icon" style="background:rgba(217,164,65,.12); color:var(--gold-light);">🌍</div>
+            <h2>Pour les populations</h2>
+            <div class="tagline">Un accès à un marché autrement inatteignable</div>
+            <p>Un agriculteur, un propriétaire foncier ou un porteur de projet local peut aujourd'hui documenter son actif et le présenter à des investisseurs potentiels bien au-delà de son cercle géographique habituel — sans dépendre uniquement d'intermédiaires locaux.</p>
+            <p>La traçabilité numérique protège également contre certaines formes de contestation ou de fraude sur les transactions, grâce à un journal d'audit conservé de façon continue.</p>
+            <p>Cet accès élargi reste progressif : il dépend de l'adoption réelle de la plateforme et de la confiance construite projet après projet, pas d'une promesse immédiate.</p>
+        </div>
+    </div>
+
+    <!-- PIONEERS -->
+    <div class="audience-panel" id="panel-pioneers">
+        <div class="audience-card">
+            <div class="audience-icon" style="background:rgba(167,139,250,.12); color:var(--purple);">π</div>
+            <h2>Pour les Pioneers</h2>
+            <div class="tagline">Une identité vérifiable, sans déplacement physique</div>
+            <p>Chaque Pioneer accède à GeoTerraChainQFS avec son identité Pi Network authentifiée en temps réel auprès des serveurs officiels de Pi — pas une simple déclaration, une vérification technique réelle à chaque connexion.</p>
+            <p>Cette identité vérifiée permet de tokeniser un actif personnel, de participer au financement fractionné d'un projet, ou de soumettre un document — chaque action étant rattachée à un compte authentifié et traçable.</p>
+            <p>La conformité KYC documentaire complète reste appliquée par Pi Network lui-même au moment du paiement Mainnet, en complément de cette vérification d'identité.</p>
+        </div>
+    </div>
+
+    <!-- DIASPORA -->
+    <div class="audience-panel" id="panel-diaspora">
+        <div class="audience-card">
+            <div class="audience-icon" style="background:rgba(217,164,65,.12); color:var(--gold-light);">✈️</div>
+            <h2>Pour la diaspora africaine</h2>
+            <div class="tagline">Investir dans la transformation de l'Afrique, depuis partout</div>
+            <p>La diaspora pourra découvrir des projets africains structurés et, lorsque les conditions juridiques et opérationnelles le permettent, participer à leur financement ou à leur développement.</p>
+            <p>L'objectif est de créer un pont numérique entre l'Afrique, sa diaspora, les capitaux disponibles, les projets porteurs et les actifs réels du continent.</p>
+
+            <div class="bridge-diagram">
+                <span class="bridge-node">Afrique</span>
+                <span class="bridge-arrow">↔</span>
+                <span class="bridge-node">Diaspora</span>
+                <span class="bridge-arrow">↔</span>
+                <span class="bridge-node">Capitaux</span>
+                <span class="bridge-arrow">↔</span>
+                <span class="bridge-node">Projets</span>
+                <span class="bridge-arrow">↔</span>
+                <span class="bridge-node">Actifs réels</span>
+            </div>
+
+            <div class="pilot-note">⚠️ Phase pilote. La participation financière à distance est actuellement testée en environnement contrôlé, dans l'attente de la confirmation du cadre réglementaire applicable au financement participatif transfrontalier.</div>
+        </div>
+    </div>
+
+    <div class="cta-row">
+        <a href="investissement.html" class="btn-cta">Découvrir les projets →</a>
+    </div>
+
+</div>
+
+<footer>
+    <div class="copy">© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network</div>
+</footer>
+
+<script>
+function switchAudience(target) {
+    document.querySelectorAll(".audience-tab").forEach(t => t.classList.toggle("active", t.dataset.target === target));
+    document.querySelectorAll(".audience-panel").forEach(p => p.classList.toggle("active", p.id === `panel-${target}`));
+    window.scrollTo({ top: document.querySelector(".audience-tabs").offsetTop - 20, behavior: "smooth" });
+}
+</script>
+
+</body>
+</html>
