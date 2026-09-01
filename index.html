@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoTerraChain QFS — Notre Terre · Notre Richesse</title>
+<meta name="description" content="La nouvelle infrastructure panafricaine de tokenisation des actifs réels sur Pi Network.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #050505;
+    --gold: #d9a441;
+    --gold-light: #f3ca6c;
+    --gold-dark: #8d6720;
+    --white: #f7f7f7;
+    --muted: #9b9b9b;
+    --green: #32d583;
+    --red: #ff5d5d;
+    --blue: #5aa7ff;
+    --purple: #a78bfa;
+    --border: rgba(217,164,65,.25);
+    --border-soft: rgba(255,255,255,.08);
+    --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% -10%, rgba(217,164,65,.13), transparent 45%), linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    color: var(--white);
+    font-family: Inter, Arial, sans-serif;
+    line-height: 1.5;
+}
+.wrap { width: 100%; max-width: 1200px; margin: auto; padding: 0 18px; }
+
+/* HEADER */
+header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5,5,5,.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+}
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+.logo-row { display: flex; align-items: center; gap: 10px; }
+.logo-row img { height: 40px; width: auto; }
+.nav-links { display: none; gap: 22px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.nav-links a { color: var(--muted); text-decoration: none; }
+.nav-links a:hover { color: var(--gold-light); }
+@media (min-width: 900px) { .nav-links { display: flex; } }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.pill { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); color: var(--gold-light); background: rgba(217,164,65,.06); white-space: nowrap; }
+.btn-nav { font-size: 11px; font-weight: 800; padding: 9px 14px; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn-nav.primary { background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: #080808; }
+
+/* PILOT BANNER */
+.pilot-banner {
+    background: rgba(217,164,65,.08); border-bottom: 1px solid var(--border);
+    padding: 10px 18px; text-align: center; font-size: 11.5px; color: #eacb83; line-height: 1.6;
+}
+.pilot-banner strong { color: var(--gold-light); }
+
+.pilot-banner-bottom {
+    display: flex; align-items: flex-start; gap: 16px;
+    border: 1.5px solid var(--gold); border-radius: 16px;
+    padding: 22px; margin: 50px 0;
+    background: linear-gradient(145deg, rgba(217,164,65,.1), rgba(217,164,65,.02));
+    box-shadow: 0 0 40px rgba(217,164,65,.08);
+}
+.pilot-icon {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(217,164,65,.15); border: 1px solid var(--gold);
+    display: grid; place-items: center; font-size: 20px;
+}
+.pilot-banner-bottom strong { display: block; font-size: 14px; color: var(--gold-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+.pilot-banner-bottom p { font-size: 12.5px; color: #d8c8a8; line-height: 1.7; }
+
+/* HERO */
+.hero { padding: 60px 0 40px; display: grid; gap: 40px; }
+@media (min-width: 900px) { .hero { grid-template-columns: 1.1fr .9fr; align-items: center; } }
+.hero h1 { font-size: clamp(34px, 6vw, 54px); font-weight: 900; line-height: 1.05; letter-spacing: -1px; }
+.hero h1 .accent { color: var(--gold-light); display: block; }
+.hero p.lead { margin-top: 18px; font-size: 15px; color: #d8d8d8; max-width: 520px; }
+.hero p.sub { margin-top: 12px; font-size: 13px; color: var(--muted); max-width: 520px; line-height: 1.7; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.badge { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border-soft); background: rgba(255,255,255,.02); }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn-cta { font-size: 13px; font-weight: 800; padding: 14px 22px; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.btn-cta.primary { background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: #080808; box-shadow: 0 14px 34px rgba(217,164,65,.22); }
+.btn-cta.secondary { border: 1px solid var(--border-soft); color: var(--white); background: rgba(255,255,255,.02); }
+
+.hero-visual { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 1/1; background: radial-gradient(circle at 50% 50%, rgba(217,164,65,.18), transparent 70%); display: grid; place-items: center; box-shadow: 0 0 80px rgba(217,164,65,.12), inset 0 0 60px rgba(217,164,65,.06); }
+.hero-visual::before { content:""; position:absolute; inset:0; background: conic-gradient(from 0deg, transparent, rgba(217,164,65,.15), transparent 30%); animation: rotate 12s linear infinite; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+.hero-visual img { position: relative; width: 78%; height: 78%; object-fit: contain; filter: drop-shadow(0 0 30px rgba(217,164,65,.25)); }
+
+/* SECTION HEADER */
+.section-head { text-align: center; margin: 70px 0 30px; }
+.section-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); font-weight: 800; }
+.section-title { font-size: clamp(22px, 4vw, 30px); font-weight: 800; margin-top: 8px; }
+
+/* ASSET CLASSES */
+.classes-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.class-card { border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 22px 18px; background: linear-gradient(145deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); text-align: center; }
+.class-icon { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 14px; font-size: 20px; }
+.class-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.class-card .tagline { font-size: 10.5px; color: var(--gold-light); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+.class-card p { font-size: 11.5px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.class-link { font-size: 11px; font-weight: 800; color: var(--white); text-decoration: none; border: 1px solid var(--border-soft); padding: 8px 14px; border-radius: 8px; display: inline-block; }
+
+/* PROJECTS HUB */
+.hub-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.hub-header .section-title { margin: 0; text-align: left; }
+.hub-header .section-eyebrow { text-align: left; display: block; }
+.link-all { font-size: 11.5px; font-weight: 700; color: var(--gold-light); text-decoration: none; border: 1px solid var(--border); padding: 8px 14px; border-radius: 999px; white-space: nowrap; }
+
+.projects-scroll { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.project-card { border: 1px solid var(--border-soft); border-radius: var(--radius); background: linear-gradient(145deg, rgba(25,25,25,.9), rgba(11,11,11,.9)); overflow: hidden; }
+.project-card .body { padding: 16px; }
+.project-status { display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; margin-bottom: 10px; }
+.project-status.pilote_testnet { background: rgba(217,164,65,.1); color: var(--gold-light); border: 1px solid var(--border); }
+.project-title { font-size: 14.5px; font-weight: 800; margin-bottom: 4px; }
+.project-loc { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+.pbar-bg { height: 7px; border-radius: 6px; background: rgba(255,255,255,.08); overflow: hidden; margin-bottom: 8px; }
+.pbar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold-light)); }
+.pstats { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-bottom: 14px; }
+.pstats strong { color: var(--gold-light); }
+.btn-invest { display: block; text-align: center; font-size: 11.5px; font-weight: 800; padding: 10px; border-radius: 10px; text-decoration: none; background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: #080808; }
+.empty-projects { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 12.5px; border: 1px dashed var(--border); border-radius: var(--radius); }
+
+/* HOW IT WORKS */
+.steps-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.step-pill { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border-soft); background: rgba(255,255,255,.02); }
+.step-btn { color: var(--white); text-decoration: none; transition: transform .15s ease, border-color .15s ease; cursor: pointer; }
+.step-btn:hover { transform: translateY(-2px); border-color: var(--gold); color: var(--gold-light); }
+.step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: #080808; display: grid; place-items: center; font-size: 10px; font-weight: 900; }
+
+/* CTA FOOTER BAND */
+.cta-band { display: grid; gap: 16px; margin: 60px 0; }
+@media (min-width: 800px) { .cta-band { grid-template-columns: 1fr 1fr; } }
+.cta-box { border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; background: linear-gradient(145deg, rgba(217,164,65,.06), rgba(255,255,255,.01)); }
+.cta-box.purple { border-color: rgba(167,139,250,.3); background: linear-gradient(145deg, rgba(167,139,250,.06), rgba(255,255,255,.01)); }
+.cta-box h3 { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+.cta-box p { font-size: 12px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+
+footer { border-top: 1px solid var(--border-soft); padding: 30px 0; margin-top: 40px; }
+.footer-inner { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+.footer-inner img { height: 30px; }
+.footer-inner .copy { font-size: 10.5px; color: #666; }
+
+.loading-text { text-align: center; padding: 30px; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="wrap nav">
+        <div class="logo-row">
+            <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+        </div>
+        <nav class="nav-links">
+            <a href="#accueil">Accueil</a>
+            <a href="pourquoi.html">Pourquoi ?</a>
+            <a href="#actifs">Explorer</a>
+            <a href="investissement.html">Investir</a>
+            <a href="tokenisation.html">Tokeniser</a>
+            <a href="guide-aide-geoterrachain-qfs.html">Guide &amp; Aide</a>
+            <a href="investissement.html?tab=institution">Vérification</a>
+        </nav>
+        <div class="nav-right">
+            <span class="pill">π Pi Mainnet</span>
+        </div>
+    </div>
+</header>
+
+<div class="wrap">
+
+    <!-- HERO -->
+    <section class="hero" id="accueil">
+        <div>
+            <h1>NOTRE TERRE.<span class="accent">NOTRE RICHESSE.</span></h1>
+            <p class="lead">La nouvelle infrastructure panafricaine de tokenisation des actifs réels.</p>
+            <p class="sub">GeoTerraChainQFS structure, vérifie et transforme les actifs réels africains en opportunités d'investissement fractionné sur Pi Network — en phase pilote, sous supervision réglementaire.</p>
+
+            <div class="hero-badges">
+                <span class="badge">π Pi Mainnet</span>
+                <span class="badge">🪙 GTCπ — Token natif</span>
+                <span class="badge">🔥 0,5% Burn système</span>
+            </div>
+
+            <div class="hero-cta">
+                <a href="investissement.html" class="btn-cta primary">Explorer les projets →</a>
+                <a href="tokenisation.html" class="btn-cta secondary">◈ Tokeniser un actif</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <img src="logo-final-complet.png" alt="GeoTerraChain QFS — Afrique connectée">
+        </div>
+    </section>
+
+    <!-- PARCOURS DE TOKENISATION - BOUTONS D'ÉTAPES -->
+    <div class="section-head" style="margin-top:50px;">
+        <div class="section-eyebrow">Parcours de tokenisation</div>
+        <div class="section-title">Transformez votre actif réel en fractions numériques sécurisées</div>
+    </div>
+
+    <div class="steps-row">
+        <a href="tokenisation.html?step=1" class="step-pill step-btn"><span class="step-num">1</span>Connexion Pi</a>
+        <a href="tokenisation.html?step=2" class="step-pill step-btn"><span class="step-num">2</span>Identité backend</a>
+        <a href="tokenisation.html?step=3" class="step-pill step-btn"><span class="step-num">3</span>Actif RWA</a>
+        <a href="tokenisation.html?step=4" class="step-pill step-btn"><span class="step-num">4</span>GPS &amp; localisation</a>
+        <a href="tokenisation.html?step=5" class="step-pill step-btn"><span class="step-num">5</span>Documents &amp; vérification</a>
+        <a href="tokenisation.html?step=6" class="step-pill step-btn"><span class="step-num">6</span>Calcul GTCπ</a>
+        <a href="tokenisation.html?step=7" class="step-pill step-btn"><span class="step-num">7</span>Paiement Pi &amp; soumission</a>
+    </div>
+
+    <!-- 5 CLASSES D'ACTIFS -->
+    <div class="section-head" id="actifs">
+        <div class="section-eyebrow">Classes d'actifs</div>
+        <div class="section-title">5 catégories d'actifs réels tokenisables</div>
+    </div>
+
+    <div class="classes-grid">
+        <div class="class-card">
+            <div class="class-icon" style="background:rgba(90,167,255,.12); color:var(--blue);">🏠</div>
+            <div class="tagline">TerraEstate™</div>
+            <h3>Immobilier &amp; foncier</h3>
+            <p>Terrains, logements, bureaux, centres commerciaux, complexes résidentiels.</p>
+            <a href="investissement.html" class="class-link">Explorer →</a>
+        </div>
+        <div class="class-card">
+            <div class="class-icon" style="background:rgba(50,213,131,.12); color:var(--green);">🌾</div>
+            <div class="tagline">TerraAgro™</div>
+            <h3>Agriculture &amp; agro-pastoral</h3>
+            <p>Terres agricoles, plantations, élevage, agro-industrie, coopératives.</p>
+            <a href="investissement.html" class="class-link">Explorer →</a>
+        </div>
+        <div class="class-card">
+            <div class="class-icon" style="background:rgba(217,164,65,.12); color:var(--gold-light);">⚡</div>
+            <div class="tagline">TerraEnergy™</div>
+            <h3>Énergies &amp; infrastructures</h3>
+            <p>Solaire, centrales, stockage, réseaux, électrification énergétique.</p>
+            <a href="investissement.html" class="class-link">Explorer →</a>
+        </div>
+        <div class="class-card">
+            <div class="class-icon" style="background:rgba(167,139,250,.12); color:var(--purple);">⛏️</div>
+            <div class="tagline">TerraMine™</div>
+            <h3>Ressources minières</h3>
+            <p>Exploration, exploitation, transformation, infrastructures minières.</p>
+            <a href="investissement.html" class="class-link">Explorer →</a>
+        </div>
+        <div class="class-card">
+            <div class="class-icon" style="background:rgba(217,164,65,.12); color:var(--gold-light);">🏙️</div>
+            <div class="tagline">TerraMix™</div>
+            <h3>Projets mixtes &amp; multi-actifs</h3>
+            <p>Combinaison d'actifs immobiliers, agricoles, énergétiques et autres secteurs.</p>
+            <a href="investissement.html" class="class-link">Explorer →</a>
+        </div>
+    </div>
+
+    <!-- INVESTMENT HUB - DONNÉES RÉELLES -->
+    <div class="hub-header" style="margin-top:70px;">
+        <div>
+            <span class="section-eyebrow">Investment Hub</span>
+            <div class="section-title">Projets réels en cours de financement</div>
+        </div>
+        <a href="investissement.html" class="link-all">Voir tous les projets →</a>
+    </div>
+
+    <div id="projectsContainer">
+        <div class="loading-text">Chargement des projets…</div>
+    </div>
+
+    <!-- CTA BAND -->
+    <div class="cta-band">
+        <div class="cta-box">
+            <h3>◈ Tokeniser un actif</h3>
+            <p>Transformez votre actif réel en fractions numériques sécurisées et accessibles aux investisseurs, avec identité Pi vérifiée et audit backend.</p>
+            <a href="tokenisation.html" class="btn-cta primary">Commencer maintenant →</a>
+        </div>
+        <div class="cta-box purple">
+            <h3>📊 Mon tableau de bord</h3>
+            <p>Suivez vos investissements, vos fractions et vos projets en temps réel — connexion Pi requise.</p>
+            <a href="investissement.html" class="btn-cta secondary">Accéder au dashboard →</a>
+        </div>
+    </div>
+
+    <!-- PHASE PILOTE - BANDEAU FINAL -->
+    <div class="pilot-banner-bottom">
+        <div class="pilot-icon">⚠️</div>
+        <div>
+            <strong>Phase pilote</strong>
+            <p>GeoTerraChain QFS teste actuellement ses mécanismes de tokenisation et d'investissement fractionné en environnement contrôlé. L'ouverture publique au grand investissement est soumise à l'autorisation de l'autorité compétente.</p>
+        </div>
+    </div>
+
+</div>
+
+<footer id="apropos">
+    <div class="wrap footer-inner">
+        <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+        <div class="copy">© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network</div>
+        <div class="copy">Plateforme en phase pilote. Les fractions représentent une participation économique au projet et ne constituent pas un titre de propriété légal tant que la structure juridique applicable n'a pas été confirmée.</div>
+    </div>
+</footer>
+
+<script>
+const API_BASE_URL = "https://geoterrachain-qfs-vercel.vercel.app";
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+}
+
+function formatNumber(n) {
+    return Number(n || 0).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+}
+
+async function loadRealProjects() {
+    const container = document.getElementById("projectsContainer");
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/investment/list-projects`);
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "Erreur de chargement.");
+
+        const projects = data.projects || [];
+
+        if (projects.length === 0) {
+            container.innerHTML = `<div class="empty-projects">Aucun projet publié pour l'instant. Soyez le premier à en créer un.<br><br><a href="investissement.html" class="btn-invest" style="display:inline-block; margin-top:10px;">Créer un projet →</a></div>`;
+            return;
+        }
+
+        container.innerHTML = `<div class="projects-scroll">${projects.map(renderProjectCard).join("")}</div>`;
+
+    } catch (error) {
+        container.innerHTML = `<div class="empty-projects">Projets momentanément indisponibles.</div>`;
+        console.error(error);
+    }
+}
+
+function renderProjectCard(p) {
+    const objectif = Number(p.objectif_gtcp) || 0;
+    const collecte = Number(p.collecte_gtcp) || 0;
+    const pct = objectif > 0 ? Math.min(100, (collecte / objectif) * 100) : 0;
+
+    return `
+        <div class="project-card">
+            <div class="body">
+                <span class="project-status ${escapeHtml(p.statut)}">${escapeHtml(p.statut).replace(/_/g, " ")}</span>
+                <div class="project-title">${escapeHtml(p.titre)}</div>
+                <div class="project-loc">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")}</div>
+                <div class="pbar-bg"><div class="pbar-fill" style="width:${pct}%;"></div></div>
+                <div class="pstats">
+                    <span>Collecté : <strong>${formatNumber(collecte)} GTCπ</strong></span>
+                    <span>${pct.toFixed(1)}%</span>
+                </div>
+                <a href="investissement.html" class="btn-invest">Voir le projet →</a>
+            </div>
+        </div>
+        `;
+}
+
+document.addEventListener("DOMContentLoaded", loadRealProjects);
+</script>
+
+</body>
+</html>
