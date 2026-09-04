@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mon Espace Pioneer — GeoTerraChain QFS</title>
+
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #050505;
+    --gold: #d9a441;
+    --gold-light: #f3ca6c;
+    --gold-dark: #8d6720;
+    --white: #f7f7f7;
+    --muted: #9b9b9b;
+    --green: #32d583;
+    --red: #ff5d5d;
+    --blue: #5aa7ff;
+    --purple: #a78bfa;
+    --border: rgba(217,164,65,.25);
+    --border-soft: rgba(255,255,255,.08);
+    --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% -20%, rgba(217,164,65,.13), transparent 40%), linear-gradient(180deg, #050505 0%, #090909 100%);
+    color: var(--white);
+    font-family: Inter, Arial, sans-serif;
+    line-height: 1.5;
+}
+.app { width: 100%; max-width: 900px; margin: auto; padding: 20px 14px 50px; }
+
+header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+.logo-row img { height: 34px; width: auto; }
+.back-home { font-size: 11px; font-weight: 700; color: var(--muted); text-decoration: none; border: 1px solid rgba(255,255,255,.1); padding: 8px 12px; border-radius: 10px; white-space: nowrap; }
+.back-home:hover { color: var(--gold-light); border-color: var(--border); }
+
+.gate { text-align: center; padding: 60px 20px; }
+.gate .seal { width: 60px; height: 60px; margin: 0 auto 18px; border: 1px solid var(--border); border-radius: 50%; display: grid; place-items: center; font-size: 26px; background: rgba(217,164,65,.06); }
+.gate p { color: var(--muted); font-size: 13px; max-width: 380px; margin: 0 auto 20px; line-height: 1.7; }
+
+.btn { min-height: 46px; padding: 0 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: #151515; color: white; font-size: 12px; font-weight: 800; cursor: pointer; }
+.btn-primary { background: linear-gradient(135deg, var(--gold-light), var(--gold)); border-color: var(--gold); color: #080808; box-shadow: 0 10px 26px rgba(217,164,65,.18); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.profile-card {
+    display: flex; align-items: center; gap: 16px; padding: 22px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: linear-gradient(145deg, rgba(217,164,65,.08), rgba(255,255,255,.01));
+    margin-bottom: 24px;
+}
+.profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-light), var(--gold)); display: grid; place-items: center; font-size: 22px; font-weight: 900; color: #080808; flex-shrink: 0; }
+.profile-name { font-size: 16px; font-weight: 800; }
+.profile-meta { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+.role-badge { display: inline-block; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--gold-light); background: rgba(217,164,65,.08); margin-top: 8px; }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.stat-card { border: 1px solid var(--border-soft); border-radius: 12px; padding: 16px; text-align: center; background: rgba(255,255,255,.015); }
+.stat-card strong { display: block; font-size: 22px; color: var(--gold-light); }
+.stat-card span { display: block; font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border-soft); overflow-x: auto; }
+.tab { padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.item-card { border: 1px solid var(--border-soft); border-radius: 14px; padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,.02); }
+.item-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
+.item-meta { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.item-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+.item-row:last-of-type { border-bottom: none; }
+.item-row span:first-child { color: #777; }
+.item-row span:last-child { color: #eee; font-weight: 600; text-align: right; }
+
+.status-pill { display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; margin-bottom: 8px; }
+.status-pill.pending_review, .status-pill.pilote_testnet, .status-pill.en_attente { background: rgba(217,164,65,.1); color: var(--gold-light); border: 1px solid var(--border); }
+.status-pill.verifie, .status-pill.confirme { background: rgba(50,213,131,.1); color: #78e8ad; border: 1px solid rgba(50,213,131,.3); }
+.status-pill.rejete { background: rgba(255,93,93,.1); color: #ff9292; border: 1px solid rgba(255,93,93,.3); }
+
+.empty-state { text-align: center; padding: 34px 15px; color: var(--muted); font-size: 12px; }
+.empty-state .icon { font-size: 26px; margin-bottom: 10px; display: block; }
+
+.link-btn { display: inline-block; margin-top: 10px; font-size: 11.5px; font-weight: 800; color: var(--gold-light); text-decoration: none; border: 1px solid var(--border); padding: 8px 14px; border-radius: 999px; }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+        <a href="index.html" class="logo-row"><img src="logo-final-complet.png" alt="GeoTerraChain QFS"></a>
+        <a href="index.html" class="back-home">← Accueil</a>
+    </header>
+
+    <div id="content">
+        <div class="gate">
+            <div class="seal">π</div>
+            <p>Connectez-vous avec Pi pour accéder à votre espace Pioneer — vos actifs, vos projets et vos participations.</p>
+            <button class="btn btn-primary" id="piLoginBtn">π Se connecter avec Pi</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const CONFIG = {
+    API_BASE_URL: "https://geoterrachain-qfs-vercel.vercel.app",
+    PI_SANDBOX: false,
+    PI_SCOPES: ["username", "payments"]
+};
+
+let accessToken = null;
+
+function $(id) { return document.getElementById(id); }
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+}
+
+function formatNumber(n) {
+    return Number(n || 0).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+}
+
+function formatDate(iso) {
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+async function loginAndLoad() {
+    const btn = $("piLoginBtn");
+    if (typeof window.Pi === "undefined") {
+        alert("Pi SDK indisponible — ouvrez cette page dans Pi Browser.");
+        return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Connexion…";
+    try {
+        Pi.init({ version: "2.0", sandbox: CONFIG.PI_SANDBOX });
+        const auth = await Pi.authenticate(CONFIG.PI_SCOPES, () => {});
+        accessToken = auth.accessToken;
+        await loadDashboard();
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Connexion Pi impossible.");
+        btn.disabled = false;
+        btn.textContent = "π Se connecter avec Pi";
+    }
+}
+
+async function loadDashboard() {
+    $("content").innerHTML = '<div class="empty-state"><span class="icon">⏳</span>Chargement de votre espace…</div>';
+
+    try {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/investment/documents`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ accessToken, action: "dashboard" })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "Erreur de chargement.");
+
+        renderDashboard(data);
+
+    } catch (error) {
+        $("content").innerHTML = `<div class="empty-state">✗ ${escapeHtml(error.message)}</div>`;
+    }
+}
+
+function renderDashboard(data) {
+    const profile = data.profile || {};
+    const actifs = data.actifs || [];
+    const projets = data.projets || [];
+    const participations = data.participations || [];
+
+    const initial = (profile.pi_username || "P").charAt(0).toUpperCase();
+
+    $("content").innerHTML = `
+        <div class="profile-card">
+            <div class="profile-avatar">${escapeHtml(initial)}</div>
+            <div>
+                <div class="profile-name">@${escapeHtml(profile.pi_username || "Pioneer")}</div>
+                <div class="profile-meta">Membre depuis ${formatDate(profile.created_at)}</div>
+                ${profile.role === "institution_verificatrice" ? '<span class="role-badge">Institution vérificatrice</span>' : ''}
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card"><strong>${actifs.length}</strong><span>Actifs déclarés</span></div>
+            <div class="stat-card"><strong>${projets.length}</strong><span>Projets créés</span></div>
+            <div class="stat-card"><strong>${participations.length}</strong><span>Participations</span></div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="actifs" onclick="switchTab('actifs')">Mes actifs</div>
+            <div class="tab" data-tab="projets" onclick="switchTab('projets')">Mes projets</div>
+            <div class="tab" data-tab="participations" onclick="switchTab('participations')">Mes participations</div>
+        </div>
+
+        <div class="panel active" id="panel-actifs">${renderActifs(actifs)}</div>
+        <div class="panel" id="panel-projets">${renderProjets(projets)}</div>
+        <div class="panel" id="panel-participations">${renderParticipations(participations)}</div>
+        `;
+}
+
+function renderActifs(actifs) {
+    if (actifs.length === 0) {
+        return `<div class="empty-state"><span class="icon">🗂️</span>Aucun actif déclaré pour l'instant.<br><a href="tokenisation.html" class="link-btn">Tokeniser un actif →</a></div>`;
+    }
+    return actifs.map(e => {
+        const p = e.payload || {};
+        const asset = p.asset || {};
+        return `
+            <div class="item-card">
+                <span class="status-pill ${escapeHtml(p.status || 'pending_review')}">${escapeHtml((p.status || 'PENDING_REVIEW').replace(/_/g, ' '))}</span>
+                <div class="item-title">${escapeHtml(asset.reference || p.requestId || 'Actif')}</div>
+                <div class="item-meta">${escapeHtml(asset.type || '—')} · ${escapeHtml(asset.city || asset.region || '—')}</div>
+                <div class="item-row"><span>Référence</span><span>${escapeHtml(p.requestId || '—')}</span></div>
+                <div class="item-row"><span>Offre GTCπ</span><span>${formatNumber(p.tokenomics ? p.tokenomics.targetOffer : 0)}</span></div>
+                <div class="item-row"><span>Soumis le</span><span>${formatDate(e.created_at)}</span></div>
+            </div>
+            `;
+    }).join("");
+}
+
+function renderProjets(projets) {
+    if (projets.length === 0) {
+        return `<div class="empty-state"><span class="icon">💎</span>Aucun projet créé pour l'instant.<br><a href="investissement.html?tab=create" class="link-btn">Créer un projet →</a></div>`;
+    }
+    return projets.map(p => {
+        const objectif = Number(p.objectif_gtcp) || 0;
+        const collecte = Number(p.collecte_gtcp) || 0;
+        const pct = objectif > 0 ? Math.min(100, (collecte / objectif) * 100) : 0;
+        return `
+            <div class="item-card">
+                <span class="status-pill ${escapeHtml(p.statut)}">${escapeHtml(p.statut.replace(/_/g, ' '))}</span>
+                <div class="item-title">${escapeHtml(p.titre)}</div>
+                <div class="item-meta">${escapeHtml(p.type_projet || '—')} · ${escapeHtml(p.commune || '—')}</div>
+                <div class="item-row"><span>Collecté</span><span>${formatNumber(collecte)} / ${formatNumber(objectif)} GTCπ</span></div>
+                <div class="item-row"><span>Progression</span><span>${pct.toFixed(1)}%</span></div>
+                <div class="item-row"><span>Créé le</span><span>${formatDate(p.created_at)}</span></div>
+            </div>
+            `;
+    }).join("");
+}
+
+function renderParticipations(participations) {
+    if (participations.length === 0) {
+        return `<div class="empty-state"><span class="icon">📊</span>Aucune participation pour l'instant.<br><a href="investissement.html" class="link-btn">Explorer les projets →</a></div>`;
+    }
+    return participations.map(p => {
+        const projet = p.gtc_projets_collectifs || {};
+        return `
+            <div class="item-card">
+                <span class="status-pill ${escapeHtml(p.payment_statut || 'confirme')}">${escapeHtml((p.payment_statut || 'confirme').replace(/_/g, ' '))}</span>
+                <div class="item-title">${escapeHtml(projet.titre || 'Projet')}</div>
+                <div class="item-meta">${escapeHtml(projet.type_projet || '—')} · ${escapeHtml(projet.commune || '—')}</div>
+                <div class="item-row"><span>Unités détenues</span><span>${formatNumber(p.unites)}</span></div>
+                <div class="item-row"><span>Montant investi</span><span>${formatNumber(p.montant_gtcp)} GTCπ</span></div>
+                <div class="item-row"><span>Part du projet</span><span>${Number(p.pourcentage_parts || 0).toFixed(2)}%</span></div>
+                <div class="item-row"><span>Investi le</span><span>${formatDate(p.created_at)}</span></div>
+            </div>
+            `;
+    }).join("");
+}
+
+function switchTab(tab) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === `panel-${tab}`));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    $("piLoginBtn").addEventListener("click", loginAndLoad);
+});
+</script>
+
+</body>
+</html>
