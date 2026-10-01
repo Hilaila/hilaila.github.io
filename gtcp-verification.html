@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GeoTerraChain QFS — Vérification officielle GTCπ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Georgia,serif;background:#0A0A0A;color:#D8D0C0;min-height:100vh;padding:20px;}
+.wrap{max-width:640px;margin:0 auto;}
+.header{text-align:center;padding:24px 0;border-bottom:1px solid #1A1A1A;margin-bottom:24px;}
+.logo{font-size:16px;color:#C9A84C;letter-spacing:3px;text-transform:uppercase;}
+.sub{font-size:10px;color:#8B6914;letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
+.card{background:#0D0D0D;border:1px solid #8B6914;padding:20px;margin-bottom:16px;}
+.card.legacy{border-color:#333;}
+.card-title{font-size:11px;color:#C9A84C;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;border-bottom:1px solid #1A1A1A;padding-bottom:10px;}
+.card.legacy .card-title{color:#777;}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1A1A1A;font-size:13px;gap:12px;}
+.row:last-child{border-bottom:none;}
+.label{color:#666;flex-shrink:0;}
+.value{color:#D8D0C0;text-align:right;word-break:break-all;font-family:monospace;font-size:11px;}
+.value.gold{color:#C9A84C;font-family:Georgia,serif;font-size:13px;}
+.status{display:inline-block;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.4);color:#2ECC71;padding:6px 14px;font-size:11px;letter-spacing:1px;margin-top:8px;}
+.status.pending{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.4);color:#C9A84C;}
+.status.legacy{background:rgba(120,120,120,0.1);border-color:#444;color:#999;}
+.diagram{text-align:center;font-family:monospace;font-size:12px;color:#8B6914;line-height:2.2;margin:20px 0;}
+.diagram strong{color:#C9A84C;}
+.note{font-size:12px;color:#A0A090;line-height:1.8;margin-bottom:10px;}
+.footer{text-align:center;font-size:9px;color:#555;margin-top:24px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo">GeoTerraChain QFS</div>
+    <div class="sub">Identité officielle du token</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Déclaration d'identité — en vigueur</div>
+    <div class="row"><span class="label">Nom</span><span class="value gold">GTCπ</span></div>
+    <div class="row"><span class="label">Code Stellar (Asset Code)</span><span class="value gold">GTCP</span></div>
+    <div class="row"><span class="label">Réseau</span><span class="value gold">Stellar Testnet</span></div>
+    <div class="row"><span class="label">Issuer officiel</span><span class="value">GCGNJ2AFI6CCJ5YB7ASS5CDDVLOSWYNPNLUBGJENJDS37EXS7EIRTAWX</span></div>
+    <div class="row"><span class="label">Projet</span><span class="value gold">GeoTerraChain QFS</span></div>
+    <div style="text-align:center;margin-top:10px;">
+      <span class="status">✓ Issuer officiellement déclaré par GeoTerraChain QFS</span>
+    </div>
+  </div>
+
+  <div class="diagram">
+    GeoTerraChain QFS<br/>│<br/>▼<br/>
+    <strong>GTCπ</strong><br/>│<br/>▼<br/>
+    Asset Code : <strong>GTCP</strong><br/>│<br/>▼<br/>
+    Issuer : <strong>GCGNJ2…RTAWX</strong><br/>│<br/>▼<br/>
+    Stellar Testnet
+  </div>
+
+  <div class="card">
+    <div class="card-title">Preuve on-chain</div>
+    <p class="note">
+      Une entrée <code>manageData</code> signée par cette adresse sera publiée ici dès
+      qu'une première tokenisation réussie l'aura confirmée en conditions réelles.
+    </p>
+    <span class="status pending">⏳ En attente de la première transaction réussie avec cet Issuer</span>
+    <a style="display:block;text-align:center;background:none;border:1px solid #444;color:#999;text-decoration:none;padding:10px;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:12px;" href="https://stellar.expert/explorer/testnet/account/GCGNJ2AFI6CCJ5YB7ASS5CDDVLOSWYNPNLUBGJENJDS37EXS7EIRTAWX" target="_blank" rel="noopener">
+      Voir le compte sur StellarExpert →
+    </a>
+  </div>
+
+  <div class="card legacy">
+    <div class="card-title">Émetteurs antérieurs — Testnet, abandonnés</div>
+    <p class="note">
+      Deux adresses précédentes ont été abandonnées lors de la mise en place de ce système
+      de vérification : la première suite à la perte de sa clé de contrôle, la seconde suite
+      à une erreur de saisie manuelle de sa clé secrète. Aucune des deux n'est utilisée par
+      GeoTerraChain QFS.
+    </p>
+    <div class="row"><span class="label">1ʳᵉ adresse (clé perdue)</span><span class="value">GBVS7HTLIMKAJFRUCNBARRF3II644CRXG7CYN6XNZYN4POI6FTBEBSDR</span></div>
+    <div class="row"><span class="label">2ᵉ adresse (clé mal saisie)</span><span class="value">GBLW3E3J7QRWWTRTUPYME7BQLPL3JS5WHNFLXRZBRQUYATWPHLPO7OZN</span></div>
+    <span class="status legacy">Historique — ne pas utiliser comme référence</span>
+  </div>
+
+  <div class="footer">
+    © 2026 GeoTerraChain QFS · Cette page atteste d'une déclaration d'identité de projet sur Stellar Testnet.<br/>
+    Elle ne constitue pas une reconnaissance juridique et ne confère aucun titre foncier.
+  </div>
+
+</div>
+</body>
+</html>
