@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoTerraChain QFS — Notre Terre · Notre Richesse</title>
+<meta name="description" content="GeoTerraChain QFS : infrastructure panafricaine de tokenisation d'actifs réels sur Pi Network. Phase pilote.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+  :root {
+    --bg:#000008; --gold:#C9A84C; --gold-2:#E8C872; --gold-3:#8B6914;
+    --text:#E8E2D4; --muted:#9A9384; --line:rgba(201,168,76,.18);
+    --glass:rgba(255,255,255,.035); --green:#3DDC97; --violet:#7B5CD6;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'Space Grotesk', system-ui, sans-serif; line-height:1.65; font-size:16px;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(201,168,76,.14), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 100% 25%, rgba(123,92,214,.14), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,168,76,.08), transparent 70%);
+    background-attachment:fixed; min-height:100vh;
+  }
+  body.locked { overflow:hidden; }
+  a { color:var(--gold-2); text-decoration:none; }
+  img { max-width:100%; display:block; }
+
+  /* Écran de démarrage (splash) */
+  #splash { position:fixed; inset:0; z-index:100; display:grid; place-items:center; text-align:center; padding:24px; transition:opacity .7s ease, visibility .7s;
+    background:radial-gradient(circle at 50% 42%, rgba(201,168,76,.16), transparent 55%), radial-gradient(circle at 50% 100%, rgba(123,92,214,.18), transparent 60%), var(--bg); }
+  #splash.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .spl-logo { position:relative; width:min(64vw, 300px); aspect-ratio:1; margin:0 auto; display:grid; place-items:center; }
+  .spl-logo::before { content:""; position:absolute; inset:-14%; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.38), rgba(201,168,76,.10) 45%, transparent 70%); animation:halo 2.2s ease-in-out infinite; }
+  .spl-logo::after { content:""; position:absolute; inset:-6%; border-radius:50%; border:1px solid rgba(232,200,114,.35); border-top-color:var(--gold-2); animation:tourne 3.2s linear infinite; }
+  .spl-logo img { position:relative; width:100%; height:100%; object-fit:cover; border-radius:50%; animation:entree .9s cubic-bezier(.2,.8,.2,1) both; filter:drop-shadow(0 0 28px rgba(201,168,76,.45)); }
+  .spl-words { margin-top:28px; font-family:'Playfair Display', Georgia, serif; font-size:clamp(20px, 6vw, 34px); font-weight:700; letter-spacing:.01em; }
+  .spl-words span { display:inline-block; opacity:0; transform:translateY(10px); animation:mot .5s ease forwards; color:var(--text); }
+  .spl-words span.g { color:var(--gold-2); }
+  .spl-words span:nth-child(1){animation-delay:.55s} .spl-words span:nth-child(2){animation-delay:.8s} .spl-words span:nth-child(3){animation-delay:1.05s}
+  .spl-words span:nth-child(4){animation-delay:1.3s} .spl-words span:nth-child(5){animation-delay:1.55s}
+  .spl-tag { margin-top:10px; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.16em; white-space:nowrap; color:var(--muted); opacity:0; animation:mot .6s ease 1.8s forwards; }
+  .spl-bar { width:min(56vw, 220px); height:2px; margin:22px auto 0; border-radius:2px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .spl-bar i { display:block; height:100%; width:0; background:linear-gradient(90deg, var(--gold-3), var(--gold-2)); animation:charge 2.4s ease forwards; }
+  @keyframes halo { 0%,100% { transform:scale(.92); opacity:.7; } 50% { transform:scale(1.06); opacity:1; } }
+  @keyframes tourne { to { transform:rotate(360deg); } }
+  @keyframes entree { from { opacity:0; transform:scale(.82); } to { opacity:1; transform:scale(1); } }
+  @keyframes mot { to { opacity:1; transform:translateY(0); } }
+  @keyframes charge { to { width:100%; } }
+
+  /* Barre du haut */
+  .top { position:sticky; top:0; z-index:20; background:rgba(0,0,8,.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
+  .top::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px; max-width:1100px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--text); min-width:0; }
+  .brand img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold); box-shadow:0 0 18px rgba(201,168,76,.25); flex-shrink:0; }
+  .brand b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:17px; color:var(--gold-2); font-weight:700; line-height:1.15; white-space:nowrap; }
+  .brand small { display:block; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .pi-btn { border:0; cursor:pointer; border-radius:999px; padding:10px 16px; font:700 14px 'Space Grotesk', system-ui, sans-serif; white-space:nowrap;
+    background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; box-shadow:0 0 22px rgba(201,168,76,.35); }
+  .pi-btn.ok { background:rgba(61,220,151,.12); color:var(--green); border:1px solid rgba(61,220,151,.4); box-shadow:none; }
+  .pi-btn:disabled { opacity:.8; }
+  nav.menu { display:flex; gap:8px; overflow-x:auto; padding:0 16px 10px; max-width:1100px; margin:0 auto; scrollbar-width:none; }
+  nav.menu::-webkit-scrollbar { display:none; }
+  nav.menu a { flex-shrink:0; font-size:13.5px; color:var(--text); padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--glass); }
+  nav.menu a.on { color:#000008; background:var(--gold-2); border-color:var(--gold-2); }
+
+  /* Bandeau défilant */
+  .ticker { overflow:hidden; border-bottom:1px solid var(--line); background:rgba(201,168,76,.03); }
+  .ticker div { display:inline-block; white-space:nowrap; padding:8px 0; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); letter-spacing:.08em; animation:defile 34s linear infinite; }
+  .ticker span { color:var(--green); }
+  @keyframes defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+  main { max-width:1100px; margin:0 auto; padding:0 16px; }
+  section { padding:44px 0 8px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.2em; color:var(--gold);
+    border:1px solid var(--line); border-radius:999px; padding:6px 14px; background:var(--glass); text-transform:uppercase; }
+  .eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+  h2 { font-family:'Playfair Display', Georgia, serif; font-size:clamp(26px, 6vw, 38px); line-height:1.15; margin:14px 0 18px; color:var(--text); }
+  .gold { background:linear-gradient(120deg, #F4E7C1 0%, var(--gold-2) 40%, var(--gold) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* Hero */
+  .hero { display:grid; gap:28px; align-items:center; padding-top:40px; }
+  .hero h1 { font-family:'Playfair Display', Georgia, serif; font-size:clamp(42px, 11vw, 76px); line-height:1.02; font-weight:800; margin:18px 0 14px; }
+  .lead { font-size:19px; color:var(--text); font-weight:500; }
+  .sub { color:var(--muted); margin-top:10px; max-width:620px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .chip { font-family:'JetBrains Mono', monospace; font-size:12px; padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:var(--glass); }
+  .chip.live { color:var(--green); border-color:rgba(61,220,151,.35); }
+  .ctas { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:13px 20px; border-radius:14px; font-weight:700; font-size:15px; border:1px solid var(--line); color:var(--text); background:var(--glass); }
+  .btn.primary { background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; border:0; box-shadow:0 0 26px rgba(201,168,76,.3); }
+  .hero-visual { position:relative; display:grid; place-items:center; }
+  .hero-visual::before { content:""; position:absolute; width:78%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, rgba(201,168,76,.22), transparent 65%); filter:blur(10px); }
+  .hero-visual img { position:relative; width:min(320px, 78%); border-radius:50%; border:1px solid var(--line); box-shadow:0 0 60px rgba(201,168,76,.18); }
+
+  /* Cartes en verre */
+  .card { background:var(--glass); border:1px solid var(--line); border-radius:18px; padding:20px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
+
+  /* Parcours */
+  .steps { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
+  .step { display:flex; align-items:center; gap:12px; padding:14px; border-radius:14px; border:1px solid var(--line); background:var(--glass); color:var(--text); }
+  .step span { font-family:'JetBrains Mono', monospace; color:var(--gold); border:1px solid var(--line); border-radius:8px; padding:2px 8px; font-size:13px; }
+
+  /* Classes d'actifs */
+  .asset .tag { font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.12em; color:var(--gold); }
+  .asset h3 { font-family:'Playfair Display', Georgia, serif; font-size:20px; margin:6px 0 6px; }
+  .asset p { color:var(--muted); font-size:14.5px; }
+  .asset a { display:inline-block; margin-top:12px; font-weight:600; }
+
+  /* Projets */
+  .head-row { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .projects-scroll { display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); }
+  .project h3 { font-size:17px; margin:8px 0 2px; }
+  .project .meta { color:var(--muted); font-size:13.5px; }
+  .project-status { display:inline-block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:6px; border:1px solid var(--line); color:var(--gold); }
+  .project-status.pilote_testnet { color:var(--green); border-color:rgba(61,220,151,.35); }
+  .progress { height:8px; border-radius:99px; background:rgba(255,255,255,.07); overflow:hidden; margin:14px 0 8px; }
+  .progress i { display:block; height:100%; background:linear-gradient(90deg, var(--gold-3), var(--gold-2)); }
+  .stats { display:flex; justify-content:space-between; font-size:13.5px; color:var(--muted); }
+  .project a { display:inline-block; margin-top:12px; font-weight:600; }
+  .empty-projects { text-align:center; color:var(--muted); }
+  .empty-projects .btn { margin-top:12px; }
+
+  /* CTA */
+  .cta h3 { font-family:'Playfair Display', Georgia, serif; font-size:22px; margin-bottom:8px; }
+  .cta p { color:var(--muted); margin-bottom:14px; }
+  .cta.violet { background:linear-gradient(135deg, rgba(123,92,214,.22), rgba(123,92,214,.06)); border-color:rgba(123,92,214,.4); }
+
+  /* Alertes */
+  .alert { border-color:rgba(201,168,76,.55); background:linear-gradient(135deg, rgba(201,168,76,.12), rgba(201,168,76,.03)); box-shadow:0 0 32px rgba(201,168,76,.1); }
+  .alert h3 { font-family:'Playfair Display', Georgia, serif; font-size:20px; margin-bottom:6px; color:var(--gold-2); }
+  .alert p { color:var(--text); }
+
+  footer { max-width:1100px; margin:44px auto 0; padding:28px 16px 48px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:13px; }
+  footer img { width:54px; margin:0 auto 12px; border-radius:50%; }
+  footer nav { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 18px; margin:12px 0; }
+  footer .sig { font-family:'JetBrains Mono', monospace; letter-spacing:.18em; font-size:11px; color:var(--gold-3); text-transform:uppercase; margin-top:10px; }
+
+  #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:50; max-width:90%; padding:12px 16px; border-radius:12px; background:#14121c; border:1px solid var(--line); color:var(--text); font-size:14px; display:none; }
+
+  @media (min-width:860px) { .hero { grid-template-columns:1.2fr .8fr; } }
+  @media (max-width:420px) { .brand small { display:none; } .brand b { font-size:15px; } .pi-btn { padding:9px 12px; font-size:13px; } }
+  @media (prefers-reduced-motion: reduce) { .ticker div { animation:none; } html { scroll-behavior:auto; } #splash, .spl-logo::before, .spl-logo::after, .spl-logo img, .spl-words span, .spl-tag, .spl-bar i { animation:none !important; transition:none; } .spl-words span, .spl-tag { opacity:1; transform:none; } .spl-bar i { width:100%; } }
+</style>
+</head>
+<body class="locked">
+
+<div id="splash" aria-label="GeoTerraChain QFS">
+  <div>
+    <div class="spl-logo"><img src="logo-final-complet.png" alt="GeoTerraChain QFS"></div>
+    <div class="spl-words"><span>Notre</span>&nbsp;<span class="g">Terre</span>&nbsp;<span class="g">·</span>&nbsp;<span>Notre</span>&nbsp;<span class="g">Richesse</span></div>
+    <div class="spl-tag">TOKENISATION · TERRITOIRE · FINANCE</div>
+    <div class="spl-bar"><i></i></div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="bar">
+    <a class="brand" href="#accueil">
+      <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+      <span><b>GeoTerraChain QFS</b><small>Pi Network · UEMOA</small></span>
+    </a>
+    <button class="pi-btn" id="piBtn" type="button">π Se connecter</button>
+  </div>
+  <nav class="menu" aria-label="Navigation principale">
+    <a class="on" href="#accueil">Accueil</a>
+    <a href="pourquoi.html">Pourquoi ?</a>
+    <a href="#actifs">Explorer</a>
+    <a href="investissement.html">Investir</a>
+    <a href="tokenisation.html">Tokeniser</a>
+    <a href="guide-aide-geoterrachain-qfs.html">Guide &amp; Aide</a>
+    <a href="investissement.html?tab=institution">Vérification</a>
+    <a href="pioneer.html">Mon espace</a>
+  </nav>
+</header>
+
+<div class="ticker" aria-hidden="true"><div>
+  PI NETWORK · STELLAR · RWA · UEMOA · OHADA · <span>PHASE PILOTE</span> · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp;
+  PI NETWORK · STELLAR · RWA · UEMOA · OHADA · <span>PHASE PILOTE</span> · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp;
+</div></div>
+
+<main>
+  <section class="hero" id="accueil">
+    <div>
+      <span class="eyebrow">Pi Network · Phase pilote</span>
+      <h1>Notre Terre.<br><span class="gold">Notre Richesse.</span></h1>
+      <p class="lead">La nouvelle infrastructure panafricaine de tokenisation des actifs réels.</p>
+      <p class="sub">GeoTerraChain QFS structure, vérifie et transforme des actifs réels africains en investissement fractionné sur Pi Network, en phase pilote et sous supervision réglementaire.</p>
+      <div class="chips">
+        <span class="chip live">π Pi Network · Phase pilote</span>
+        <span class="chip">🪙 GTCπ — Token natif</span>
+        <span class="chip">🔥 0,5 % Burn système</span>
+      </div>
+      <div class="ctas">
+        <a class="btn primary" href="investissement.html">Explorer les projets →</a>
+        <a class="btn" href="tokenisation.html">◈ Tokeniser un actif</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="logo-final-complet.png" alt="GeoTerraChain QFS — Afrique connectée">
+    </div>
+  </section>
+
+  <section id="parcours">
+    <span class="eyebrow">Parcours de tokenisation</span>
+    <h2>Transformez votre actif réel en <span class="gold">fractions numériques sécurisées</span></h2>
+    <div class="steps">
+      <a class="step" href="tokenisation.html?step=1"><span>01</span>Connexion Pi</a>
+      <a class="step" href="tokenisation.html?step=2"><span>02</span>Identité backend</a>
+      <a class="step" href="tokenisation.html?step=3"><span>03</span>Actif RWA</a>
+      <a class="step" href="tokenisation.html?step=4"><span>04</span>GPS &amp; localisation</a>
+      <a class="step" href="tokenisation.html?step=5"><span>05</span>Documents &amp; vérification</a>
+      <a class="step" href="tokenisation.html?step=6"><span>06</span>Calcul GTCπ</a>
+      <a class="step" href="tokenisation.html?step=7"><span>07</span>Paiement Pi &amp; soumission</a>
+    </div>
+  </section>
+
+  <section id="actifs">
+    <span class="eyebrow">Classes d'actifs</span>
+    <h2>5 catégories d'actifs réels <span class="gold">tokenisables</span></h2>
+    <div class="grid">
+      <div class="card asset"><span class="tag">TerraEstate™</span><h3>Immobilier &amp; foncier</h3><p>Terrains, logements, bureaux, centres commerciaux, complexes résidentiels.</p><a href="investissement.html">Explorer →</a></div>
+      <div class="card asset"><span class="tag">TerraAgro™</span><h3>Agriculture &amp; agro-pastoral</h3><p>Terres agricoles, plantations, élevage, agro-industrie, coopératives.</p><a href="investissement.html">Explorer →</a></div>
+      <div class="card asset"><span class="tag">TerraEnergy™</span><h3>Énergies &amp; infrastructures</h3><p>Solaire, centrales, stockage, réseaux, électrification énergétique.</p><a href="investissement.html">Explorer →</a></div>
+      <div class="card asset"><span class="tag">TerraMine™</span><h3>Ressources minières</h3><p>Exploration, exploitation, transformation, infrastructures minières.</p><a href="investissement.html">Explorer →</a></div>
+      <div class="card asset"><span class="tag">TerraMix™</span><h3>Projets mixtes &amp; multi-actifs</h3><p>Combinaison d'actifs immobiliers, agricoles, énergétiques et autres secteurs.</p><a href="investissement.html">Explorer →</a></div>
+    </div>
+  </section>
+
+  <section id="projets">
+    <div class="head-row">
+      <div><span class="eyebrow">Investment Hub</span><h2>Projets réels <span class="gold">en cours de financement</span></h2></div>
+      <a href="investissement.html">Voir tous les projets →</a>
+    </div>
+    <div id="projectsContainer" class="card empty-projects">Chargement des projets…</div>
+  </section>
+
+  <section>
+    <div class="grid">
+      <div class="card cta">
+        <h3>◈ Tokeniser un actif</h3>
+        <p>Transformez un actif réel en fractions numériques, avec identité Pi vérifiée et audit backend.</p>
+        <a class="btn primary" href="tokenisation.html">Commencer maintenant →</a>
+      </div>
+      <div class="card cta violet">
+        <h3>📊 Mon tableau de bord</h3>
+        <p>Suivez vos investissements, fractions et projets en temps réel. Connexion Pi requise.</p>
+        <a class="btn" href="investissement.html">Accéder au dashboard →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="grid">
+      <div class="card alert">
+        <h3>🔐 Sécurité</h3>
+        <p>GeoTerraChain QFS ne vous demandera <strong>jamais</strong> votre phrase secrète de 24 mots ni vos clés privées. Ne les communiquez à personne.</p>
+      </div>
+      <div class="card alert">
+        <h3>⚠️ Phase pilote</h3>
+        <p>GeoTerraChain QFS teste ses mécanismes de tokenisation et d'investissement fractionné en environnement contrôlé. L'ouverture publique au grand investissement est soumise à l'autorisation de l'autorité compétente.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="apropos">
+  <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+  <p>© 2026 GeoTerraChain QFS · Panafrican Quantum Financial System · Powered by Pi Network</p>
+  <nav>
+    <a href="https://hilaila.github.io/privacy.html">Confidentialité</a>
+    <a href="https://hilaila.github.io/termes.html">Conditions d'utilisation</a>
+    <a href="guide-aide-geoterrachain-qfs.html">Guide &amp; Aide</a>
+    <a href="mailto:iyhalob2015outlookfr@gmail.com">Contact</a>
+  </nav>
+  <p>Plateforme en phase pilote. Les fractions représentent une participation économique au projet ; elles ne constituent pas un titre de propriété légal tant que la structure juridique applicable n'a pas été confirmée.</p>
+  <p class="sig">Notre Terre · Notre Richesse</p>
+</footer>
+
+<div id="toast" role="status"></div>
+
+<script>
+  const API_BASE_URL = "https://geoterrachain-qfs-vercel.vercel.app";
+
+  function escapeHtml(value) {
+    return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  }
+  function formatNumber(n) {
+    return Number(n || 0).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+  }
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(toast._t); toast._t = setTimeout(() => { t.style.display = "none"; }, 4000);
+  }
+
+  /* ---------- Connexion Pi (Mainnet) ---------- */
+  let piReady = false;
+  try { Pi.init({ version: "2.0" }); piReady = true; } catch (e) { piReady = false; }
+
+  function onIncompletePaymentFound(payment) { console.log("Paiement incomplet :", payment); }
+
+  const piBtn = document.getElementById("piBtn");
+  piBtn.addEventListener("click", async () => {
+    if (!piReady || typeof Pi === "undefined") { toast("Ouvrez GeoTerraChain QFS dans le Pi Browser pour vous connecter."); return; }
+    piBtn.disabled = true; piBtn.textContent = "Connexion…";
+    try {
+      const auth = await Pi.authenticate(["username"], onIncompletePaymentFound);
+      piBtn.textContent = "✓ @" + auth.user.username;
+      piBtn.classList.add("ok");
+      toast("Bienvenue @" + auth.user.username + " !");
+    } catch (e) {
+      piBtn.disabled = false; piBtn.textContent = "π Se connecter";
+      toast("Connexion impossible. Ouvrez l'app dans le Pi Browser et réessayez.");
+    }
+  });
+
+  /* ---------- Projets ---------- */
+  function renderProjectCard(p) {
+    const objectif = Number(p.objectif_gtcp) || 0;
+    const collecte = Number(p.collecte_gtcp) || 0;
+    const pct = objectif > 0 ? Math.min(100, (collecte / objectif) * 100) : 0;
+    const statut = escapeHtml(p.statut);
+    return `<div class="card project">
+      <span class="project-status ${statut}">${statut.replace(/_/g, " ")}</span>
+      <h3>${escapeHtml(p.titre)}</h3>
+      <div class="meta">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")}</div>
+      <div class="progress"><i style="width:${pct}%;"></i></div>
+      <div class="stats"><span>Collecté : ${formatNumber(collecte)} GTCπ</span><span>${pct.toFixed(1)}%</span></div>
+      <a href="investissement.html">Voir le projet →</a>
+    </div>`;
+  }
+
+  async function loadRealProjects() {
+    const box = document.getElementById("projectsContainer");
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/investment/list-projects`);
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || "Erreur de chargement.");
+      const projects = data.projects || [];
+      if (!projects.length) {
+        box.innerHTML = `Aucun projet publié pour l'instant. Soyez le premier à en créer un.<br><a class="btn primary" href="investissement.html">Créer un projet →</a>`;
+        return;
+      }
+      box.className = "projects-scroll";
+      box.innerHTML = projects.map(renderProjectCard).join("");
+    } catch (err) {
+      box.textContent = "Projets momentanément indisponibles.";
+      console.error(err);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadRealProjects();
+    const splash = document.getElementById("splash");
+    let closed = false;
+    function closeSplash() {
+      if (closed) return; closed = true;
+      splash.classList.add("hide");
+      document.body.classList.remove("locked");
+      setTimeout(() => { splash.style.display = "none"; }, 750);
+    }
+    splash.addEventListener("click", closeSplash);
+    setTimeout(closeSplash, 2600);
+  });
+</script>
+</body>
+</html>
