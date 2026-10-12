@@ -693,6 +693,21 @@
   const piBtn = document.getElementById("piBtn");
   let piUser = null, piBusy = false;
   function renderPiBtn() { piBtn.textContent = piUser ? "✓ @" + piUser : t(piBusy ? "pi_wait" : "pi_signin"); }
+  /* Journal de l'application : le serveur vérifie le @nom auprès de Pi et
+     enregistre la connexion (une fois par visite). Sans effet sur l'affichage. */
+  function noteConnexion(token) {
+    if (!token) return;
+    try { if (sessionStorage.getItem("gtcLogged") === "1") return; } catch (e) {}
+    try {
+      fetch(`${API_BASE_URL}/api/pi-auth`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken: token, page: "index" }),
+        keepalive: true
+      }).then(r => { if (r.ok) { try { sessionStorage.setItem("gtcLogged", "1"); } catch (e) {} } }).catch(() => {});
+    } catch (e) {}
+  }
+
   async function connectPi(silent) {
     if (!initPi()) { if (!silent) toast(t("t_pibrowser")); return; }
     piBtn.disabled = true; piBusy = true; renderPiBtn();
@@ -702,6 +717,7 @@
       piUser = auth.user.username; piBusy = false;
       piBtn.classList.add("ok"); renderPiBtn();
       try { sessionStorage.setItem("gtcUser", piUser); } catch (e) {}
+      noteConnexion(auth.accessToken);
       if (!silent) toast(t("t_welcome") + piUser + " !");
     } catch (e) {
       piBtn.disabled = false; piBusy = false; renderPiBtn();
