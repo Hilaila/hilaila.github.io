@@ -74,7 +74,21 @@
       copied: "Copié ✓",
       manual: "ajout manuel",
       refresh: "↻ Actualiser",
-      csv: "⤓ Exporter (CSV)",
+      csv: "⤓ Exporter",
+      x_h: "Exporter le journal",
+      x_p: "Le Pi Browser ne permet pas toujours de télécharger un fichier. Choisissez une option :",
+      x_share: "📤 Partager / Enregistrer",
+      x_copy_sum: "📋 Copier le résumé",
+      x_copy_csv: "📋 Copier le tableau (CSV)",
+      x_dl: "⤓ Télécharger le fichier CSV",
+      x_close: "Fermer",
+      x_tip: "Astuce : collez le texte copié dans WhatsApp (en message à vous-même) ou dans vos Notes pour le garder. Le tableau CSV s'ouvre dans Excel ou Google Sheets.",
+      x_copied: "Copié ✓ — collez-le où vous voulez.",
+      x_nocopy: "Copie impossible : sélectionnez le texte ci-dessous à la main.",
+      x_sum_title: "Journal GeoTerraChain QFS — exporté le {d}",
+      x_sum_goal: "Pioneers uniques (hors administrateur) : {n}",
+      x_sum_counts: "Connexions : {c} · Demandes : {r} · Paiements test : {p} · Jetons émis : {t}",
+      x_sum_list: "Pioneers :",
       empty_f: "Aucun évènement pour ce filtre.",
       updated: "Mis à jour à {h}",
       diag_h: "Diagnostic serveur",
@@ -152,7 +166,21 @@
       copied: "Copied ✓",
       manual: "manual entry",
       refresh: "↻ Refresh",
-      csv: "⤓ Export (CSV)",
+      csv: "⤓ Export",
+      x_h: "Export the log",
+      x_p: "The Pi Browser cannot always download files. Choose an option:",
+      x_share: "📤 Share / Save",
+      x_copy_sum: "📋 Copy the summary",
+      x_copy_csv: "📋 Copy the table (CSV)",
+      x_dl: "⤓ Download the CSV file",
+      x_close: "Close",
+      x_tip: "Tip: paste the copied text into WhatsApp (as a message to yourself) or into your Notes to keep it. The CSV table opens in Excel or Google Sheets.",
+      x_copied: "Copied ✓ — paste it wherever you like.",
+      x_nocopy: "Copy failed: select the text below manually.",
+      x_sum_title: "GeoTerraChain QFS activity log — exported on {d}",
+      x_sum_goal: "Unique Pioneers (excluding administrator): {n}",
+      x_sum_counts: "Sign-ins: {c} · Requests: {r} · Test payments: {p} · Tokens issued: {t}",
+      x_sum_list: "Pioneers:",
       empty_f: "No event for this filter.",
       updated: "Updated at {h}",
       diag_h: "Server diagnostics",
@@ -335,6 +363,15 @@
   footer img { width:48px; height:48px; margin:0 auto 10px; border-radius:50%; }
   footer .sig { font-family:'JetBrains Mono', monospace; letter-spacing:.18em; font-size:10.5px; color:var(--gold-3); text-transform:uppercase; margin-top:8px; }
 
+  #xport { position:fixed; inset:0; z-index:60; display:none; align-items:flex-end; justify-content:center; background:rgba(0,0,8,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+  #xport.on { display:flex; }
+  #xport .sheet { width:100%; max-width:640px; max-height:92vh; overflow:auto; padding:20px 18px 26px; border-radius:24px 24px 0 0; border:1px solid var(--line); border-bottom:0; background:linear-gradient(160deg, #11101a, #07070d); box-shadow:0 -20px 60px rgba(0,0,0,.6); }
+  #xport h2 { font-family:'Playfair Display', Georgia, serif; font-size:22px; color:var(--gold-2); }
+  #xport p { color:var(--muted); font-size:13px; margin:6px 0 14px; }
+  #xport .opts { display:grid; gap:9px; }
+  #xport .opts .btn { width:100%; }
+  #xport textarea { width:100%; height:150px; margin-top:14px; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,8,.6); color:#CFC8B6; font:11px/1.5 'JetBrains Mono', monospace; padding:10px; resize:vertical; }
+  #xport small { display:block; margin-top:10px; font-size:11.5px; color:var(--muted); line-height:1.5; }
   #toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:50; max-width:90%; padding:11px 16px; border-radius:12px; background:#14121c; border:1px solid var(--line); color:var(--text); font-size:13.5px; display:none; }
 
   @media (max-width:520px) {
@@ -442,6 +479,21 @@
   <div data-i18n="foot"></div>
   <div class="sig">GeoTerraChain QFS · Afrique Quantum Financial System</div>
 </footer>
+<div id="xport" role="dialog" aria-modal="true" aria-labelledby="xTitle">
+  <div class="sheet">
+    <h2 id="xTitle" data-i18n="x_h"></h2>
+    <p data-i18n="x_p"></p>
+    <div class="opts">
+      <button class="btn btn-gold" id="xShare" type="button" data-i18n="x_share"></button>
+      <button class="btn" id="xSum" type="button" data-i18n="x_copy_sum"></button>
+      <button class="btn" id="xCsv" type="button" data-i18n="x_copy_csv"></button>
+      <button class="btn" id="xDl" type="button" data-i18n="x_dl"></button>
+    </div>
+    <textarea id="xText" readonly aria-label="CSV"></textarea>
+    <small data-i18n="x_tip"></small>
+    <div class="opts" style="margin-top:12px"><button class="btn" id="xClose" type="button" data-i18n="x_close"></button></div>
+  </div>
+</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -608,15 +660,74 @@ function renderDiag() {
   $("diagList").innerHTML = rows.map(r => `<li><b>${r[0]}</b><span class="${r[2] ? "ok" : "ko"}">${r[1]}</span></li>`).join("");
 }
 
-function exportCSV() {
+function buildCSV() {
   const rows = [["date", "heure", "username", "type", "page", "reference", "montant", "txid", "stellar_tx", "ajout_manuel"]];
   [...state.events].sort((a, b) => a.at - b.at).forEach(e => rows.push([
     e.at.toLocaleDateString("fr-FR", TZ), e.at.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", ...TZ }),
     e.username, e.type, e.page || "", e.reference || "", e.amount == null ? "" : e.amount, e.txid || "", e.stellar_tx || "", e.manual ? "oui" : ""]));
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
+  return rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
+}
+
+function buildSummary() {
+  const isAdmin = u => state.admins.includes(String(u).toLowerCase());
+  const all = users();
+  const pioneers = all.filter(u => !isAdmin(u.username));
+  const count = (...ts) => state.events.filter(e => ts.includes(e.type)).length;
+  const steps = ["connexion", "demande", "paiement", "jeton"];
+  const lines = [
+    t("x_sum_title", { d: new Date().toLocaleString(loc(), { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", ...TZ }) }),
+    "",
+    t("x_sum_goal", { n: pioneers.length }),
+    t("x_sum_counts", { c: count("connexion", "identite"), r: count("demande"), p: count("paiement"), t: count("jeton") }),
+    "",
+    t("x_sum_list")
+  ];
+  pioneers.forEach((u, i) => {
+    const done = steps.filter(s => u.types.has(s)).map(s => t("t_" + s)).join(", ");
+    lines.push(`${i + 1}. @${u.username} — ${done} — ${fmtShort(u.first)} → ${fmtShort(u.last)}`);
+  });
+  return lines.join("\n");
+}
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+  } catch (e) {}
+  try {
+    const ta = $("xText"); ta.value = text; ta.removeAttribute("readonly"); ta.focus(); ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand("copy");
+    ta.setAttribute("readonly", ""); return ok;
+  } catch (e) { return false; }
+}
+
+function openExport() {
+  $("xText").value = buildCSV();
+  $("xShare").classList.toggle("hide", !navigator.share);
+  $("xport").classList.add("on");
+}
+function closeExport() { $("xport").classList.remove("on"); }
+
+async function shareExport() {
+  const csv = buildCSV(), name = "journal-geoterrachain-qfs.csv";
+  try {
+    const file = new File(["﻿" + csv], name, { type: "text/csv" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: t("x_h") });
+      return;
+    }
+    await navigator.share({ title: t("x_h"), text: buildSummary() + "\n\n" + csv });
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    toast(t("x_nocopy"));
+  }
+}
+
+function downloadCSV() {
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
-  a.download = "journal-geoterrachain-qfs.csv"; a.click();
+  a.href = URL.createObjectURL(new Blob(["﻿" + buildCSV()], { type: "text/csv;charset=utf-8" }));
+  a.download = "journal-geoterrachain-qfs.csv";
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
@@ -626,7 +737,23 @@ document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click
 }));
 $("loginBtn").addEventListener("click", login);
 $("refreshBtn").addEventListener("click", () => load().catch(e => toast(e.message)));
-$("csvBtn").addEventListener("click", exportCSV);
+$("csvBtn").addEventListener("click", openExport);
+$("xClose").addEventListener("click", closeExport);
+$("xport").addEventListener("click", e => { if (e.target.id === "xport") closeExport(); });
+$("xShare").addEventListener("click", shareExport);
+$("xDl").addEventListener("click", downloadCSV);
+$("xSum").addEventListener("click", async () => {
+  const text = buildSummary();
+  const ok = await copyText(text);
+  $("xText").value = text;
+  toast(ok ? t("x_copied") : t("x_nocopy"));
+});
+$("xCsv").addEventListener("click", async () => {
+  const text = buildCSV();
+  const ok = await copyText(text);
+  $("xText").value = text;
+  toast(ok ? t("x_copied") : t("x_nocopy"));
+});
 $("search").addEventListener("input", e => { state.q = e.target.value; render(); });
 $("filters").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
