@@ -77,6 +77,18 @@
       csv: "⤓ Exporter (CSV)",
       empty_f: "Aucun évènement pour ce filtre.",
       updated: "Mis à jour à {h}",
+      diag_h: "Diagnostic serveur",
+      diag_s: "Visible seulement par l'administrateur, pour comprendre un journal vide.",
+      diag_audit: "Journal (gtc_audit_events)",
+      diag_pay: "Paiements (gtc_paiements)",
+      diag_users: "Utilisateurs (gtc_users)",
+      diag_rows: "{n} ligne(s)",
+      diag_key: "Clé Supabase sur Vercel",
+      diag_key_ok: "clé serveur ✓",
+      diag_key_bad: "« {k} » ✗ : c'est la clé publique, il faut la clé service_role",
+      diag_write: "Test d'écriture du journal",
+      diag_write_ok: "réussi ✓",
+      diag_write_bad: "échec ✗ : {e}",
       foot: "Journal interne · Aucune phrase secrète ni clé n'est jamais enregistrée",
       ticker: "JOURNAL · PI NETWORK · STELLAR · <span>PHASE PILOTE</span> · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp; JOURNAL · PI NETWORK · STELLAR · <span>PHASE PILOTE</span> · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp;"
     },
@@ -143,6 +155,18 @@
       csv: "⤓ Export (CSV)",
       empty_f: "No event for this filter.",
       updated: "Updated at {h}",
+      diag_h: "Server diagnostics",
+      diag_s: "Visible to the administrator only, to understand an empty log.",
+      diag_audit: "Log (gtc_audit_events)",
+      diag_pay: "Payments (gtc_paiements)",
+      diag_users: "Users (gtc_users)",
+      diag_rows: "{n} row(s)",
+      diag_key: "Supabase key on Vercel",
+      diag_key_ok: "server key ✓",
+      diag_key_bad: "“{k}” ✗: this is the public key, the service_role key is required",
+      diag_write: "Log write test",
+      diag_write_ok: "succeeded ✓",
+      diag_write_bad: "failed ✗: {e}",
       foot: "Internal log · No secret phrase or key is ever recorded",
       ticker: "ACTIVITY LOG · PI NETWORK · STELLAR · <span>PILOT PHASE</span> · GTCπ · OUR LAND · OUR WEALTH ·&nbsp; ACTIVITY LOG · PI NETWORK · STELLAR · <span>PILOT PHASE</span> · GTCπ · OUR LAND · OUR WEALTH ·&nbsp;"
     }
@@ -300,6 +324,13 @@
   .actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
   .actions small { color:var(--muted); font:500 11px 'JetBrains Mono', monospace; margin-left:auto; }
 
+  .diag { border-color:rgba(168,139,255,.35); background:linear-gradient(160deg, rgba(123,92,214,.10), rgba(255,255,255,.015)); }
+  .diag h2 { color:var(--violet-2); }
+  .diag ul { list-style:none; display:grid; gap:8px; }
+  .diag li { display:flex; justify-content:space-between; gap:12px; padding:9px 12px; border-radius:12px; background:rgba(0,0,8,.45); border:1px solid rgba(255,255,255,.06); font-size:13px; }
+  .diag li b { font-weight:600; color:var(--text); }
+  .diag li span { font-family:'JetBrains Mono', monospace; font-size:12px; text-align:right; color:#BDB6A3; overflow-wrap:anywhere; }
+  .diag li span.ok { color:var(--green); } .diag li span.ko { color:var(--red); }
   footer { max-width:1000px; margin:36px auto 0; padding:24px 16px 44px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:12.5px; }
   footer img { width:48px; height:48px; margin:0 auto 10px; border-radius:50%; }
   footer .sig { font-family:'JetBrains Mono', monospace; letter-spacing:.18em; font-size:10.5px; color:var(--gold-3); text-transform:uppercase; margin-top:8px; }
@@ -393,6 +424,11 @@
       <div id="timeline"></div>
     </section>
 
+    <section class="glass diag hide" id="diagCard">
+      <div class="head"><div><h2 data-i18n="diag_h"></h2><div class="hs" data-i18n="diag_s"></div></div></div>
+      <ul id="diagList"></ul>
+    </section>
+
     <div class="actions">
       <button class="btn" id="refreshBtn" type="button" data-i18n="refresh"></button>
       <button class="btn" id="csvBtn" type="button" data-i18n="csv"></button>
@@ -412,7 +448,7 @@
 const CONFIG = { API_BASE_URL: "https://geoterrachain-qfs-vercel.vercel.app", TIMEOUT_MS: 25000, GOAL_MIN: 5, GOAL_IDEAL: 8 };
 const ICON = { connexion: "π", identite: "π", demande: "◈", paiement: "✓", jeton: "⬡" };
 const $ = id => document.getElementById(id);
-const state = { events: [], admins: [], filter: "", q: "", token: null, loadedAt: null };
+const state = { events: [], admins: [], diag: null, filter: "", q: "", token: null, loadedAt: null };
 
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const loc = () => (LANG === "en" ? "en-GB" : "fr-FR");
@@ -476,10 +512,11 @@ async function load() {
     if (err.indexOf("AUDIT_READ_FAILED") === 0) throw new Error(t("e_table"));
     throw new Error(err || t("e_bad", { c: status }));
   }
-  setData(data.events || [], data.admins || []);
+  setData(data.events || [], data.admins || [], data.diag || null);
 }
 
-function setData(events, admins) {
+function setData(events, admins, diag) {
+  state.diag = diag || null;
   state.events = events.map(e => ({ ...e, at: new Date(e.created_at) })).sort((a, b) => b.at - a.at);
   state.admins = admins.map(a => String(a).toLowerCase());
   state.loadedAt = new Date();
@@ -551,6 +588,24 @@ function render() {
   });
   $("timeline").innerHTML = html ? html + "</div>" : `<div class="empty">${t("empty_f")}</div>`;
   $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) : "";
+  renderDiag();
+}
+
+function renderDiag() {
+  const d = state.diag, card = $("diagCard");
+  if (!d) { card.classList.add("hide"); return; }
+  const keyOk = ["service_role", "secret"].includes(d.key);
+  const tableTxt = x => !x ? "—" : (x.ok ? t("diag_rows", { n: x.count }) : "✗ " + esc(x.error || ""));
+  const rows = [
+    [t("diag_audit"), tableTxt(d.audit), d.audit && d.audit.ok],
+    [t("diag_pay"), tableTxt(d.paiements), d.paiements && d.paiements.ok],
+    [t("diag_users"), tableTxt(d.users), d.users && d.users.ok],
+    [t("diag_key"), keyOk ? t("diag_key_ok") : t("diag_key_bad", { k: esc(d.key) }), keyOk]
+  ];
+  if (d.writeTest) rows.push([t("diag_write"), d.writeTest.ok ? t("diag_write_ok") : t("diag_write_bad", { e: esc(d.writeTest.error || "") }), d.writeTest.ok]);
+  const problem = state.events.length === 0 || !keyOk || rows.some(r => r[2] === false);
+  card.classList.toggle("hide", !problem);
+  $("diagList").innerHTML = rows.map(r => `<li><b>${r[0]}</b><span class="${r[2] ? "ok" : "ko"}">${r[1]}</span></li>`).join("");
 }
 
 function exportCSV() {
