@@ -1602,7 +1602,7 @@ async function authenticatePi(silent = false) {
             state.authBusy = false;
             renderPiButton();
             status.textContent = "Pi ne répond pas encore";
-            setHint("Si aucune fenêtre Pi ne s'est ouverte, appuyez de nouveau sur « π Connexion ».");
+            setHint("La connexion ne fonctionne que dans l'application Pi Browser. Si ce lien s'est ouvert dans Chrome, WhatsApp ou une autre app, ouvrez Pi Browser et tapez hilaila.github.io/tokenisation.html. Si vous êtes déjà dans Pi Browser, appuyez de nouveau sur « π Connexion ».");
         }
 
     }, CONFIG.AUTH_GUARD_MS);

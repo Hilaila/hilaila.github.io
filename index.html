@@ -107,6 +107,7 @@
       "t_pibrowser": "Ouvrez GeoTerraChain QFS dans le Pi Browser pour vous connecter.",
       "t_welcome": "Bienvenue @",
       "t_fail": "Connexion impossible. Ouvrez l'app dans le Pi Browser et réessayez.",
+      "t_notpi": "Pi ne répond pas. La connexion ne fonctionne que dans l'application Pi Browser : si ce lien s'est ouvert dans Chrome, WhatsApp ou une autre app, ouvrez Pi Browser et tapez hilaila.github.io",
       "pst_pilote_testnet": "pilote testnet",
       "hint": "🌐 Langue / Language : touchez FR ou EN en haut à gauche du menu."
     },
@@ -201,6 +202,7 @@
       "t_pibrowser": "Open GeoTerraChain QFS in the Pi Browser to sign in.",
       "t_welcome": "Welcome @",
       "t_fail": "Sign-in failed. Open the app in the Pi Browser and try again.",
+      "t_notpi": "Pi is not responding. Sign-in only works inside the Pi Browser app: if this link opened in Chrome, WhatsApp or another app, open Pi Browser and type hilaila.github.io",
       "pst_pilote_testnet": "testnet pilot",
       "hint": "🌐 Language / Langue: tap EN or FR at the top left of the menu."
     }
@@ -683,7 +685,7 @@
   function toast(msg) {
     const box = document.getElementById("toast");
     box.textContent = msg; box.style.display = "block";
-    clearTimeout(toast._t); toast._t = setTimeout(() => { box.style.display = "none"; }, msg.length > 60 ? 6500 : 4000);
+    clearTimeout(toast._t); toast._t = setTimeout(() => { box.style.display = "none"; }, msg.length > 120 ? 10000 : msg.length > 60 ? 6500 : 4000);
   }
 
   /* ---------- Connexion Pi (Mainnet) ---------- */
@@ -717,7 +719,7 @@
   async function connectPi(silent) {
     if (!initPi()) { if (!silent) toast(t("t_pibrowser")); return; }
     piBtn.disabled = true; piBusy = true; renderPiBtn();
-    const garde = setTimeout(() => { if (!piUser) { piBtn.disabled = false; piBusy = false; renderPiBtn(); } }, 25000);
+    const garde = setTimeout(() => { if (!piUser) { piBtn.disabled = false; piBusy = false; renderPiBtn(); toast(t("t_notpi")); } }, 25000);
     try {
       const auth = await Pi.authenticate(["username"], onIncompletePaymentFound);
       piUser = auth.user.username; piBusy = false;
