@@ -198,10 +198,26 @@ window.GTC_EN = {
  "Impossible de créer le paiement.": "Could not create the payment.",
  "Échec de l'émission du token.": "Token issuance failed.",
  "Jeton de test GTCπ émis (Testnet).": "GTCπ test token issued (Testnet).",
- "Connectez-vous avec Pi pour commencer : les étapes suivantes s'ouvriront ensuite.": "Sign in with Pi to start: the next steps will open afterwards."
+ "Connectez-vous avec Pi pour commencer : les étapes suivantes s'ouvriront ensuite.": "Sign in with Pi to start: the next steps will open afterwards.",
+ "PDF, JPG, PNG — 5 fichiers maximum, 10 Mo par fichier. Envoi sécurisé juste après la soumission.": "PDF, JPG, PNG — 5 files maximum, 10 MB per file. Sent securely right after submission.",
+ "5 fichiers maximum : seuls les 5 premiers sont gardés.": "5 files maximum: only the first 5 are kept.",
+ "Formats acceptés : PDF, JPG, PNG.": "Accepted formats: PDF, JPG, PNG.",
+ "Fichier trop lourd : 10 Mo maximum par fichier.": "File too large: 10 MB maximum per file.",
+ "Le serveur n'a pas préparé l'envoi des documents.": "The server did not prepare the document upload.",
+ "Envoi interrompu : vérifiez votre connexion internet.": "Upload interrupted: check your internet connection.",
+ "Les documents n'ont pas pu être vérifiés.": "The documents could not be verified.",
+ "Documents envoyés et scellés.": "Documents uploaded and sealed.",
+ "Envoi des documents impossible.": "Document upload failed.",
+ "🔗 Lien du document foncier enregistré avec la demande.": "🔗 Land document link recorded with the request.",
+ "Empreintes SHA-256 enregistrées · stockage privé": "SHA-256 fingerprints recorded · private storage",
+ "✗ Envoi des documents interrompu.": "✗ Document upload interrupted.",
+ "Réessayer l'envoi": "Retry upload"
 },
   prefix: [["Réponse inattendue du serveur (code", "Unexpected server response (code"], ["Paiement Pi incomplet :", "Incomplete Pi payment:"], ["Finalisation du paiement précédent refusée :", "Completion of the previous payment refused:"], ["Finalisation du paiement précédent impossible :", "Could not complete the previous payment:"], ["Paiement annulé :", "Payment cancelled:"], ["Référence demande :", "Request reference:"], ["Référence :", "Reference:"], ["TXID Pi :", "Pi TXID:"], ["TX Stellar :", "Stellar TX:"], ["Latitude :", "Latitude:"], ["Longitude :", "Longitude:"]],
   regex: [
+  [new RegExp("^⏳ Envoi des documents… (\\d+)/(\\d+)$"), "⏳ Uploading documents… $1/$2"],
+  [new RegExp("^✓ (\\d+) document\\(s\\) envoyé\\(s\\) et scellé\\(s\\)$"), "✓ $1 document(s) uploaded and sealed"],
+  [new RegExp("^Envoi refusé pour « (.+) » \\(code (\\d+)\\)\\.$"), "Upload refused for “$1” (code $2)."],
   [new RegExp("^Le montant de (.+?) π est débité en vrai Pi : c'est un montant symbolique qui sert uniquement à tester le circuit de paiement\\. Le jeton GTCπ émis ensuite est un$"), "The $1 π amount is charged in real Pi: it is a symbolic amount used only to test the payment flow. The GTCπ token issued next is a"],
   [new RegExp("^π Payer (.+) π \\(test\\)$"), "π Pay $1 π (test)"],
   [new RegExp("× 0,005 ="), "× 0.005 ="]

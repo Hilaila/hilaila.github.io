@@ -1119,7 +1119,7 @@ input::placeholder, textarea::placeholder {
 
                 <label class="document-drop" for="documents">
                     <strong>📎 Ajouter les documents</strong>
-                    <span>PDF, JPG, PNG — sélection locale avant transmission au backend</span>
+                    <span>PDF, JPG, PNG — 5 fichiers maximum, 10 Mo par fichier. Envoi sécurisé juste après la soumission.</span>
                 </label>
 
                 <input id="documents" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple hidden>
@@ -1352,7 +1352,9 @@ const state = {
     paymentCompleted: false,
     paymentTxid: null,
     mintStatus: null,
-    mintTxHash: null
+    mintTxHash: null,
+
+    docs: { status: null, done: 0, total: 0, files: [], error: null }
 
 };
 
@@ -2005,8 +2007,25 @@ function validateLocationAndNext() {
 }
 
 
+const DOC_RULES = { maxFiles: 5, maxBytes: 10 * 1024 * 1024, types: ["application/pdf", "image/jpeg", "image/png"] };
+
+function docAllowed(file) {
+    const ext = String(file.name || "").toLowerCase().split(".").pop();
+    return DOC_RULES.types.includes(String(file.type || "").toLowerCase()) || ["pdf", "jpg", "jpeg", "png"].includes(ext);
+}
+
 $("documents").addEventListener("change", event => {
-    state.files = Array.from(event.target.files);
+    const chosen = Array.from(event.target.files);
+    const wrongType = chosen.filter(f => !docAllowed(f));
+    const tooBig = chosen.filter(f => docAllowed(f) && f.size > DOC_RULES.maxBytes);
+    let kept = chosen.filter(f => docAllowed(f) && f.size <= DOC_RULES.maxBytes && f.size > 0);
+    if (kept.length > DOC_RULES.maxFiles) {
+        kept = kept.slice(0, DOC_RULES.maxFiles);
+        showToast("5 fichiers maximum : seuls les 5 premiers sont gardés.", "warning");
+    }
+    if (wrongType.length) showToast("Formats acceptés : PDF, JPG, PNG.", "error");
+    if (tooBig.length) showToast("Fichier trop lourd : 10 Mo maximum par fichier.", "error");
+    state.files = kept;
     displayFiles();
 });
 
@@ -2291,6 +2310,8 @@ async function submitTokenization() {
 
         showToast("Demande de tokenisation enregistrée.", "success");
 
+        if (state.files.length) uploadDocuments();
+
     } catch (error) {
 
         console.error("Tokenization submission error:", error);
@@ -2348,6 +2369,126 @@ const TEST_NOTE = `
         il n'a aucune valeur, ne s'échange pas et ne représente aucun droit sur l'actif.
     </div>
     `;
+
+
+/* ============================================================
+   DOCUMENTS FONCIERS — envoi sécurisé après la soumission
+   ============================================================
+   1. le serveur délivre une adresse d'envoi signée par fichier
+      (espace de stockage privé) ;
+   2. le téléphone envoie chaque fichier directement ;
+   3. le serveur relit les fichiers, calcule leur empreinte SHA-256
+      et les scelle dans le journal d'audit.
+   ============================================================ */
+
+async function uploadDocuments() {
+
+    if (!state.submissionId || !state.accessToken || !state.files.length) return;
+    if (state.docs.status === "uploading" || state.docs.status === "done") return;
+
+    state.docs = { status: "uploading", done: 0, total: state.files.length, files: [], error: null };
+    renderResultBox();
+
+    try {
+
+        const prep = await postJSON("/api/tokenization/submit", {
+            action: "upload-urls",
+            accessToken: state.accessToken,
+            requestId: state.submissionId,
+            files: state.files.map(f => ({ name: f.name, type: f.type, size: f.size }))
+        });
+
+        if (!prep.ok || !prep.data.ok || !Array.isArray(prep.data.uploads)) {
+            throw new Error(serverMessage(prep.data, "Le serveur n'a pas préparé l'envoi des documents."));
+        }
+
+        for (let i = 0; i < prep.data.uploads.length; i++) {
+            const up = prep.data.uploads[i];
+            const file = state.files[up.index - 1];
+            let response;
+            try {
+                response = await fetch(up.signedUrl, {
+                    method: "PUT",
+                    headers: { "Content-Type": up.type },
+                    body: file
+                });
+            } catch (error) {
+                throw new Error("Envoi interrompu : vérifiez votre connexion internet.");
+            }
+            if (!response.ok) throw new Error(`Envoi refusé pour « ${file.name} » (code ${response.status}).`);
+            state.docs.done = i + 1;
+            renderResultBox();
+        }
+
+        const done = await postJSON("/api/tokenization/submit", {
+            action: "uploaded",
+            accessToken: state.accessToken,
+            requestId: state.submissionId,
+            attempt: prep.data.attempt
+        }, CONFIG.MINT_TIMEOUT_MS);
+
+        if (!done.ok || !done.data.ok) {
+            throw new Error(serverMessage(done.data, "Les documents n'ont pas pu être vérifiés."));
+        }
+
+        state.docs = { status: "done", done: state.files.length, total: state.files.length, files: done.data.files || [], error: null };
+        showToast("Documents envoyés et scellés.", "success");
+
+    } catch (error) {
+
+        console.error("Document upload error:", error);
+        state.docs.status = "error";
+        state.docs.error = error.message || "Envoi des documents impossible.";
+        showToast(state.docs.error, "error");
+
+    }
+
+    renderResultBox();
+
+}
+
+
+function retryDocuments() {
+    state.docs.status = null;
+    uploadDocuments();
+}
+
+
+function docsSection() {
+
+    const d = state.docs;
+    const box = (inner, color) => `
+        <div style="margin-top:12px; padding:10px 12px; border:1px solid rgba(255,255,255,.08); border-radius:12px; text-align:left; font-size:11px; line-height:1.5; color:${color || "var(--muted)"};">${inner}</div>`;
+
+    if (!state.files.length) {
+        return $("documentUrl").value.trim()
+            ? box("🔗 Lien du document foncier enregistré avec la demande.")
+            : "";
+    }
+
+    if (d.status === "uploading") {
+        return box(`⏳ Envoi des documents… ${d.done}/${d.total}`);
+    }
+
+    if (d.status === "done") {
+        const list = d.files.map(f => `
+            <div style="display:flex; justify-content:space-between; gap:8px; margin-top:4px; color:#999;">
+                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📄 ${escapeHtml(f.name)}</span>
+                <span class="hash" style="color:#777;">${escapeHtml(String(f.sha256 || "").slice(0, 12))}…</span>
+            </div>`).join("");
+        return box(`<strong style="color:var(--green);">✓ ${d.files.length} document(s) envoyé(s) et scellé(s)</strong>
+            <div style="margin-top:2px;">Empreintes SHA-256 enregistrées · stockage privé</div>${list}`);
+    }
+
+    if (d.status === "error") {
+        return box(`✗ Envoi des documents interrompu.
+            <div style="margin-top:4px; color:#999;">${escapeHtml(d.error || "")}</div>
+            <div style="margin-top:8px;"><button class="btn" type="button" onclick="retryDocuments()">Réessayer l'envoi</button></div>`, "#ff9292");
+    }
+
+    return "";
+
+}
 
 
 function renderResultBox() {
@@ -2409,6 +2550,7 @@ function renderResultBox() {
             <div style="margin-top:8px; color:#777; font-size:10px;">
                 État : PAIEMENT COMPLÉTÉ · DOSSIER EN ATTENTE DE VÉRIFICATION
             </div>
+            ${docsSection()}
             ${mintSection}
             <div style="margin-top:14px; padding:10px 12px; border:1px dashed rgba(234,203,131,.35); border-radius:12px; color:#cfc6b2; font-size:11px; line-height:1.5; text-align:left;">
                 Votre dossier va maintenant être vérifié. La tokenisation définitive n'aura lieu qu'après cette vérification.
@@ -2428,6 +2570,7 @@ function renderResultBox() {
         <div style="margin-top:8px; color:#777; font-size:10px;">
             État : EN ATTENTE DE VÉRIFICATION
         </div>
+        ${docsSection()}
         <div id="paymentStatus" style="margin-top:14px; font-size:11px; color:var(--muted);"></div>
         <div style="margin-top:14px;">
             <button class="btn btn-primary" id="payNowBtn" type="button" onclick="initiatePayment()">

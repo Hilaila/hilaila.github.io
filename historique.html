@@ -67,6 +67,10 @@
       t_demande: "Demande de tokenisation",
       t_paiement: "Paiement test",
       t_jeton: "Jeton de test émis",
+      t_documents: "Documents envoyés",
+      doc_open: "Ouvrir",
+      doc_opening: "Ouverture…",
+      doc_fail: "Impossible d'ouvrir le document.",
       p_index: "page d'accueil",
       p_page: "page {p}",
       targeted: "{n} GTCπ visés",
@@ -161,6 +165,10 @@
       t_demande: "Tokenization request",
       t_paiement: "Test payment",
       t_jeton: "Test token issued",
+      t_documents: "Documents uploaded",
+      doc_open: "Open",
+      doc_opening: "Opening…",
+      doc_fail: "Could not open the document.",
       p_index: "home page",
       p_page: "{p} page",
       targeted: "{n} GTCπ targeted",
@@ -341,7 +349,12 @@
   .tl::before { content:""; position:absolute; left:8px; top:6px; bottom:6px; width:2px; background:linear-gradient(180deg, rgba(232,200,114,.5), rgba(123,92,214,.35)); border-radius:2px; }
   .ev { position:relative; padding:9px 0 13px; }
   .ev::before { content:""; position:absolute; left:-21px; top:15px; width:12px; height:12px; border-radius:50%; background:var(--c); box-shadow:0 0 0 3px rgba(0,0,8,1), 0 0 12px var(--c); }
-  .ev.connexion, .ev.identite { --c:var(--blue); } .ev.demande { --c:var(--gold-2); } .ev.paiement { --c:var(--green); } .ev.jeton { --c:var(--violet-2); }
+  .ev.connexion, .ev.identite { --c:var(--blue); } .ev.demande { --c:var(--gold-2); } .ev.paiement { --c:var(--green); } .ev.jeton { --c:var(--violet-2); } .ev.documents { --c:#FFB28A; }
+  .ev .docs { margin-top:6px; display:grid; grid-template-columns:minmax(0, 1fr); gap:5px; }
+  .ev .doc { min-width:0; display:flex; align-items:center; gap:8px; padding:7px 9px; border:1px solid var(--line); border-radius:10px; background:rgba(0,0,8,.4); font-size:12.5px; }
+  .ev .doc span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ev .doc code { flex-shrink:1; min-width:0; max-width:84px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:500 10.5px 'JetBrains Mono', monospace; color:var(--muted); }
+  .ev .doc button { flex-shrink:0; border:1px solid var(--gold-2); background:rgba(232,200,114,.12); color:var(--gold-2); border-radius:999px; padding:4px 10px; font:700 11.5px 'Space Grotesk', sans-serif; cursor:pointer; }
   .ev .l1 { display:flex; justify-content:space-between; gap:10px; }
   .ev .l1 b { font-size:14.5px; }
   .ev .l1 b span { color:var(--c); }
@@ -503,7 +516,7 @@
 
 <script>
 const CONFIG = { API_BASE_URL: "https://geoterrachain-qfs-vercel.vercel.app", TIMEOUT_MS: 25000, GOAL_MIN: 5, GOAL_IDEAL: 8 };
-const ICON = { connexion: "π", identite: "π", demande: "◈", paiement: "✓", jeton: "⬡" };
+const ICON = { connexion: "π", identite: "π", demande: "◈", paiement: "✓", jeton: "⬡", documents: "📄" };
 const $ = id => document.getElementById(id);
 const state = { events: [], admins: [], diag: null, filter: "", q: "", token: null, loadedAt: null };
 
@@ -529,6 +542,21 @@ function applyLang() {
   document.querySelectorAll(".lang button").forEach(b => { const on = b.getAttribute("data-l") === LANG; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
   const g = document.querySelector(".lang"); if (g) g.setAttribute("aria-label", t("lang"));
   if (!$("dash").classList.contains("hide")) render();
+}
+
+async function openDocument(btn) {
+  const w = window.open("", "_blank");
+  btn.disabled = true; btn.textContent = t("doc_opening");
+  try {
+    const { ok, data } = await postJSON("/api/pi-auth", { action: "document-url", accessToken: state.token, path: btn.getAttribute("data-doc") });
+    if (!ok || !data.ok || !data.url) throw new Error(data && data.error || "");
+    if (w) w.location.href = data.url; else location.href = data.url;
+  } catch (e) {
+    if (w) w.close();
+    toast(t("doc_fail") + (e.message ? " (" + e.message + ")" : ""));
+  } finally {
+    btn.disabled = false; btn.textContent = t("doc_open");
+  }
 }
 
 async function postJSON(path, body) {
@@ -642,6 +670,7 @@ function render() {
     if (e.amount != null && e.type === "demande") parts.push(t("targeted", { n: fmtNum(e.amount, 0) }));
     let hash = "";
     if (e.txid) hash += `<div class="hash"><code><b>${t("txid")}</b> ${esc(e.txid)}</code><button type="button" data-copy="${esc(e.txid)}">${t("copy")}</button></div>`;
+    if (Array.isArray(e.files) && e.files.length) hash += `<div class="docs">${e.files.map(f => `<div class="doc"><span>📄 ${esc(f.name)} · ${(Number(f.size) / 1024).toLocaleString(loc(), { maximumFractionDigits: 0 })} ${LANG === "en" ? "KB" : "Ko"}</span>${f.sha256 ? `<code>${esc(String(f.sha256).slice(0, 12))}…</code>` : ""}${f.path ? `<button type="button" data-doc="${esc(f.path)}">${t("doc_open")}</button>` : ""}</div>`).join("")}</div>`;
     if (e.stellar_tx) hash += `<div class="hash"><code><b>${t("stx")}</b> <a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(e.stellar_tx)}" target="_blank" rel="noopener">${esc(e.stellar_tx)}</a></code><button type="button" data-copy="${esc(e.stellar_tx)}">${t("copy")}</button></div>`;
     html += `<div class="ev ${esc(e.type)}"><div class="l1"><b>@${esc(e.username)} · <span>${esc(t("t_" + e.type))}</span></b><time>${fmtTime(e.at)}</time></div>
       <div class="l2">${parts.join(" · ")}${e.manual ? `<em>${t("manual")}</em>` : ""}</div>${hash}</div>`;
@@ -770,6 +799,8 @@ $("filters").addEventListener("click", e => {
   render();
 });
 $("timeline").addEventListener("click", e => {
+  const d = e.target.closest("button[data-doc]");
+  if (d) { openDocument(d); return; }
   const b = e.target.closest("button[data-copy]"); if (!b) return;
   const v = b.getAttribute("data-copy");
   const done = () => { b.textContent = t("copied"); setTimeout(() => { b.textContent = t("copy"); }, 1500); };
