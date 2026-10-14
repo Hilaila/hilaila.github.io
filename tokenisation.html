@@ -2372,7 +2372,7 @@ function renderResultBox() {
                         TX Stellar : ${escapeHtml(state.mintTxHash || "—")}
                     </div>
                     <div style="margin-top:6px; color:#777; font-size:10px;">
-                        Jeton de test sans valeur, non échangeable.
+                        Jeton de test sans valeur, non échangeable — ce n'est pas la tokenisation de votre actif.
                     </div>
                 </div>
                 `;
@@ -2404,9 +2404,13 @@ function renderResultBox() {
                 TXID Pi : ${escapeHtml(state.paymentTxid || "—")}
             </div>
             <div style="margin-top:8px; color:#777; font-size:10px;">
-                État : PAIEMENT COMPLÉTÉ
+                État : PAIEMENT COMPLÉTÉ · DOSSIER EN ATTENTE DE VÉRIFICATION
             </div>
             ${mintSection}
+            <div style="margin-top:14px; padding:10px 12px; border:1px dashed rgba(234,203,131,.35); border-radius:12px; color:#cfc6b2; font-size:11px; line-height:1.5; text-align:left;">
+                Votre dossier va maintenant être vérifié. La tokenisation définitive n'aura lieu qu'après cette vérification.
+                Le jeton de test émis en phase pilote sert uniquement à tester le parcours : il ne vaut ni tokenisation ni titre de propriété.
+            </div>
             `;
         return;
     }
