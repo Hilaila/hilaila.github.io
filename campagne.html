@@ -30,7 +30,7 @@
       eyebrow: "Campagne Pioneers · Phase pilote",
       h1: "Notre Terre, <em>Notre Richesse</em>",
       lead: "Deux vidéos pour découvrir GeoTerraChain QFS et nous aider à l'améliorer : un spot de 30 secondes et un film de 2 minutes.",
-      vf: "Vidéos en français, sous-titrées.",
+      vf: "Vidéos en français, sous-titrées. Version anglaise : touche EN en haut.",
       spot_h: "Le spot",
       spot_d: "30 secondes · idéal pour les statuts",
       film_h: "Le film",
@@ -64,7 +64,7 @@
       eyebrow: "Pioneers campaign · Pilot phase",
       h1: "Our Land, <em>Our Wealth</em>",
       lead: "Two videos to discover GeoTerraChain QFS and help us improve it: a 30-second spot and a 2-minute film.",
-      vf: "Videos in French, with subtitles.",
+      vf: "Videos in English, with subtitles. French version: tap FR at the top.",
       spot_h: "The spot",
       spot_d: "30 seconds · made for status updates",
       film_h: "The film",
@@ -81,13 +81,13 @@
       open_app: "π Open the app",
       msg_h: "Ready-to-share message",
       msg_d: "Paste it in WhatsApp, Telegram or Pi Chat, with the video.",
-      msg: "🌍 GeoTerraChain QFS: our land deserves clarity.\n\n🎬 Watch the film (2 min, in French): " + PAGE + "\n\n👉 How to join:\n1️⃣ Open the Pi Browser\n2️⃣ Go to " + SITE + "\n3️⃣ Sign in, explore and share your feedback\n\n✅ Independent project · Pilot phase\n🔒 Never share your 24-word secret phrase.",
+      msg: "🌍 GeoTerraChain QFS: our land deserves clarity.\n\n🎬 Watch the film (2 min): " + PAGE + "\n\n👉 How to join:\n1️⃣ Open the Pi Browser\n2️⃣ Go to " + SITE + "\n3️⃣ Sign in, explore and share your feedback\n\n✅ Independent project · Pilot phase\n🔒 Never share your 24-word secret phrase.",
       copy_msg: "📋 Copy the message",
       msg_copied: "Message copied ✓",
       safe_h: "Security",
       safe: "Never share your 24-word secret phrase. GeoTerraChain QFS will never ask for it, here or by message.",
       note: "Independent project · Pilot phase. Technology does not replace legal documents or the competent authorities.",
-      credits: "Fictional characters · Synthetic voices: Piper (SIWIS dataset, CC BY 4.0) · Original music · Real app screens with fictitious sample data.",
+      credits: "Fictional characters · Synthetic voices: Piper (LibriTTS dataset, CC BY 4.0) · Original music · Real app screens (in French) with fictitious sample data.",
       foot: "GeoTerraChain QFS · Our Land · Our Wealth",
       ticker: "PIONEERS CAMPAIGN · PI NETWORK · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · INDEPENDENT PROJECT ·&nbsp; PIONEERS CAMPAIGN · PI NETWORK · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · INDEPENDENT PROJECT ·&nbsp;"
     }
@@ -218,12 +218,12 @@
       <h2 data-i18n="spot_h">Le spot</h2>
       <p class="hs" data-i18n="spot_d"></p>
       <div class="player">
-        <video controls playsinline preload="metadata" poster="videos/affiche-spot.jpg">
-          <source src="videos/geoterrachain-spot-30s.mp4" type="video/mp4">
-        </video>
+        <video controls playsinline preload="metadata"
+          data-fr="videos/geoterrachain-spot-30s.mp4" data-en="videos/geoterrachain-spot-30s-en.mp4"
+          data-poster-fr="videos/affiche-spot.jpg" data-poster-en="videos/affiche-spot-en.jpg"></video>
       </div>
       <div class="row">
-        <a class="btn" href="videos/geoterrachain-spot-30s.mp4" download="GeoTerraChain-QFS-Spot-30s.mp4" data-i18n="dl"></a>
+        <a class="btn" href="videos/geoterrachain-spot-30s.mp4" download="GeoTerraChain-QFS-Spot-30s.mp4" data-fr="videos/geoterrachain-spot-30s.mp4" data-en="videos/geoterrachain-spot-30s-en.mp4" data-dl-fr="GeoTerraChain-QFS-Spot-30s-FR.mp4" data-dl-en="GeoTerraChain-QFS-Spot-30s-EN.mp4" data-i18n="dl"></a>
       </div>
     </section>
 
@@ -231,12 +231,12 @@
       <h2 data-i18n="film_h">Le film</h2>
       <p class="hs" data-i18n="film_d"></p>
       <div class="player">
-        <video controls playsinline preload="metadata" poster="videos/affiche-film.jpg">
-          <source src="videos/geoterrachain-film-2min.mp4" type="video/mp4">
-        </video>
+        <video controls playsinline preload="metadata"
+          data-fr="videos/geoterrachain-film-2min.mp4" data-en="videos/geoterrachain-film-2min-en.mp4"
+          data-poster-fr="videos/affiche-film.jpg" data-poster-en="videos/affiche-film-en.jpg"></video>
       </div>
       <div class="row">
-        <a class="btn" href="videos/geoterrachain-film-2min.mp4" download="GeoTerraChain-QFS-Film-2min.mp4" data-i18n="dl"></a>
+        <a class="btn" href="videos/geoterrachain-film-2min.mp4" download="GeoTerraChain-QFS-Film-2min.mp4" data-fr="videos/geoterrachain-film-2min.mp4" data-en="videos/geoterrachain-film-2min-en.mp4" data-dl-fr="GeoTerraChain-QFS-Film-2min-FR.mp4" data-dl-en="GeoTerraChain-QFS-Film-2min-EN.mp4" data-i18n="dl"></a>
       </div>
     </section>
   </div>
@@ -298,6 +298,12 @@ function applyLang() {
   document.querySelectorAll(".lang button").forEach(b => { const on = b.getAttribute("data-l") === LANG; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
   const g = document.querySelector(".lang"); if (g) g.setAttribute("aria-label", t("lang"));
   $("msg").value = t("msg");
+  // vidéos et téléchargements dans la langue choisie
+  document.querySelectorAll("video[data-fr]").forEach(v => {
+    const src = v.getAttribute("data-" + LANG), poster = v.getAttribute("data-poster-" + LANG);
+    if (v.getAttribute("src") !== src) { v.pause(); v.setAttribute("poster", poster); v.setAttribute("src", src); v.load(); }
+  });
+  document.querySelectorAll("a[data-fr]").forEach(a => { a.setAttribute("href", a.getAttribute("data-" + LANG)); a.setAttribute("download", a.getAttribute("data-dl-" + LANG)); });
 }
 document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
   LANG = b.getAttribute("data-l");
