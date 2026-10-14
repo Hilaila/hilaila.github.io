@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000008">
+<title>Le film — GeoTerraChain QFS</title>
+<meta name="description" content="Le film de la campagne Pioneers : pourquoi des informations foncières claires comptent, et comment tester GeoTerraChain QFS dans le Pi Browser.">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="GeoTerraChain QFS — Notre Terre · Notre Richesse">
+<meta property="og:description" content="Regarde le film (2 min) et teste l'application dans le Pi Browser. Projet indépendant · Phase pilote.">
+<meta property="og:url" content="https://hilaila.github.io/campagne.html">
+<meta property="og:image" content="https://hilaila.github.io/videos/apercu-lien.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<script>
+  /* ---------- Langues (même réglage que la page d'accueil : localStorage gtcLang) ---------- */
+  var SITE = "https://hilaila.github.io/";
+  var PAGE = SITE + "campagne.html";
+  var GTC_I18N = {
+    fr: {
+      title: "Le film — GeoTerraChain QFS",
+      lang: "Langue",
+      back: "← Accueil",
+      eyebrow: "Campagne Pioneers · Phase pilote",
+      h1: "Notre Terre, <em>Notre Richesse</em>",
+      lead: "Deux vidéos pour découvrir GeoTerraChain QFS et nous aider à l'améliorer : un spot de 30 secondes et un film de 2 minutes.",
+      vf: "Vidéos en français, sous-titrées.",
+      spot_h: "Le spot",
+      spot_d: "30 secondes · idéal pour les statuts",
+      film_h: "Le film",
+      film_d: "2 minutes · Awa, Koffi et Yao",
+      dl: "⤓ Télécharger (MP4)",
+      share: "📤 Partager la page",
+      copy_link: "🔗 Copier le lien",
+      copied: "Lien copié ✓",
+      copy_fail: "Copie impossible : sélectionnez le texte ci-dessous.",
+      steps_h: "Participer en 3 étapes",
+      s1: "Ouvre le <b>Pi Browser</b>",
+      s2: "Va sur <b class=\"mono\">https://hilaila.github.io/</b>",
+      s3: "<b>Connecte-toi et explore</b>, puis donne ton avis",
+      open_app: "π Ouvrir l'application",
+      msg_h: "Message prêt à partager",
+      msg_d: "Copie-le dans WhatsApp, Telegram ou Pi Chat, avec la vidéo.",
+      msg: "🌍 GeoTerraChain QFS : notre terre mérite la clarté.\n\n🎬 Regarde le film (2 min) : " + PAGE + "\n\n👉 Pour participer :\n1️⃣ Ouvre le Pi Browser\n2️⃣ Va sur " + SITE + "\n3️⃣ Connecte-toi, explore et donne ton avis\n\n✅ Projet indépendant · Phase pilote\n🔒 Ne partage jamais ta phrase secrète de 24 mots.",
+      copy_msg: "📋 Copier le message",
+      msg_copied: "Message copié ✓",
+      safe_h: "Sécurité",
+      safe: "Ne partage jamais ta phrase secrète de 24 mots. GeoTerraChain QFS ne te la demandera jamais, ni ici, ni par message.",
+      note: "Projet indépendant · Phase pilote. La technologie ne remplace ni les documents légaux ni les autorités compétentes.",
+      credits: "Personnages fictifs · Voix de synthèse : Piper (jeu de données SIWIS, CC BY 4.0) · Musique originale · Écrans réels de l'application avec des données d'exemple fictives.",
+      foot: "GeoTerraChain QFS · Notre Terre · Notre Richesse",
+      ticker: "CAMPAGNE PIONEERS · PI NETWORK · <span>PHASE PILOTE</span> · NOTRE TERRE · NOTRE RICHESSE · PROJET INDÉPENDANT ·&nbsp; CAMPAGNE PIONEERS · PI NETWORK · <span>PHASE PILOTE</span> · NOTRE TERRE · NOTRE RICHESSE · PROJET INDÉPENDANT ·&nbsp;"
+    },
+    en: {
+      title: "The film — GeoTerraChain QFS",
+      lang: "Language",
+      back: "← Home",
+      eyebrow: "Pioneers campaign · Pilot phase",
+      h1: "Our Land, <em>Our Wealth</em>",
+      lead: "Two videos to discover GeoTerraChain QFS and help us improve it: a 30-second spot and a 2-minute film.",
+      vf: "Videos in French, with subtitles.",
+      spot_h: "The spot",
+      spot_d: "30 seconds · made for status updates",
+      film_h: "The film",
+      film_d: "2 minutes · Awa, Koffi and Yao",
+      dl: "⤓ Download (MP4)",
+      share: "📤 Share this page",
+      copy_link: "🔗 Copy link",
+      copied: "Link copied ✓",
+      copy_fail: "Copy failed: select the text below.",
+      steps_h: "Join in 3 steps",
+      s1: "Open the <b>Pi Browser</b>",
+      s2: "Go to <b class=\"mono\">https://hilaila.github.io/</b>",
+      s3: "<b>Sign in and explore</b>, then share your feedback",
+      open_app: "π Open the app",
+      msg_h: "Ready-to-share message",
+      msg_d: "Paste it in WhatsApp, Telegram or Pi Chat, with the video.",
+      msg: "🌍 GeoTerraChain QFS: our land deserves clarity.\n\n🎬 Watch the film (2 min, in French): " + PAGE + "\n\n👉 How to join:\n1️⃣ Open the Pi Browser\n2️⃣ Go to " + SITE + "\n3️⃣ Sign in, explore and share your feedback\n\n✅ Independent project · Pilot phase\n🔒 Never share your 24-word secret phrase.",
+      copy_msg: "📋 Copy the message",
+      msg_copied: "Message copied ✓",
+      safe_h: "Security",
+      safe: "Never share your 24-word secret phrase. GeoTerraChain QFS will never ask for it, here or by message.",
+      note: "Independent project · Pilot phase. Technology does not replace legal documents or the competent authorities.",
+      credits: "Fictional characters · Synthetic voices: Piper (SIWIS dataset, CC BY 4.0) · Original music · Real app screens with fictitious sample data.",
+      foot: "GeoTerraChain QFS · Our Land · Our Wealth",
+      ticker: "PIONEERS CAMPAIGN · PI NETWORK · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · INDEPENDENT PROJECT ·&nbsp; PIONEERS CAMPAIGN · PI NETWORK · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · INDEPENDENT PROJECT ·&nbsp;"
+    }
+  };
+  var LANG = (function () {
+    var l = null;
+    try { l = localStorage.getItem("gtcLang"); } catch (e) {}
+    if (l !== "fr" && l !== "en") l = (navigator.language || "fr").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    return l;
+  })();
+  document.documentElement.lang = LANG;
+  function t(k) {
+    var d = GTC_I18N[LANG] || {};
+    return d[k] != null ? d[k] : (GTC_I18N.fr[k] != null ? GTC_I18N.fr[k] : k);
+  }
+</script>
+<style>
+  :root {
+    --bg:#000008; --gold:#C9A84C; --gold-2:#E8C872; --gold-3:#8B6914;
+    --text:#E8E2D4; --muted:#9A9384; --line:rgba(201,168,76,.18);
+    --glass:rgba(255,255,255,.035); --green:#3DDC97; --violet:#7B5CD6; --violet-2:#A88BFF; --red:#FF8D8D;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'Space Grotesk', system-ui, sans-serif; line-height:1.6; font-size:15px; min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(201,168,76,.14), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 100% 25%, rgba(123,92,214,.16), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,168,76,.08), transparent 70%);
+    background-attachment:fixed;
+  }
+  a { color:var(--gold-2); text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; }
+  .hide { display:none !important; }
+
+  .top { position:sticky; top:0; z-index:20; background:rgba(0,0,8,.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
+  .top::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px; max-width:1000px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--text); min-width:0; }
+  .brand img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold); box-shadow:0 0 18px rgba(201,168,76,.25); flex-shrink:0; }
+  .brand b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:17px; color:var(--gold-2); font-weight:700; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .brand span { min-width:0; }
+  .brand small { display:block; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .sub { display:flex; align-items:center; gap:8px; padding:2px 16px 10px; max-width:1000px; margin:0 auto; }
+  .lang { display:flex; align-items:center; flex-shrink:0; gap:2px; padding:3px; border:1.5px solid var(--gold-2); border-radius:999px; background:rgba(232,200,114,.10); box-shadow:0 0 14px rgba(232,200,114,.35); }
+  .lang .globe { display:grid; place-items:center; width:24px; color:var(--gold-2); padding-left:3px; }
+  .lang .globe svg { width:17px; height:17px; }
+  .lang button { border:0; border-radius:999px; background:transparent; color:#D9CFB4; font:700 12.5px 'JetBrains Mono', monospace; letter-spacing:.06em; padding:6px 10px; min-width:38px; cursor:pointer; }
+  .lang button.on { background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); color:#000008; box-shadow:0 0 10px rgba(232,200,114,.5); }
+  .msep { flex-shrink:0; width:1px; align-self:stretch; margin:4px 2px; background:linear-gradient(180deg, transparent, rgba(232,200,114,.6), transparent); }
+  .sub a { font-size:13.5px; color:var(--text); padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--glass); white-space:nowrap; }
+
+  .ticker { overflow:hidden; border-bottom:1px solid var(--line); background:rgba(201,168,76,.03); }
+  .ticker div { display:inline-block; white-space:nowrap; padding:8px 0; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); letter-spacing:.08em; animation:defile 34s linear infinite; }
+  .ticker span { color:var(--green); }
+  @keyframes defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+  main { max-width:1000px; margin:0 auto; padding:18px 16px 0; }
+  .hero { position:relative; overflow:hidden; padding:24px 20px; border:1px solid var(--line); border-radius:24px; background:linear-gradient(135deg, rgba(201,168,76,.12), rgba(123,92,214,.08) 60%, rgba(255,255,255,.02)); margin-bottom:16px; }
+  .hero::after { content:""; position:absolute; width:260px; height:260px; right:-110px; top:-120px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.22), transparent 65%); }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:rgba(0,0,8,.4); }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { position:relative; z-index:1; margin-top:14px; font-family:'Playfair Display', Georgia, serif; font-size:clamp(30px, 8vw, 46px); line-height:1.05; font-weight:800; }
+  .hero h1 em { font-style:normal; background:linear-gradient(100deg, #A87A14 0%, #F6D978 28%, #FFF5CF 42%, #E2B33A 58%, #B8871A 100%); background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:brille 4s linear infinite; }
+  @keyframes brille { from { background-position:100% 0; } to { background-position:-160% 0; } }
+  .hero p { position:relative; z-index:1; margin-top:10px; color:var(--muted); font-size:14.5px; max-width:620px; }
+  .hero .vf { font:500 12px 'JetBrains Mono', monospace; letter-spacing:.04em; color:var(--gold-2); }
+
+  .glass { position:relative; border:1px solid var(--line); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:18px; margin-bottom:14px; }
+  .glass h2 { font-family:'Playfair Display', Georgia, serif; font-size:21px; color:var(--gold-2); line-height:1.2; }
+  .glass .hs { font-size:12.5px; color:var(--muted); margin-top:2px; }
+
+  .films { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width:760px) { .films { grid-template-columns:1fr 1fr; } }
+  .film { margin-bottom:0; }
+  .film .player { margin:14px auto 0; width:100%; max-width:340px; aspect-ratio:9/16; border-radius:22px; overflow:hidden; background:#05050a; border:1px solid rgba(232,200,114,.35); box-shadow:0 0 0 4px rgba(0,0,8,.6), 0 18px 50px rgba(0,0,0,.55), 0 0 36px rgba(201,168,76,.18); }
+  .film video { display:block; width:100%; height:100%; object-fit:cover; background:#05050a; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:14px; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--line); background:var(--glass); color:var(--text); font:700 14px 'Space Grotesk', system-ui, sans-serif; cursor:pointer; text-align:center; }
+  .btn-gold { border:0; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; box-shadow:0 0 22px rgba(201,168,76,.35); }
+
+  .steps { list-style:none; margin-top:14px; display:grid; gap:10px; }
+  .steps li { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.35); font-size:15px; }
+  .steps li > span { flex-shrink:0; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font:700 14px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); box-shadow:0 0 12px rgba(232,200,114,.35); }
+  .steps b { color:var(--gold-2); }
+  .steps .mono { font-size:13.5px; word-break:break-all; }
+
+  textarea { width:100%; min-height:210px; margin-top:12px; padding:14px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,8,.55); color:var(--text); font:500 13.5px/1.55 'JetBrains Mono', monospace; resize:vertical; }
+  .safe { border-color:rgba(255,141,141,.35); background:linear-gradient(160deg, rgba(255,141,141,.08), rgba(255,255,255,.015)); }
+  .safe h2 { color:#FFC4C4; }
+  .safe p { margin-top:6px; color:var(--text); }
+  .note { font-size:13px; color:var(--muted); }
+  .credits { margin-top:8px; font:500 11.5px/1.6 'JetBrains Mono', monospace; color:#7d7769; }
+
+  #toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:50; display:none; padding:11px 18px; border-radius:999px; background:rgba(0,0,8,.92); border:1px solid var(--gold-2); color:var(--gold-2); font:700 13.5px 'Space Grotesk', sans-serif; box-shadow:0 0 22px rgba(201,168,76,.35); max-width:calc(100% - 32px); text-align:center; }
+  footer { max-width:1000px; margin:10px auto 0; padding:18px 16px 30px; text-align:center; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--muted); }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+      <span><b>GeoTerraChain QFS</b><small>Pi Network · UEMOA</small></span>
+    </a>
+  </div>
+  <div class="sub">
+    <div class="lang" role="group" aria-label="Langue"><span class="globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/></svg></span><button type="button" data-l="fr">FR</button><button type="button" data-l="en">EN</button></div>
+    <span class="msep" aria-hidden="true"></span>
+    <a href="index.html" data-i18n="back">← Accueil</a>
+  </div>
+</header>
+<div class="ticker" aria-hidden="true"><div data-i18n-html="ticker"></div></div>
+
+<main>
+  <section class="hero">
+    <span class="eyebrow"><i></i><span data-i18n="eyebrow">Campagne Pioneers · Phase pilote</span></span>
+    <h1 data-i18n-html="h1">Notre Terre, <em>Notre Richesse</em></h1>
+    <p data-i18n="lead"></p>
+    <p class="vf" data-i18n="vf"></p>
+  </section>
+
+  <div class="films">
+    <section class="glass film" id="spot">
+      <h2 data-i18n="spot_h">Le spot</h2>
+      <p class="hs" data-i18n="spot_d"></p>
+      <div class="player">
+        <video controls playsinline preload="metadata" poster="videos/affiche-spot.jpg">
+          <source src="videos/geoterrachain-spot-30s.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="row">
+        <a class="btn" href="videos/geoterrachain-spot-30s.mp4" download="GeoTerraChain-QFS-Spot-30s.mp4" data-i18n="dl"></a>
+      </div>
+    </section>
+
+    <section class="glass film" id="film">
+      <h2 data-i18n="film_h">Le film</h2>
+      <p class="hs" data-i18n="film_d"></p>
+      <div class="player">
+        <video controls playsinline preload="metadata" poster="videos/affiche-film.jpg">
+          <source src="videos/geoterrachain-film-2min.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="row">
+        <a class="btn" href="videos/geoterrachain-film-2min.mp4" download="GeoTerraChain-QFS-Film-2min.mp4" data-i18n="dl"></a>
+      </div>
+    </section>
+  </div>
+
+  <div class="row" style="margin:4px 0 16px">
+    <button class="btn btn-gold" type="button" id="shareBtn" data-i18n="share"></button>
+    <button class="btn" type="button" id="linkBtn" data-i18n="copy_link"></button>
+  </div>
+
+  <section class="glass">
+    <h2 data-i18n="steps_h">Participer en 3 étapes</h2>
+    <ol class="steps">
+      <li><span>1</span><div data-i18n-html="s1"></div></li>
+      <li><span>2</span><div data-i18n-html="s2"></div></li>
+      <li><span>3</span><div data-i18n-html="s3"></div></li>
+    </ol>
+    <div class="row"><a class="btn btn-gold" href="index.html" data-i18n="open_app"></a></div>
+  </section>
+
+  <section class="glass">
+    <h2 data-i18n="msg_h">Message prêt à partager</h2>
+    <p class="hs" data-i18n="msg_d"></p>
+    <textarea id="msg" readonly aria-label="Message"></textarea>
+    <div class="row"><button class="btn btn-gold" type="button" id="msgBtn" data-i18n="copy_msg"></button></div>
+  </section>
+
+  <section class="glass safe">
+    <h2>🔒 <span data-i18n="safe_h">Sécurité</span></h2>
+    <p data-i18n="safe"></p>
+  </section>
+
+  <section class="glass">
+    <p class="note" data-i18n="note"></p>
+    <p class="credits" data-i18n="credits"></p>
+  </section>
+</main>
+<footer data-i18n="foot">GeoTerraChain QFS · Notre Terre · Notre Richesse</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<textarea id="copyBox" class="hide" aria-hidden="true" tabindex="-1"></textarea>
+
+<script>
+const $ = id => document.getElementById(id);
+function toast(msg) {
+  const b = $("toast"); b.textContent = msg; b.style.display = "block";
+  clearTimeout(toast._t); toast._t = setTimeout(() => { b.style.display = "none"; }, 2600);
+}
+async function copyText(text) {
+  try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) {}
+  try {
+    const ta = $("copyBox"); ta.classList.remove("hide"); ta.value = text; ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand("copy"); ta.classList.add("hide"); return ok;
+  } catch (e) { return false; }
+}
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.title = t("title");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
+  document.querySelectorAll(".lang button").forEach(b => { const on = b.getAttribute("data-l") === LANG; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+  const g = document.querySelector(".lang"); if (g) g.setAttribute("aria-label", t("lang"));
+  $("msg").value = t("msg");
+}
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
+  LANG = b.getAttribute("data-l");
+  try { localStorage.setItem("gtcLang", LANG); } catch (e) {}
+  applyLang();
+}));
+$("linkBtn").addEventListener("click", async () => { toast(await copyText(PAGE) ? t("copied") : t("copy_fail")); });
+$("msgBtn").addEventListener("click", async () => {
+  if (await copyText(t("msg"))) toast(t("msg_copied"));
+  else { const m = $("msg"); m.focus(); m.select(); toast(t("copy_fail")); }
+});
+$("shareBtn").addEventListener("click", async () => {
+  if (navigator.share) {
+    try { await navigator.share({ title: t("title"), text: t("msg"), url: PAGE }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  toast(await copyText(t("msg")) ? t("msg_copied") : t("copy_fail"));
+});
+// une seule vidéo à la fois
+document.querySelectorAll("video").forEach(v => v.addEventListener("play", () => {
+  document.querySelectorAll("video").forEach(o => { if (o !== v) o.pause(); });
+}));
+applyLang();
+</script>
+</body>
+</html>
