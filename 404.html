@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000008">
+<meta name="robots" content="noindex">
+<title>Page introuvable — GeoTerraChain QFS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
+<script>
+  /* Page 404 de GitHub Pages : servie pour toute adresse inconnue, quel que soit le dossier.
+     Tous les liens et images sont donc en chemin absolu (/…). */
+  var GTC_I18N = {
+    fr: {
+      title: "Page introuvable — GeoTerraChain QFS",
+      back: "← Accueil",
+      eyebrow: "Erreur 404 · Bloc introuvable",
+      h1: "Ce bloc n'existe pas <em>sur notre chaîne</em>",
+      lead: "L'adresse demandée ne correspond à aucune page de GeoTerraChain QFS. Elle a peut-être été mal copiée ou coupée en deux.",
+      req: "Adresse demandée",
+      status: "Statut",
+      status_v: "404 · introuvable",
+      net: "Réseau",
+      net_v: "GitHub Pages · HTTPS",
+      maybe: "Vouliez-vous dire",
+      open: "Ouvrir",
+      go_h: "Continuer l'exploration",
+      go_s: "Les pages principales de l'application",
+      l_home: "Accueil", l_home_d: "Notre Terre · Notre Richesse",
+      l_tok: "Tokeniser", l_tok_d: "Dossier d'actif en 7 étapes",
+      l_inv: "Investir", l_inv_d: "Projets fractionnés · pilote",
+      l_film: "Le film", l_film_d: "Spot 30 s · film 2 min",
+      l_guide: "Guide", l_guide_d: "Tokenisation pas à pas",
+      l_vision: "Vision", l_vision_d: "La vision du projet",
+      tip_h: "Astuce",
+      tip: "La connexion Pi ne fonctionne que dans l'application <b>Pi Browser</b>. Si ce lien s'est ouvert dans Chrome ou WhatsApp, ouvrez Pi Browser et tapez <span class=\"mono\">hilaila.github.io</span>.",
+      safe: "🔒 GeoTerraChain QFS ne vous demandera jamais votre phrase secrète de 24 mots.",
+      foot: "GeoTerraChain QFS · Notre Terre · Notre Richesse",
+      ticker: "ERREUR 404 · BLOC INTROUVABLE · <span>PHASE PILOTE</span> · NOTRE TERRE · NOTRE RICHESSE · PI NETWORK ·&nbsp; ERREUR 404 · BLOC INTROUVABLE · <span>PHASE PILOTE</span> · NOTRE TERRE · NOTRE RICHESSE · PI NETWORK ·&nbsp;"
+    },
+    en: {
+      title: "Page not found — GeoTerraChain QFS",
+      back: "← Home",
+      eyebrow: "Error 404 · Block not found",
+      h1: "This block doesn't exist <em>on our chain</em>",
+      lead: "The requested address does not match any GeoTerraChain QFS page. It may have been copied incorrectly or cut in two.",
+      req: "Requested address",
+      status: "Status",
+      status_v: "404 · not found",
+      net: "Network",
+      net_v: "GitHub Pages · HTTPS",
+      maybe: "Did you mean",
+      open: "Open",
+      go_h: "Keep exploring",
+      go_s: "The app's main pages",
+      l_home: "Home", l_home_d: "Our Land · Our Wealth",
+      l_tok: "Tokenize", l_tok_d: "7-step asset file",
+      l_inv: "Invest", l_inv_d: "Fractional projects · pilot",
+      l_film: "The film", l_film_d: "30 s spot · 2 min film",
+      l_guide: "Guide", l_guide_d: "Tokenization step by step",
+      l_vision: "Vision", l_vision_d: "The project's vision",
+      tip_h: "Tip",
+      tip: "Pi sign-in only works inside the <b>Pi Browser</b> app. If this link opened in Chrome or WhatsApp, open Pi Browser and type <span class=\"mono\">hilaila.github.io</span>.",
+      safe: "🔒 GeoTerraChain QFS will never ask for your 24-word secret phrase.",
+      foot: "GeoTerraChain QFS · Our Land · Our Wealth",
+      ticker: "ERROR 404 · BLOCK NOT FOUND · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · PI NETWORK ·&nbsp; ERROR 404 · BLOCK NOT FOUND · <span>PILOT PHASE</span> · OUR LAND · OUR WEALTH · PI NETWORK ·&nbsp;"
+    }
+  };
+  var LANG = (function () {
+    var l = null;
+    try { l = localStorage.getItem("gtcLang"); } catch (e) {}
+    if (l !== "fr" && l !== "en") l = (navigator.language || "fr").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    return l;
+  })();
+  document.documentElement.lang = LANG;
+  function t(k) {
+    var d = GTC_I18N[LANG] || {};
+    return d[k] != null ? d[k] : (GTC_I18N.fr[k] != null ? GTC_I18N.fr[k] : k);
+  }
+</script>
+<style>
+  :root {
+    --bg:#000008; --gold:#C9A84C; --gold-2:#E8C872; --gold-3:#8B6914;
+    --text:#E8E2D4; --muted:#9A9384; --line:rgba(201,168,76,.18);
+    --glass:rgba(255,255,255,.035); --green:#3DDC97; --violet:#7B5CD6; --violet-2:#A88BFF; --red:#FF8D8D;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'Space Grotesk', system-ui, sans-serif; line-height:1.6; font-size:15px; min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(201,168,76,.14), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 100% 25%, rgba(123,92,214,.16), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,168,76,.08), transparent 70%);
+    background-attachment:fixed;
+  }
+  a { color:var(--gold-2); text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; }
+  .hide { display:none !important; }
+
+  .top { position:sticky; top:0; z-index:20; background:rgba(0,0,8,.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
+  .top::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px; max-width:1000px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--text); min-width:0; }
+  .brand img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold); box-shadow:0 0 18px rgba(201,168,76,.25); flex-shrink:0; }
+  .brand b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:17px; color:var(--gold-2); font-weight:700; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .brand span { min-width:0; }
+  .brand small { display:block; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .sub { display:flex; align-items:center; gap:8px; padding:2px 16px 10px; max-width:1000px; margin:0 auto; }
+  .lang { display:flex; align-items:center; flex-shrink:0; gap:2px; padding:3px; border:1.5px solid var(--gold-2); border-radius:999px; background:rgba(232,200,114,.10); box-shadow:0 0 14px rgba(232,200,114,.35); }
+  .lang .globe { display:grid; place-items:center; width:24px; color:var(--gold-2); padding-left:3px; }
+  .lang .globe svg { width:17px; height:17px; }
+  .lang button { border:0; border-radius:999px; background:transparent; color:#D9CFB4; font:700 12.5px 'JetBrains Mono', monospace; letter-spacing:.06em; padding:6px 10px; min-width:38px; cursor:pointer; }
+  .lang button.on { background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); color:#000008; box-shadow:0 0 10px rgba(232,200,114,.5); }
+  .msep { flex-shrink:0; width:1px; align-self:stretch; margin:4px 2px; background:linear-gradient(180deg, transparent, rgba(232,200,114,.6), transparent); }
+  .sub a { font-size:13.5px; color:var(--text); padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--glass); white-space:nowrap; }
+  .ticker { overflow:hidden; border-bottom:1px solid var(--line); background:rgba(201,168,76,.03); }
+  .ticker div { display:inline-block; white-space:nowrap; padding:8px 0; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); letter-spacing:.08em; animation:defile 34s linear infinite; }
+  .ticker span { color:var(--green); }
+  @keyframes defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+  main { max-width:1000px; margin:0 auto; padding:18px 16px 0; }
+
+  /* ---------- Héros : emblème hexagonal + 404 doré ---------- */
+  .hero { position:relative; overflow:hidden; padding:26px 20px 24px; border:1px solid var(--line); border-radius:24px; background:linear-gradient(135deg, rgba(201,168,76,.12), rgba(123,92,214,.08) 60%, rgba(255,255,255,.02)); margin-bottom:16px; text-align:center; }
+  .hero::after { content:""; position:absolute; width:260px; height:260px; right:-110px; top:-120px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.22), transparent 65%); pointer-events:none; }
+  .emblem { position:relative; width:min(260px, 72vw); aspect-ratio:1; margin:4px auto 6px; }
+  .emblem svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .ring { transform-origin:50% 50%; animation:tourne 28s linear infinite; }
+  .ring2 { transform-origin:50% 50%; animation:tourne 40s linear infinite reverse; }
+  @keyframes tourne { to { transform:rotate(360deg); } }
+  .node { animation:clignote 2.4s ease-in-out infinite; }
+  .node.n2 { animation-delay:.6s; } .node.n3 { animation-delay:1.2s; } .node.n4 { animation-delay:1.8s; }
+  @keyframes clignote { 50% { opacity:.25; } }
+  .broken { stroke-dasharray:4 6; animation:pointille 1.6s linear infinite; }
+  @keyframes pointille { to { stroke-dashoffset:-20; } }
+  .code404 { position:absolute; inset:0; display:grid; place-items:center; }
+  .code404 b { font-family:'Playfair Display', Georgia, serif; font-weight:800; font-size:clamp(54px, 17vw, 76px); line-height:1; letter-spacing:.02em;
+    background:linear-gradient(100deg, #A87A14 0%, #F6D978 28%, #FFF5CF 42%, #E2B33A 58%, #B8871A 100%); background-size:260% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent; animation:brille 4s linear infinite; filter:drop-shadow(0 0 18px rgba(232,200,114,.35)); }
+  @keyframes brille { from { background-position:100% 0; } to { background-position:-160% 0; } }
+
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:rgba(0,0,8,.4); }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--red); box-shadow:0 0 10px var(--red); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { position:relative; z-index:1; margin-top:14px; font-family:'Playfair Display', Georgia, serif; font-size:clamp(26px, 7vw, 40px); line-height:1.1; font-weight:800; }
+  .hero h1 em { font-style:normal; background:linear-gradient(100deg, #A87A14 0%, #F6D978 28%, #FFF5CF 42%, #E2B33A 58%, #B8871A 100%); background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:brille 4s linear infinite; }
+  .hero p { position:relative; z-index:1; margin:10px auto 0; color:var(--muted); font-size:14.5px; max-width:560px; }
+
+  /* ---------- Carte « transaction » : l'adresse demandée ---------- */
+  .glass { position:relative; border:1px solid var(--line); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:18px; margin-bottom:14px; }
+  .glass h2 { font-family:'Playfair Display', Georgia, serif; font-size:21px; color:var(--gold-2); line-height:1.2; }
+  .glass .hs { font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .tx { display:grid; gap:10px; }
+  .tx div { display:grid; gap:2px; padding:10px 12px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.45); }
+  .tx small { font:500 10.5px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .tx code { font:500 13px/1.5 'JetBrains Mono', monospace; color:var(--text); word-break:break-all; }
+  .tx .bad { color:var(--red); }
+  .tx .ok { color:var(--green); }
+  @media (min-width:640px) { .tx { grid-template-columns:2fr 1fr 1fr; } }
+
+  /* ---------- Suggestion ---------- */
+  .maybe { border-color:rgba(232,200,114,.45); background:linear-gradient(160deg, rgba(232,200,114,.12), rgba(255,255,255,.02)); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .maybe small { display:block; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); }
+  .maybe b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:22px; color:var(--text); line-height:1.2; }
+  .maybe code { display:block; margin-top:2px; font:500 12px 'JetBrains Mono', monospace; color:var(--muted); word-break:break-all; }
+
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:var(--glass); color:var(--text); font:700 14px 'Space Grotesk', system-ui, sans-serif; cursor:pointer; text-align:center; }
+  .btn-gold { border:0; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; box-shadow:0 0 22px rgba(201,168,76,.35); }
+
+  /* ---------- Liens rapides ---------- */
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  @media (min-width:760px) { .grid { grid-template-columns:repeat(3, 1fr); } }
+  .tile { position:relative; display:flex; flex-direction:column; gap:6px; padding:14px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.4); color:var(--text); overflow:hidden; transition:border-color .2s, transform .2s; }
+  .tile::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg, transparent, var(--gold-2), transparent); opacity:.6; }
+  .tile:active, .tile:hover { border-color:rgba(232,200,114,.5); transform:translateY(-1px); }
+  .tile .ic { width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:rgba(232,200,114,.10); border:1px solid var(--line); color:var(--gold-2); }
+  .tile .ic svg { width:18px; height:18px; }
+  .tile b { font-size:15px; }
+  .tile span { font-size:12px; color:var(--muted); line-height:1.35; }
+
+  .tip p { margin-top:6px; font-size:14px; }
+  .tip b { color:var(--gold-2); }
+  .safe { margin-top:10px; font-size:13px; color:#FFC4C4; }
+  footer { max-width:1000px; margin:10px auto 0; padding:18px 16px 30px; text-align:center; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <a class="brand" href="/index.html">
+      <img src="/logo-final-complet.png" alt="GeoTerraChain QFS">
+      <span><b>GeoTerraChain QFS</b><small>Pi Network · UEMOA</small></span>
+    </a>
+  </div>
+  <div class="sub">
+    <div class="lang" role="group" aria-label="Langue / Language"><span class="globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/></svg></span><button type="button" data-l="fr">FR</button><button type="button" data-l="en">EN</button></div>
+    <span class="msep" aria-hidden="true"></span>
+    <a href="/index.html" data-i18n="back">← Accueil</a>
+  </div>
+</header>
+<div class="ticker" aria-hidden="true"><div data-i18n-html="ticker"></div></div>
+
+<main>
+  <section class="hero">
+    <div class="emblem" aria-hidden="true">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#FFF3C4"/><stop offset=".5" stop-color="#E8C872"/><stop offset="1" stop-color="#8B6914"/>
+          </linearGradient>
+        </defs>
+        <g class="ring2"><circle cx="100" cy="100" r="96" fill="none" stroke="rgba(168,139,255,.28)" stroke-width="1" stroke-dasharray="2 7"/></g>
+        <g class="ring">
+          <polygon points="100,12 176,56 176,144 100,188 24,144 24,56" fill="none" stroke="url(#g)" stroke-width="2.2" stroke-linejoin="round"/>
+          <circle cx="100" cy="12" r="4.5" fill="#E8C872"/><circle cx="176" cy="56" r="4.5" fill="#E8C872"/>
+          <circle cx="176" cy="144" r="4.5" fill="#E8C872"/><circle cx="100" cy="188" r="4.5" fill="#E8C872"/>
+          <circle cx="24" cy="144" r="4.5" fill="#E8C872"/><circle cx="24" cy="56" r="4.5" fill="#E8C872"/>
+        </g>
+        <polygon points="100,34 157,67 157,133 100,166 43,133 43,67" fill="rgba(0,0,8,.55)" stroke="rgba(201,168,76,.35)" stroke-width="1"/>
+        <!-- chaîne de blocs : le dernier maillon est rompu -->
+        <line x1="66" y1="142" x2="88" y2="148" stroke="#E8C872" stroke-width="1.4" opacity=".7"/>
+        <line x1="88" y1="148" x2="112" y2="148" stroke="#E8C872" stroke-width="1.4" opacity=".7"/>
+        <line x1="112" y1="148" x2="134" y2="142" stroke="#FF8D8D" stroke-width="1.4" class="broken"/>
+        <circle class="node" cx="66" cy="142" r="3.2" fill="#E8C872"/>
+        <circle class="node n2" cx="88" cy="148" r="3.2" fill="#E8C872"/>
+        <circle class="node n3" cx="112" cy="148" r="3.2" fill="#E8C872"/>
+        <circle class="node n4" cx="134" cy="142" r="3.6" fill="none" stroke="#FF8D8D" stroke-width="1.4"/>
+      </svg>
+      <div class="code404"><b>404</b></div>
+    </div>
+    <span class="eyebrow"><i></i><span data-i18n="eyebrow">Erreur 404 · Bloc introuvable</span></span>
+    <h1 data-i18n-html="h1">Ce bloc n'existe pas <em>sur notre chaîne</em></h1>
+    <p data-i18n="lead"></p>
+  </section>
+
+  <section class="glass maybe hide" id="maybe">
+    <div>
+      <small data-i18n="maybe">Vouliez-vous dire</small>
+      <b id="maybeName"></b>
+      <code id="maybePath"></code>
+    </div>
+    <a class="btn btn-gold" id="maybeBtn" href="/index.html"><span data-i18n="open">Ouvrir</span> →</a>
+  </section>
+
+  <section class="glass">
+    <div class="tx">
+      <div><small data-i18n="req">Adresse demandée</small><code id="reqPath" class="bad">—</code></div>
+      <div><small data-i18n="status">Statut</small><code class="bad" data-i18n="status_v">404 · introuvable</code></div>
+      <div><small data-i18n="net">Réseau</small><code class="ok" data-i18n="net_v">GitHub Pages · HTTPS</code></div>
+    </div>
+  </section>
+
+  <section class="glass">
+    <h2 data-i18n="go_h">Continuer l'exploration</h2>
+    <p class="hs" data-i18n="go_s"></p>
+    <nav class="grid">
+      <a class="tile" href="/index.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><b data-i18n="l_home">Accueil</b><span data-i18n="l_home_d"></span></a>
+      <a class="tile" href="/tokenisation.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg></span><b data-i18n="l_tok">Tokeniser</b><span data-i18n="l_tok_d"></span></a>
+      <a class="tile" href="/investissement.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><b data-i18n="l_inv">Investir</b><span data-i18n="l_inv_d"></span></a>
+      <a class="tile" href="/campagne.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg></span><b data-i18n="l_film">Le film</b><span data-i18n="l_film_d"></span></a>
+      <a class="tile" href="/guide.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h7"/></svg></span><b data-i18n="l_guide">Guide</b><span data-i18n="l_guide_d"></span></a>
+      <a class="tile" href="/vision-geoterrachain-qfs-premium-v2.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/></svg></span><b data-i18n="l_vision">Vision</b><span data-i18n="l_vision_d"></span></a>
+    </nav>
+  </section>
+
+  <section class="glass tip">
+    <h2 data-i18n="tip_h">Astuce</h2>
+    <p data-i18n-html="tip"></p>
+    <p class="safe" data-i18n="safe"></p>
+  </section>
+</main>
+<footer data-i18n="foot">GeoTerraChain QFS · Notre Terre · Notre Richesse</footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Pages connues + mots-clés, pour proposer la bonne page ---------- */
+  var PAGES = [
+    { f: "index.html",                               fr: "Accueil",            en: "Home",            k: ["index", "accueil", "home"] },
+    { f: "tokenisation.html",                        fr: "Tokeniser un actif", en: "Tokenize an asset", k: ["tokenis", "tokeniz", "token"] },
+    { f: "investissement.html",                      fr: "Investir",           en: "Invest",          k: ["invest"] },
+    { f: "campagne.html",                            fr: "Le film",            en: "The film",        k: ["campagne", "campaign", "film", "video"] },
+    { f: "guide-aide-geoterrachain-qfs.html",        fr: "Guide & Aide",       en: "Guide & Help",    k: ["aide", "help", "faq"] },
+    { f: "guide.html",                               fr: "Guide de tokenisation", en: "Tokenization guide", k: ["guide"] },
+    { f: "vision-geoterrachain-qfs-premium-v2.html", fr: "Vision",             en: "Vision",          k: ["vision"] },
+    { f: "litepaper.html",                           fr: "Litepaper",          en: "Litepaper",       k: ["litepaper", "lite"] },
+    { f: "pourquoi.html",                            fr: "Pourquoi ?",         en: "Why?",            k: ["pourquoi", "why"] },
+    { f: "pioneer.html",                             fr: "Mon espace Pioneer", en: "My Pioneer space", k: ["pioneer", "espace"] },
+    { f: "historique.html",                          fr: "Journal",            en: "Activity log",    k: ["historique", "journal", "log"] },
+    { f: "privacy.html",                             fr: "Confidentialité",    en: "Privacy",         k: ["privacy", "confidential"] },
+    { f: "termes.html",                              fr: "Conditions d'utilisation", en: "Terms of use", k: ["termes", "terms", "conditions", "cgu"] }
+  ];
+
+  function lev(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    for (i = 0; i <= m; i++) d[i] = [i];
+    for (j = 0; j <= n; j++) d[0][j] = j;
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[m][n];
+  }
+
+  var raw = location.pathname || "/";
+  var path = raw;
+  try { path = decodeURIComponent(raw); } catch (e) {}
+  // Adresse collée avec du texte en trop : on coupe au premier espace ou retour à la ligne.
+  path = path.split(/[\s ]/)[0];
+  var shown = location.host + path;
+  $("reqPath").textContent = shown.length > 140 ? shown.slice(0, 140) + "…" : shown;
+
+  var slug = path.toLowerCase().replace(/^\/+/, "").replace(/\/+$/, "");
+  var best = null;
+  if (slug) {
+    // 1) mot-clé contenu dans l'adresse
+    for (var i = 0; i < PAGES.length && !best; i++) {
+      for (var j = 0; j < PAGES[i].k.length; j++) {
+        if (slug.indexOf(PAGES[i].k[j]) !== -1) { best = PAGES[i]; break; }
+      }
+    }
+    // 2) sinon, nom de fichier le plus proche (faute de frappe)
+    if (!best) {
+      var base = slug.split("/").pop().replace(/\.html?$/, "");
+      var score = 1e9;
+      PAGES.forEach(function (p) {
+        var s = lev(base, p.f.replace(/\.html$/, ""));
+        if (s < score) { score = s; best = p; }
+      });
+      if (score > Math.max(3, Math.floor(base.length / 3))) best = null;
+    }
+  }
+
+  function render() {
+    document.title = t("title");
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
+    document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-l") === LANG); });
+    if (best) {
+      $("maybe").classList.remove("hide");
+      $("maybeName").textContent = LANG === "en" ? best.en : best.fr;
+      $("maybePath").textContent = location.host + "/" + best.f;
+      $("maybeBtn").setAttribute("href", "/" + best.f + location.search + location.hash);
+    }
+  }
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      LANG = b.getAttribute("data-l");
+      try { localStorage.setItem("gtcLang", LANG); } catch (e) {}
+      document.documentElement.lang = LANG;
+      render();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
