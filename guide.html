@@ -178,7 +178,7 @@ select.field-val{cursor:pointer;}
 <!-- NAV -->
 <div class="nav">
   <a class="nav-btn" href="https://hilaila.github.io">◉ Accueil</a>
-  <a class="nav-btn" href="https://hilaila.github.io/vision.html">🌍 Vision</a>
+  <a class="nav-btn" href="https://hilaila.github.io/vision-geoterrachain-qfs-premium-v2.html">🌍 Vision</a>
   <a class="nav-btn" href="https://hilaila.github.io/litepaper.html">💼 Litepaper</a>
   <span class="nav-btn active" style="border-bottom-color:var(--gold);color:var(--gold);">📖 Guide</span>
 </div>
@@ -283,7 +283,7 @@ select.field-val{cursor:pointer;}
       <div style="padding-top:16px;">
         <div class="alert blue">
           <div class="pill" style="background:#3A9BD5"></div>
-          <div><strong style="color:#3A9BD5">KYC obligatoire</strong> — Seuls les Pioneers dont le KYC est approuvé par Pi Network peuvent accéder à la tokenisation. La vérification est automatique lors de la connexion.</div>
+          <div><strong style="color:#3A9BD5">KYC obligatoire</strong> — La tokenisation est réservée aux Pioneers dont le KYC est validé par Pi Network. L'application ne demande aucun document d'identité et ne demande jamais votre phrase secrète de 24 mots.</div>
         </div>
         <div class="instruction">
           <div class="inst-num">1</div>
@@ -361,7 +361,7 @@ select.field-val{cursor:pointer;}
       <div style="padding-top:16px;">
         <div class="alert gold">
           <div class="pill" style="background:var(--gold)"></div>
-          <div>Remplissez chaque champ avec les vraies informations de votre bien foncier. Ces données seront enregistrées on-chain sur le ledger Stellar.</div>
+          <div>Remplissez chaque champ avec les vraies informations de votre bien foncier. Ces données sont enregistrées dans votre dossier et vérifiées avant toute tokenisation définitive.</div>
         </div>
 
         <div class="field-demo">
@@ -490,46 +490,40 @@ Mémo        : Tokenisation: [Nom du bien]</code>
     <div class="step-header" onclick="toggleStep(6)">
       <div class="step-num">7</div>
       <div class="step-title-wrap">
-        <div class="step-title">Étape 7 — Token créé, actif enregistré on-chain !</div>
-        <div class="step-desc">Votre parcelle est maintenant tokenisée sur la blockchain Pi</div>
+        <div class="step-title">Étape 7 — Demande enregistrée, en attente de vérification</div>
+        <div class="step-desc">Votre dossier est vérifié avant toute tokenisation définitive</div>
       </div>
       <span class="step-status pending">À FAIRE</span>
     </div>
     <div class="step-body hidden" id="body-6">
       <div style="padding-top:16px;">
         <div class="completion-box">
-          <div class="completion-icon">🎉</div>
-          <div class="completion-title">Tokenisation réussie !</div>
-          <div class="completion-text">Votre actif foncier est maintenant enregistré on-chain sur le ledger Stellar / Pi Network. Un token LandPi unique lui a été attribué avec un hash de transaction vérifiable.</div>
+          <div class="completion-icon">✓</div>
+          <div class="completion-title">Demande enregistrée</div>
+          <div class="completion-text">Votre dossier reçoit un numéro de demande et le statut « En attente de vérification ». Phase pilote : un jeton de test GTCπ (code GTCP) peut être émis sur le réseau de test Stellar. Ce jeton n'a aucune valeur et ne vaut pas titre de propriété.</div>
         </div>
 
-        <div style="font-size:11px;color:var(--muted);margin:14px 0 8px;">Exemple de token LandPi généré :</div>
-        <div style="background:#030303;border:1px solid var(--green);padding:14px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;">
-ID        : LANDPI_1749775234521
-NOM       : Plantation Cacao — San-Pédro
-SURFACE   : 5.2 ha
-TYPE      : Agro business — Cultures de rente
-RÉGION    : Côte d'Ivoire
-PROPRIO   : @Hilaila
-KYC       : ✓ Vérifié
-PRIX      : 100 GTCπ
-BURN 0.5% : − 0.5 GTCπ
-NET       : 99.5 GTCπ
-LEDGER    : #47823941
-STATUT    : TOKENISÉ
-TX HASH   : bb37b800beae08f56b6d014adecc75d...</div>
+        <div style="font-size:11px;color:var(--muted);margin:14px 0 8px;">Exemple fictif de récapitulatif :</div>
+        <div style="background:#030303;border:1px solid var(--border);padding:14px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;white-space:pre-wrap;">DEMANDE    : GTC-EXEMPLE-0001
+ACTIF      : Plantation (exemple)
+RÉGION     : Côte d'Ivoire
+PIONEER    : @exemple
+OFFRE      : 100 GTCπ
+BURN 0,5 % : − 0,5 GTCπ
+NET        : 99,5 GTCπ
+STATUT     : EN ATTENTE DE VÉRIFICATION
+JETON TEST : GTCP · réseau de test Stellar</div>
 
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
-          <span class="tag green">● ON-CHAIN</span>
+          <span class="tag">● EN ATTENTE</span>
           <span class="tag">GTCπ</span>
-          <span class="tag">LandPi</span>
-          <span class="tag blue">KYC ✓</span>
-          <span class="tag">Stellar Ledger</span>
+          <span class="tag blue">Testnet</span>
+          <span class="tag">Exemple fictif</span>
         </div>
 
         <div class="alert green" style="margin-top:14px;">
           <div class="pill" style="background:var(--green)"></div>
-          <div>Votre token apparaît maintenant dans l'onglet <strong style="color:var(--green)">◇ Portefeuille</strong> de l'app. L'historique complet de vos tokenisations y est conservé.</div>
+          <div>Retrouvez votre demande dans <strong style="color:var(--green)">Mon espace → Mes actifs</strong>. Gardez aussi la référence de demande et le TXID Pi affichés à la fin de la tokenisation.</div>
         </div>
       </div>
     </div>
@@ -597,7 +591,7 @@ TX HASH   : bb37b800beae08f56b6d014adecc75d...</div>
       <span>+</span>
     </div>
     <div class="faq-a">
-      Rendez-vous dans l'onglet "◇ Portefeuille" de l'app. Toutes vos tokenisations et transactions sont conservées et affichées avec les détails complets : hash de transaction, ledger Stellar, montant, burn, et timestamp.
+      Ouvrez « Mon espace » depuis le menu de l'accueil, onglet « Mes actifs » : vos demandes de tokenisation y sont listées. À la fin de chaque tokenisation, l'app affiche aussi la référence de la demande et le TXID de votre paiement Pi : notez-les.
     </div>
   </div>
 

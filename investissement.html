@@ -33,7 +33,9 @@ body {
     line-height: 1.5;
 }
 .app { width: 100%; max-width: 900px; margin: auto; padding: 20px 14px 50px; }
-.header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
+.header { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.header .brand { flex: 1 1 100%; order: -1; margin-bottom: 4px; }
+.header .status { margin-left: auto; }
 .back-home { font-size: 11px; font-weight: 700; color: var(--muted); text-decoration: none; border: 1px solid rgba(255,255,255,.1); padding: 8px 12px; border-radius: 10px; white-space: nowrap; }
 .back-home:hover { color: var(--gold-light); border-color: var(--border); }
 .brand-title { font-size: 17px; font-weight: 800; }
@@ -164,7 +166,7 @@ select option { background: #111; color: white; }
         <a href="pourquoi.html" class="back-home">Pourquoi ?</a>
         <a href="guide-aide-geoterrachain-qfs.html" class="back-home">Guide</a>
         <a href="pioneer.html" class="back-home">Mon espace</a>
-        <div>
+        <div class="brand">
             <div class="brand-title">GeoTerraChain QFS — Investissement RWA</div>
             <div class="brand-subtitle">Le Pont Village-Ville · Fractions du projet</div>
         </div>
@@ -172,7 +174,7 @@ select option { background: #111; color: white; }
     </header>
 
     <div class="pilot-banner">
-        <strong>⚠️ Phase pilote.</strong> Cette fonctionnalité de fractionnement et d'investissement croisé est actuellement testée en environnement contrôlé (Testnet). Aucun investissement réel avec de vrais Pi n'est ouvert au public tant que cette autorisation n'est pas confirmée par l'autorité compétente. Les montants Pi utilisés ici sont réels mais minimes (tests), et les unités attribuées n'ont pas de valeur juridique de propriété.
+        <strong>⚠️ Phase pilote.</strong> Cette fonctionnalité de fractionnement et d'investissement croisé est actuellement testée en environnement contrôlé (Testnet). Aucun investissement réel avec de vrais Pi n'est ouvert au public tant que cette autorisation n'est pas confirmée par l'autorité compétente. Les montants utilisés pendant les tests sont minimes, et les unités attribuées n'ont pas de valeur juridique de propriété.
     </div>
 
     <div style="text-align:center; margin-bottom:20px;">
