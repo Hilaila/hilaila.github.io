@@ -1,655 +1,451 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000008">
 <title>Guide de tokenisation — GeoTerraChain QFS</title>
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<meta name="description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement test.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
+<script>
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("gtcLang"); } catch (e) {}
+    if (l !== "fr" && l !== "en") l = (navigator.language || "fr").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.setAttribute("data-lang", l);
+    document.documentElement.lang = l;
+  })();
+</script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --gold:#C9A84C;--gold-dark:#8B6914;--gold-light:#E8C97A;
-  --dark:#0A0A0A;--card:#0D0D0D;--border:#1A1A1A;
-  --green:#2ECC71;--red:#E74C3C;--blue:#3A9BD5;
-  --text:#D8D0C0;--muted:#555;
-}
-body{font-family:Georgia,serif;background:var(--dark);color:var(--text);min-height:100vh;}
+  :root {
+    --bg:#000008; --gold:#C9A84C; --gold-2:#E8C872; --gold-3:#8B6914;
+    --text:#E8E2D4; --muted:#9A9384; --line:rgba(201,168,76,.18);
+    --glass:rgba(255,255,255,.035); --green:#3DDC97; --violet:#7B5CD6; --violet-2:#A88BFF; --red:#FF8D8D;
+    --shine:linear-gradient(100deg, #A87A14 0%, #F6D978 28%, #FFF5CF 42%, #E2B33A 58%, #B8871A 100%);
+  }
+  [data-lang="fr"] .en, [data-lang="en"] .fr { display:none !important; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:150px; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'Space Grotesk', system-ui, sans-serif; line-height:1.6; font-size:15px; min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(201,168,76,.14), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 100% 25%, rgba(123,92,214,.16), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,168,76,.08), transparent 70%);
+    background-attachment:fixed;
+  }
+  body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.35;
+    background-image:linear-gradient(rgba(201,168,76,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,.05) 1px, transparent 1px);
+    background-size:44px 44px; mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); }
+  header, main, footer, .ticker { position:relative; z-index:1; }
+  a { color:var(--gold-2); text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; }
 
-/* HEADER */
-.header{background:#060606;border-bottom:1px solid var(--gold-dark);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo-main{font-size:15px;font-weight:bold;color:var(--gold);letter-spacing:3px;text-transform:uppercase;}
-.logo-sub{font-size:9px;color:var(--gold-dark);letter-spacing:3px;text-transform:uppercase;margin-top:2px;}
-.badge{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:3px 8px;font-size:9px;letter-spacing:1px;display:inline-block;}
-.badge.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
+  /* ---------- En-tête ---------- */
+  .top { position:sticky; top:0; z-index:20; background:rgba(0,0,8,.78); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
+  .top::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px; max-width:1040px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--text); min-width:0; }
+  .brand img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold); box-shadow:0 0 18px rgba(201,168,76,.25); flex-shrink:0; }
+  .brand b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:17px; color:var(--gold-2); font-weight:700; line-height:1.15; white-space:nowrap; }
+  .brand small { display:block; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .badge { flex-shrink:0; font:700 10px 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--violet-2); border:1px solid rgba(168,139,255,.45); background:rgba(123,92,214,.12); border-radius:999px; padding:5px 10px; }
+  .sub { display:flex; align-items:center; gap:8px; padding:2px 16px 10px; max-width:1040px; margin:0 auto; }
+  .lang { display:flex; align-items:center; flex-shrink:0; gap:2px; padding:3px; border:1.5px solid var(--gold-2); border-radius:999px; background:rgba(232,200,114,.10); box-shadow:0 0 14px rgba(232,200,114,.35); }
+  .lang .globe { display:grid; place-items:center; width:24px; color:var(--gold-2); padding-left:3px; }
+  .lang .globe svg { width:17px; height:17px; }
+  .lang button { border:0; border-radius:999px; background:transparent; color:#D9CFB4; font:700 12.5px 'JetBrains Mono', monospace; letter-spacing:.06em; padding:6px 10px; min-width:38px; cursor:pointer; }
+  .lang button.on { background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); color:#000008; box-shadow:0 0 10px rgba(232,200,114,.5); }
+  .msep { flex-shrink:0; width:1px; align-self:stretch; margin:4px 2px; background:linear-gradient(180deg, transparent, rgba(232,200,114,.6), transparent); }
+  .sub > a { font-size:13.5px; color:var(--text); padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--glass); white-space:nowrap; }
+  .nav { display:flex; gap:6px; overflow-x:auto; padding:0 16px 10px; max-width:1040px; margin:0 auto; scrollbar-width:none; }
+  .nav::-webkit-scrollbar { display:none; }
+  .nav a { flex-shrink:0; font:600 12px 'JetBrains Mono', monospace; letter-spacing:.06em; color:#CFC6B2; padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:rgba(0,0,8,.4); transition:all .2s; }
+  .nav a.on { color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-color:transparent; box-shadow:0 0 12px rgba(232,200,114,.4); }
+  .ticker { overflow:hidden; border-bottom:1px solid var(--line); background:rgba(201,168,76,.03); }
+  .ticker div { display:inline-block; white-space:nowrap; padding:8px 0; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); letter-spacing:.08em; animation:defile 38s linear infinite; }
+  .ticker b { color:var(--green); font-weight:500; }
+  @keyframes defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 
-/* NAV */
-.nav{display:flex;background:#060606;border-bottom:1px solid var(--border);overflow-x:auto;}
-.nav-btn{padding:10px 14px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;white-space:nowrap;text-decoration:none;display:inline-block;}
-.nav-btn.active{border-bottom-color:var(--gold);color:var(--gold);}
-.nav-btn:hover{color:var(--gold);}
+  main { max-width:1040px; margin:0 auto; padding:18px 16px 0; }
 
-/* HERO */
-.hero{background:linear-gradient(180deg,#0D0D0D 0%,#080808 100%);border-bottom:1px solid var(--gold-dark);padding:48px 24px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center top,rgba(201,168,76,0.06) 0%,transparent 70%);}
-.hero-eyebrow{font-size:9px;color:var(--gold-dark);letter-spacing:6px;text-transform:uppercase;margin-bottom:16px;}
-.hero-title{font-size:32px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:400;margin-bottom:12px;line-height:1.2;}
-.hero-sub{font-size:13px;color:var(--muted);max-width:500px;margin:0 auto 24px;line-height:1.8;}
-.hero-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-.hero-badge{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:5px 12px;font-size:10px;letter-spacing:2px;}
+  /* ---------- Héros ---------- */
+  .hero { position:relative; overflow:hidden; padding:26px 20px 24px; border:1px solid var(--line); border-radius:28px; background:linear-gradient(135deg, rgba(201,168,76,.13), rgba(123,92,214,.09) 60%, rgba(255,255,255,.02)); text-align:center; }
+  .hero::after { content:""; position:absolute; width:300px; height:300px; right:-130px; top:-140px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.22), transparent 65%); pointer-events:none; }
+  .emblem { position:relative; width:min(230px, 64vw); aspect-ratio:1; margin:2px auto 10px; }
+  .emblem svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .emblem img { position:absolute; left:50%; top:50%; width:54%; height:54%; transform:translate(-50%, -50%); border-radius:50%; object-fit:cover; border:1.5px solid rgba(232,200,114,.6); box-shadow:0 0 40px rgba(232,200,114,.35); }
+  .ring { transform-origin:50% 50%; animation:tourne 30s linear infinite; }
+  .ring2 { transform-origin:50% 50%; animation:tourne 46s linear infinite reverse; }
+  @keyframes tourne { to { transform:rotate(360deg); } }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:rgba(0,0,8,.4); }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { position:relative; z-index:1; margin-top:14px; font-family:'Playfair Display', Georgia, serif; font-size:clamp(34px, 10vw, 58px); line-height:1.02; font-weight:800; }
+  .hero h1 em, .shine { font-style:normal; background:var(--shine); background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:brille 4s linear infinite; }
+  @keyframes brille { from { background-position:100% 0; } to { background-position:-160% 0; } }
+  .tagline { margin-top:8px; font:500 12px 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:var(--gold-2); }
+  .hero p.lead { position:relative; z-index:1; margin:12px auto 0; color:#CFC6B2; font-size:15px; max-width:640px; }
+  .chips { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; position:relative; z-index:1; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font:600 11.5px 'JetBrains Mono', monospace; letter-spacing:.05em; color:var(--text); padding:6px 11px; border:1px solid var(--line); border-radius:999px; background:rgba(0,0,8,.45); }
+  .chip .ic { width:15px; height:15px; color:var(--gold-2); }
+  .chip .ic svg { width:15px; height:15px; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 6px; }
+  @media (min-width:760px) { .stats { grid-template-columns:repeat(4, 1fr); } }
+  .stat { position:relative; overflow:hidden; padding:14px; border:1px solid var(--line); border-radius:18px; background:var(--glass); }
+  .stat::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg, transparent, var(--gold-2), transparent); opacity:.7; }
+  .stat b { display:block; font:700 clamp(20px, 6vw, 26px) 'JetBrains Mono', monospace; color:var(--gold-2); line-height:1.15; }
+  .stat span { display:block; margin-top:4px; font-size:12px; color:var(--muted); line-height:1.35; }
 
-/* MAIN */
-.main{padding:32px 24px;max-width:860px;margin:0 auto;}
+  /* ---------- Sections ---------- */
+  section.block { margin-top:30px; }
+  .sh { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+  .sh-ic { flex-shrink:0; width:44px; height:44px; display:grid; place-items:center; border-radius:14px; color:var(--gold-2); background:linear-gradient(135deg, rgba(232,200,114,.18), rgba(123,92,214,.12)); border:1px solid rgba(232,200,114,.35); box-shadow:0 0 18px rgba(201,168,76,.18); }
+  .sh-ic svg { width:22px; height:22px; }
+  .sh small { display:block; font-size:11px; letter-spacing:.18em; color:var(--muted); }
+  .sh h2 { font-family:'Playfair Display', Georgia, serif; font-size:clamp(23px, 6.4vw, 32px); line-height:1.15; color:var(--text); }
+  .sh-sub { margin-top:4px; font-size:13.5px; color:var(--muted); }
+  .glass { position:relative; border:1px solid var(--line); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:18px; }
+  .glass + .glass { margin-top:12px; }
+  .lead2 { font-size:15.5px; color:#DDD5C3; }
+  .lead2 b { color:var(--gold-2); font-weight:600; }
+  .cols { display:grid; gap:12px; }
+  @media (min-width:760px) { .cols.c2 { grid-template-columns:1fr 1fr; } .cols.c3 { grid-template-columns:repeat(3, 1fr); } }
+  .cols .glass + .glass { margin-top:0; }
+  .kv small { display:block; font:500 10.5px 'JetBrains Mono', monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+  .kv b { display:block; margin-top:4px; font-family:'Playfair Display', Georgia, serif; font-size:21px; color:var(--gold-2); }
+  .kv > span { display:block; font-size:12.5px; color:var(--muted); }
+  h3 { font-size:16px; font-weight:700; color:var(--text); line-height:1.3; }
+  .card-h { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .ic { flex-shrink:0; width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:rgba(232,200,114,.10); border:1px solid var(--line); color:var(--gold-2); }
+  .ic svg { width:18px; height:18px; }
+  ul.dots { list-style:none; display:grid; gap:7px; }
+  ul.dots li { position:relative; padding-left:20px; font-size:14px; color:#DDD5C3; }
+  ul.dots li::before { content:""; position:absolute; left:2px; top:.62em; width:8px; height:8px; transform:rotate(45deg); background:linear-gradient(135deg, #FFF3C4, var(--gold)); box-shadow:0 0 8px rgba(232,200,114,.5); }
+  ul.checks { list-style:none; display:grid; gap:8px; }
+  ul.checks li { display:flex; gap:10px; align-items:flex-start; font-size:14px; }
+  ul.checks li i { flex-shrink:0; width:20px; height:20px; border-radius:50%; display:grid; place-items:center; margin-top:1px; font-style:normal; font-size:12px; font-weight:700; }
+  ul.checks.ok li i { background:rgba(61,220,151,.14); color:var(--green); border:1px solid rgba(61,220,151,.4); }
+  ul.checks.goal li i { background:rgba(168,139,255,.12); color:var(--violet-2); border:1px solid rgba(168,139,255,.4); }
+  .pill-h { display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; font:600 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; padding:5px 10px; border-radius:999px; }
+  .pill-h.ok { color:var(--green); border:1px solid rgba(61,220,151,.35); background:rgba(61,220,151,.08); }
+  .pill-h.goal { color:var(--violet-2); border:1px solid rgba(168,139,255,.35); background:rgba(123,92,214,.10); }
 
-/* PROGRESS TRACKER */
-.progress-tracker{display:flex;gap:0;margin-bottom:36px;overflow-x:auto;padding-bottom:4px;}
-.pt-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:80px;cursor:pointer;}
-.pt-circle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);margin-bottom:6px;transition:all 0.3s;position:relative;z-index:1;}
-.pt-step.active .pt-circle{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
-.pt-step.done .pt-circle{border-color:var(--green);color:var(--green);background:rgba(46,204,113,0.1);}
-.pt-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-align:center;text-transform:uppercase;}
-.pt-step.active .pt-label{color:var(--gold);}
-.pt-step.done .pt-label{color:var(--green);}
-.pt-line{flex:1;height:1px;background:var(--border);margin-top:18px;min-width:20px;}
-.pt-line.done{background:var(--green);}
+  /* Actifs */
+  .sector { display:flex; align-items:center; gap:10px; margin:4px 0 10px; }
+  .sector h3 { font-family:'Playfair Display', Georgia, serif; font-size:19px; color:var(--gold-2); }
+  .assets { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (min-width:760px) { .assets { grid-template-columns:repeat(3, 1fr); } }
+  .asset { position:relative; display:flex; flex-direction:column; gap:4px; padding:13px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.42); overflow:hidden; }
+  .asset::after { content:""; position:absolute; right:-24px; top:-24px; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.14), transparent 70%); }
+  .asset .n { font-size:11px; color:var(--gold); letter-spacing:.1em; }
+  .asset b { font-size:14.5px; line-height:1.3; }
+  .asset > span:last-child { font-size:12px; color:var(--muted); line-height:1.4; }
 
-/* STEP CARDS */
-.step-card{background:var(--card);border:1px solid var(--border);margin-bottom:16px;overflow:hidden;transition:border-color 0.3s;}
-.step-card.active{border-color:var(--gold);}
-.step-card.done{border-color:var(--green);}
-.step-header{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer;user-select:none;}
-.step-num{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold);flex-shrink:0;font-family:'Courier New',monospace;}
-.step-card.done .step-num{border-color:var(--green);color:var(--green);}
-.step-title-wrap{flex:1;}
-.step-title{font-size:14px;color:var(--gold);margin-bottom:3px;}
-.step-card.done .step-title{color:var(--green);}
-.step-desc{font-size:11px;color:var(--muted);}
-.step-status{font-size:10px;padding:3px 8px;border:1px solid;letter-spacing:1px;}
-.step-status.pending{color:var(--muted);border-color:var(--muted);}
-.step-status.active{color:var(--gold);border-color:var(--gold);}
-.step-status.done{color:var(--green);border-color:var(--green);}
-.step-body{padding:0 20px 20px;border-top:1px solid var(--border);}
-.step-body.hidden{display:none;}
+  /* Processus */
+  .steps { list-style:none; position:relative; display:grid; gap:12px; padding-left:46px; }
+  .steps::before { content:""; position:absolute; left:17px; top:10px; bottom:10px; width:2px; background:linear-gradient(180deg, var(--gold-2), var(--violet), var(--gold-2)); opacity:.55; }
+  .step { position:relative; }
+  .step .node { position:absolute; left:-46px; top:14px; width:36px; height:36px; display:grid; place-items:center; clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 50%, var(--gold-3)); }
+  .step .node span { font-weight:700; font-size:14px; color:#000008; }
+  .step.hot .card { border-color:rgba(232,200,114,.55); background:linear-gradient(160deg, rgba(232,200,114,.14), rgba(123,92,214,.08)); box-shadow:0 0 30px rgba(201,168,76,.18); }
+  .step.hot .node { box-shadow:0 0 0 4px rgba(232,200,114,.2); animation:glow 2.4s ease-in-out infinite; }
+  @keyframes glow { 50% { filter:drop-shadow(0 0 10px rgba(232,200,114,.9)); } }
+  .step-h { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .step p { font-size:14px; color:#D5CDBB; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .tag { font:600 11px 'JetBrains Mono', monospace; letter-spacing:.04em; color:var(--gold-2); padding:4px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(232,200,114,.06); }
 
-/* INSTRUCTIONS */
-.instruction{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
-.instruction:last-child{border-bottom:none;}
-.inst-num{width:24px;height:24px;border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0;margin-top:2px;font-family:'Courier New',monospace;}
-.inst-content{flex:1;}
-.inst-title{font-size:12px;color:var(--text);margin-bottom:4px;font-weight:bold;}
-.inst-detail{font-size:11px;color:var(--muted);line-height:1.7;}
-.inst-code{font-family:'Courier New',monospace;font-size:11px;color:var(--gold);background:#050505;padding:6px 10px;border:1px solid var(--border);margin-top:6px;display:block;word-break:break-all;}
-.inst-tip{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:8px 12px;margin-top:8px;font-size:10px;color:var(--text);display:flex;gap:8px;line-height:1.6;}
-.inst-tip-icon{color:var(--gold);flex-shrink:0;}
+  /* Architecture */
+  .stack { display:grid; gap:10px; }
+  .layer { position:relative; padding:16px; border-radius:18px; border:1px solid var(--line); background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.012)); }
+  .layer::before { content:""; position:absolute; left:16px; right:16px; bottom:-11px; height:10px; border-radius:0 0 14px 14px; border:1px solid var(--line); border-top:0; background:rgba(201,168,76,.04); }
+  .layer.l3::before { display:none; }
+  .layer.l1 { border-color:rgba(168,139,255,.38); }
+  .layer.l3 { border-color:rgba(232,200,114,.5); background:linear-gradient(160deg, rgba(232,200,114,.12), rgba(255,255,255,.015)); }
+  .layer-h { display:flex; align-items:center; gap:10px; }
+  .layer-h h3 { flex:1; }
+  .lvl { font-size:11px; color:var(--muted); letter-spacing:.12em; }
 
-/* BURN CALC */
-.burn-demo{background:#050505;border:1px solid var(--gold-dark);padding:16px;margin-top:12px;}
-.burn-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.burn-row:last-child{border-bottom:none;font-weight:bold;padding-top:8px;}
-.burn-label{color:var(--muted);}
-.burn-val{color:var(--gold);}
-.burn-val.red{color:var(--red);}
-.burn-val.green{color:var(--green);}
+  /* GTCπ */
+  .supply { text-align:center; padding:22px 18px; }
+  .supply small { display:block; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
+  .supply b { display:block; margin-top:6px; font:800 clamp(34px, 11vw, 54px)/1.05 'JetBrains Mono', monospace; }
+  .supply span { display:block; margin-top:4px; font-size:13px; color:var(--muted); }
+  .prms { display:grid; gap:0; }
+  .prm { display:flex; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid rgba(201,168,76,.12); font-size:14px; }
+  .prm:last-child { border-bottom:0; }
+  .prm > span { color:var(--muted); }
+  .prm b { color:var(--gold-2); font-size:13.5px; text-align:right; }
+  .burn { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:6px; margin-top:12px; text-align:center; }
+  .burn div { padding:10px 6px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.45); }
+  .burn div b { display:block; font:700 15px 'JetBrains Mono', monospace; }
+  .burn div span { display:block; font-size:11px; color:var(--muted); }
+  .burn .fire b { color:#FFB28A; }
+  .burn .net b { color:var(--green); }
+  .burn em { font-style:normal; color:var(--gold-2); font-weight:700; }
+  .util { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .util div { display:flex; gap:8px; align-items:flex-start; padding:10px; border:1px solid var(--line); border-radius:12px; background:rgba(0,0,8,.4); font-size:13px; line-height:1.35; }
+  .util div i { flex-shrink:0; font-style:normal; color:var(--gold-2); font-weight:700; }
+  .fine { margin-top:12px; font-size:12.5px; color:var(--muted); }
 
-/* FIELD DEMO */
-.field-demo{margin-top:12px;}
-.field-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;display:block;}
-.field-val{background:#050505;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 12px;font-size:12px;font-family:Georgia,serif;width:100%;margin-bottom:10px;display:block;}
-select.field-val{cursor:pointer;}
+  /* Impact */
+  .case-h { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .case-h small { display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+  .imp { padding:16px; border:1px solid var(--line); border-radius:18px; background:rgba(0,0,8,.4); }
+  .imp h3 { margin:10px 0 10px; }
 
-/* COMPLETION */
-.completion-box{background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.3);padding:20px;text-align:center;margin-top:16px;}
-.completion-icon{font-size:32px;color:var(--green);margin-bottom:8px;}
-.completion-title{font-size:14px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
-.completion-text{font-size:12px;color:var(--muted);line-height:1.7;}
+  /* Vision long terme + conclusion */
+  .goals { list-style:none; display:grid; gap:8px; counter-reset:g; }
+  .goals li { counter-increment:g; display:flex; gap:12px; align-items:center; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.4); font-size:14.5px; }
+  .goals li::before { content:counter(g, decimal-leading-zero); font:700 12px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); border-radius:8px; padding:4px 7px; }
+  .quote { margin-top:14px; text-align:center; padding:26px 20px; border-color:rgba(232,200,114,.4); background:linear-gradient(135deg, rgba(232,200,114,.12), rgba(123,92,214,.10)); }
+  .quote p { font-family:'Playfair Display', Georgia, serif; font-size:clamp(19px, 5.4vw, 26px); line-height:1.35; }
+  .quote small { display:block; margin-top:12px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.2em; color:var(--gold-2); }
+  .concl { font-size:14.5px; color:#D5CDBB; }
 
-/* RESULT DISPLAY */
-.result-display{background:#030303;border:1px solid var(--green);padding:14px;margin-top:12px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;white-space:pre-wrap;display:none;}
+  .cta { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:18px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:var(--glass); color:var(--text); font:700 14px 'Space Grotesk', system-ui, sans-serif; }
+  .btn .ic { width:22px; height:22px; border:0; background:transparent; }
+  .btn .ic svg { width:18px; height:18px; }
+  .btn-gold { border:0; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; box-shadow:0 0 22px rgba(201,168,76,.35); }
+  .btn-gold .ic { color:#000008; }
+  .note { margin-top:22px; padding:14px 16px; border:1px dashed rgba(201,168,76,.35); border-radius:16px; font-size:12.5px; color:var(--muted); text-align:center; }
+  footer { max-width:1040px; margin:0 auto; padding:20px 16px 34px; text-align:center; font:500 11px/1.8 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--muted); }
+  footer b { color:var(--gold-2); font-weight:500; }
+  .totop { position:fixed; right:14px; bottom:16px; z-index:30; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); box-shadow:0 0 18px rgba(201,168,76,.45); opacity:0; pointer-events:none; transition:opacity .25s; font-weight:700; }
+  .totop.on { opacity:1; pointer-events:auto; }
 
-/* BUTTONS */
-.btn{background:linear-gradient(135deg,var(--gold-dark),var(--gold));border:none;color:var(--dark);padding:10px 20px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;font-weight:bold;display:inline-block;}
-.btn-ghost{background:transparent;border:1px solid var(--gold-dark);color:var(--gold);padding:8px 16px;font-size:10px;letter-spacing:2px;cursor:pointer;font-family:Georgia,serif;}
-.btn:hover{opacity:0.85;}
-.btn-ghost:hover{background:rgba(201,168,76,0.08);}
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation:none !important; transition:none !important; }
+    html { scroll-behavior:auto; }
+  }
 
-/* FAQ */
-.faq-item{border-bottom:1px solid var(--border);padding:14px 0;}
-.faq-q{font-size:13px;color:var(--gold);margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;}
-.faq-a{font-size:12px;color:var(--muted);line-height:1.8;display:none;}
-.faq-a.open{display:block;}
-
-/* TAG */
-.tag{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:2px 7px;font-size:9px;display:inline-block;margin:2px;}
-.tag.green{background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green);}
-.tag.blue{background:rgba(58,155,213,0.1);border-color:rgba(58,155,213,0.3);color:#3A9BD5;}
-
-/* ALERT */
-.alert{padding:10px 14px;margin-bottom:12px;font-size:11px;display:flex;gap:8px;align-items:flex-start;line-height:1.6;}
-.alert.gold{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);}
-.alert.green{background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.3);}
-.alert.blue{background:rgba(58,155,213,0.08);border:1px solid rgba(58,155,213,0.3);}
-.pill{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
-
-/* GRID */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-
-/* SECTION */
-.sec-title{font-size:14px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;font-weight:normal;}
-.sec-sep{height:1px;background:var(--border);margin:28px 0;}
-
-/* SPLASH */
-#splash{position:fixed;inset:0;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s;}
-#splash.hidden{opacity:0;pointer-events:none;}
-.splash-logo{font-size:20px;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;}
-.splash-sub{font-size:9px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;}
-.splash-spin{width:24px;height:24px;border:1px solid var(--gold-dark);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-  .grid2{grid-template-columns:1fr;}
-  .hero-title{font-size:22px;}
-  .progress-tracker{gap:0;}
-  .pt-label{font-size:8px;}
-}
+  .ui { display:inline-block; font:700 12.5px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-radius:8px; padding:1px 7px; margin:1px 0; white-space:nowrap; }
+  .need { display:grid; grid-template-columns:1fr; gap:10px; }
+  @media (min-width:640px) { .need { grid-template-columns:1fr 1fr; } }
+  .need div { display:flex; gap:12px; align-items:flex-start; padding:13px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.42); }
+  .need b { display:block; font-size:14.5px; }
+  .need span.t { display:block; font-size:12.5px; color:var(--muted); line-height:1.45; margin-top:2px; }
+  .open-app { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; font-size:14px; }
+  .open-app .arrow { color:var(--gold-2); }
+  .url { font:600 13px 'JetBrains Mono', monospace; color:var(--gold-2); border:1px dashed rgba(232,200,114,.45); border-radius:8px; padding:2px 8px; }
+  .warn { margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,141,141,.35); background:rgba(255,141,141,.07); color:#FFD0D0; font-size:13px; }
+  .see { margin-top:10px; display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--green); }
+  .see .ic { width:24px; height:24px; border-radius:7px; background:rgba(61,220,151,.12); border-color:rgba(61,220,151,.35); color:var(--green); }
+  .see .ic svg { width:14px; height:14px; }
+  .tip { margin-top:8px; font-size:12.5px; color:var(--muted); padding-left:10px; border-left:2px solid rgba(232,200,114,.4); }
+  .fields { margin-top:12px; display:grid; gap:6px; }
+  .fld { display:grid; grid-template-columns:auto 1fr; gap:2px 10px; padding:9px 11px; border:1px solid rgba(201,168,76,.14); border-radius:12px; background:rgba(0,0,8,.35); }
+  .fld b { font-size:13.5px; } .fld b i { font-style:normal; color:var(--gold-2); margin-left:2px; }
+  .fld span { grid-column:1 / -1; font-size:12px; color:var(--muted); line-height:1.4; }
+  .calc { margin-top:12px; padding:12px; border:1px solid rgba(232,200,114,.35); border-radius:14px; background:rgba(232,200,114,.06); }
+  .calc label { display:block; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-2); }
+  .calc input { width:100%; margin-top:6px; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,8,.6); color:var(--text); font:600 16px 'JetBrains Mono', monospace; }
+  .flow { list-style:none; display:grid; gap:8px; counter-reset:f; }
+  .flow li { counter-increment:f; position:relative; padding:12px 14px 12px 50px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.4); font-size:14px; }
+  .flow li::before { content:counter(f); position:absolute; left:12px; top:11px; width:26px; height:26px; display:grid; place-items:center; border-radius:50%; font:700 12px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); }
+  .flow li b { color:var(--gold-2); }
+  .states { display:grid; gap:10px; }
+  @media (min-width:760px) { .states { grid-template-columns:repeat(3, 1fr); } }
+  .state { position:relative; padding:14px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.4); }
+  .state small { font:600 10.5px 'JetBrains Mono', monospace; letter-spacing:.12em; text-transform:uppercase; }
+  .state.now { border-color:rgba(232,200,114,.55); background:linear-gradient(160deg, rgba(232,200,114,.12), rgba(0,0,8,.4)); }
+  .state.now small { color:var(--gold-2); } .state.later small { color:var(--violet-2); } .state small { color:var(--green); }
+  .state b { display:block; margin-top:4px; font-size:15px; } .state p { margin-top:4px; font-size:12.5px; color:var(--muted); }
+  .danger { border-color:rgba(255,141,141,.4); background:linear-gradient(160deg, rgba(255,141,141,.09), rgba(255,255,255,.015)); }
+  .danger h3 { color:#FFC4C4; }
+  details.q { border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.4); }
+  details.q + details.q { margin-top:8px; }
+  details.q summary { list-style:none; cursor:pointer; padding:13px 44px 13px 14px; position:relative; font-weight:600; font-size:14.5px; }
+  details.q summary::-webkit-details-marker { display:none; }
+  details.q summary::after { content:"+"; position:absolute; right:14px; top:50%; transform:translateY(-50%); width:24px; height:24px; display:grid; place-items:center; border-radius:50%; border:1px solid var(--line); color:var(--gold-2); font:700 15px 'JetBrains Mono', monospace; }
+  details.q[open] summary::after { content:"−"; }
+  details.q p { padding:0 14px 14px; font-size:14px; color:#D5CDBB; }
 </style>
 </head>
 <body>
-
-<!-- SPLASH -->
-<div id="splash">
-  <div class="splash-logo">GeoTerraChain QFS</div>
-  <div class="splash-sub">Guide de Tokenisation</div>
-  <div class="splash-spin"></div>
-</div>
-
-<!-- HEADER -->
-<div class="header">
-  <div>
-    <div class="logo-main">GeoTerraChain QFS</div>
-    <div class="logo-sub">Guide officiel de tokenisation foncière</div>
-  </div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap;">
-    <span class="badge green">● Pi SDK 2.0</span>
-    <span class="badge">KYC requis</span>
-    <span class="badge">GTCπ</span>
-  </div>
-</div>
-
-<!-- NAV -->
-<div class="nav">
-  <a class="nav-btn" href="https://hilaila.github.io">◉ Accueil</a>
-  <a class="nav-btn" href="https://hilaila.github.io/vision-geoterrachain-qfs-premium-v2.html">🌍 Vision</a>
-  <a class="nav-btn" href="https://hilaila.github.io/litepaper.html">💼 Litepaper</a>
-  <span class="nav-btn active" style="border-bottom-color:var(--gold);color:var(--gold);">📖 Guide</span>
-</div>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">Documentation officielle</div>
-  <h1 class="hero-title">Comment tokeniser<br/>votre actif foncier</h1>
-  <p class="hero-sub">Guide complet étape par étape pour tokeniser vos terres africaines sur Pi Network via GeoTerraChain QFS — Notre Terre · Notre Richesse.</p>
-  <div class="hero-badges">
-    <span class="hero-badge">7 étapes simples</span>
-    <span class="hero-badge">KYC Pioneer requis</span>
-    <span class="hero-badge">Transaction Pi on-chain</span>
-    <span class="hero-badge">Burn 0,5% GTCπ</span>
-  </div>
-</div>
-
-<div class="main">
-
-  <!-- AVANT DE COMMENCER -->
-  <div class="alert gold" style="margin-bottom:20px;">
-    <div class="pill" style="background:var(--gold)"></div>
-    <div>
-      <strong style="color:var(--gold)">Avant de commencer</strong> — Vous avez besoin de :
-      <span class="tag" style="margin-left:6px;">Pi Browser installé</span>
-      <span class="tag">Compte Pioneer KYC vérifié</span>
-      <span class="tag">Test-Pi disponible</span>
-    </div>
-  </div>
-
-  <!-- PROGRESS TRACKER -->
-  <div class="progress-tracker" id="progress-tracker">
-    <div class="pt-step done" onclick="showStep(0)"><div class="pt-circle">✓</div><div class="pt-label">Ouvrir<br/>l'app</div></div>
-    <div class="pt-line done"></div>
-    <div class="pt-step active" onclick="showStep(1)"><div class="pt-circle">2</div><div class="pt-label">Se<br/>connecter</div></div>
-    <div class="pt-line"></div>
-    <div class="pt-step" onclick="showStep(2)"><div class="pt-circle">3</div><div class="pt-label">Aller à<br/>Tokeniser</div></div>
-    <div class="pt-line"></div>
-    <div class="pt-step" onclick="showStep(3)"><div class="pt-circle">4</div><div class="pt-label">Remplir<br/>formulaire</div></div>
-    <div class="pt-line"></div>
-    <div class="pt-step" onclick="showStep(4)"><div class="pt-circle">5</div><div class="pt-label">Calcul<br/>burn</div></div>
-    <div class="pt-line"></div>
-    <div class="pt-step" onclick="showStep(5)"><div class="pt-circle">6</div><div class="pt-circle" style="display:none">✓</div><div class="pt-label">Confirmer<br/>paiement</div></div>
-    <div class="pt-line"></div>
-    <div class="pt-step" onclick="showStep(6)"><div class="pt-circle">7</div><div class="pt-label">Token<br/>créé ✓</div></div>
-  </div>
-
-  <!-- ÉTAPES -->
-
-  <!-- ÉTAPE 1 -->
-  <div class="step-card done" id="step-0">
-    <div class="step-header" onclick="toggleStep(0)">
-      <div class="step-num">✓</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 1 — Ouvrir GeoTerraChain QFS</div>
-        <div class="step-desc">Accéder à la plateforme dans Pi Browser</div>
-      </div>
-      <span class="step-status done">COMPLÉTÉ</span>
-    </div>
-    <div class="step-body" id="body-0">
-      <div style="padding-top:16px;">
-        <div class="instruction">
-          <div class="inst-num">1</div>
-          <div class="inst-content">
-            <div class="inst-title">Ouvrir Pi Browser sur votre téléphone</div>
-            <div class="inst-detail">Pi Browser est l'application officielle de Pi Network pour accéder aux apps. Téléchargez-le sur App Store ou Google Play si ce n'est pas encore fait.</div>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">2</div>
-          <div class="inst-content">
-            <div class="inst-title">Taper l'URL dans la barre d'adresse</div>
-            <div class="inst-detail">Dans la barre d'adresse en haut de Pi Browser, tapez exactement :</div>
-            <code class="inst-code">https://hilaila.github.io</code>
-            <div class="inst-tip"><span class="inst-tip-icon">◈</span><span>Le splash screen GeoTerraChain QFS apparaît pendant 2 secondes, puis l'app se charge automatiquement.</span></div>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">3</div>
-          <div class="inst-content">
-            <div class="inst-title">Vérifier que le Pi SDK est initialisé</div>
-            <div class="inst-detail">Dans le header de l'app, vous devez voir :</div>
-            <code class="inst-code">● Pi SDK v2.0 ✓</code>
-            <div class="inst-tip"><span class="inst-tip-icon">✓</span><span>Si vous voyez "● Hors Pi Browser", utilisez bien Pi Browser et non Chrome ou Firefox.</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 2 -->
-  <div class="step-card active" id="step-1">
-    <div class="step-header" onclick="toggleStep(1)">
-      <div class="step-num">2</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 2 — Se connecter avec votre compte Pi</div>
-        <div class="step-desc">Authentification Pioneer KYC via Pi SDK 2.0</div>
-      </div>
-      <span class="step-status active">EN COURS</span>
-    </div>
-    <div class="step-body" id="body-1">
-      <div style="padding-top:16px;">
-        <div class="alert blue">
-          <div class="pill" style="background:#3A9BD5"></div>
-          <div><strong style="color:#3A9BD5">KYC obligatoire</strong> — La tokenisation est réservée aux Pioneers dont le KYC est validé par Pi Network. L'application ne demande aucun document d'identité et ne demande jamais votre phrase secrète de 24 mots.</div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">1</div>
-          <div class="inst-content">
-            <div class="inst-title">Cliquer sur "π Connexion" dans la navigation</div>
-            <div class="inst-detail">La barre de navigation en haut de l'app contient 6 onglets. Cliquez sur le deuxième onglet.</div>
-            <code class="inst-code">π Connexion</code>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">2</div>
-          <div class="inst-content">
-            <div class="inst-title">Cliquer sur "Authentifier + Vérifier KYC"</div>
-            <div class="inst-detail">Le bouton violet lance le processus d'authentification Pi SDK. Pi Network va vérifier automatiquement votre identité KYC.</div>
-            <div class="inst-tip"><span class="inst-tip-icon">◎</span><span>Une fenêtre Pi Network s'ouvre pour demander votre autorisation. Cliquez sur "Allow" pour autoriser GeoTerraChain QFS à accéder à votre compte.</span></div>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">3</div>
-          <div class="inst-content">
-            <div class="inst-title">Vérifier le statut KYC dans le header</div>
-            <div class="inst-detail">Après connexion réussie, vous devez voir dans le header :</div>
-            <code class="inst-code">KYC ✓    ● VotreUsername</code>
-            <div class="inst-tip"><span class="inst-tip-icon">✓</span><span>Si vous voyez "KYC ✗", votre vérification KYC Pi Network n'est pas encore complétée. Rendez-vous dans l'app Pi Mining → KYC pour finaliser.</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 3 -->
-  <div class="step-card" id="step-2">
-    <div class="step-header" onclick="toggleStep(2)">
-      <div class="step-num">3</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 3 — Accéder à l'onglet Tokeniser</div>
-        <div class="step-desc">Naviguer vers le formulaire de tokenisation</div>
-      </div>
-      <span class="step-status pending">À FAIRE</span>
-    </div>
-    <div class="step-body hidden" id="body-2">
-      <div style="padding-top:16px;">
-        <div class="instruction">
-          <div class="inst-num">1</div>
-          <div class="inst-content">
-            <div class="inst-title">Cliquer sur "◈ Tokeniser" dans la navigation</div>
-            <div class="inst-detail">Troisième onglet de la barre de navigation.</div>
-            <code class="inst-code">◈ Tokeniser</code>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">2</div>
-          <div class="inst-content">
-            <div class="inst-title">Vérifier le message d'accès autorisé</div>
-            <div class="inst-detail">Si votre KYC est vérifié, vous verrez le message vert en haut du formulaire :</div>
-            <code class="inst-code">✓ Pioneer [Username] KYC vérifié — Accès tokenisation autorisé</code>
-            <div class="inst-tip"><span class="inst-tip-icon">⚠</span><span>Si vous voyez "Accès refusé — KYC requis", retournez à l'étape 2 et connectez-vous d'abord.</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 4 -->
-  <div class="step-card" id="step-3">
-    <div class="step-header" onclick="toggleStep(3)">
-      <div class="step-num">4</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 4 — Remplir les données de l'actif</div>
-        <div class="step-desc">Informations de la parcelle à tokeniser</div>
-      </div>
-      <span class="step-status pending">À FAIRE</span>
-    </div>
-    <div class="step-body hidden" id="body-3">
-      <div style="padding-top:16px;">
-        <div class="alert gold">
-          <div class="pill" style="background:var(--gold)"></div>
-          <div>Remplissez chaque champ avec les vraies informations de votre bien foncier. Ces données sont enregistrées dans votre dossier et vérifiées avant toute tokenisation définitive.</div>
-        </div>
-
-        <div class="field-demo">
-          <span class="field-label">Nom du bien</span>
-          <span class="field-val">Plantation Cacao — San-Pédro</span>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Le nom complet et descriptif de votre actif foncier.</div>
-
-          <span class="field-label">Surface (ha)</span>
-          <span class="field-val">5.2</span>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">La surface en hectares. Utilisez un point (.) et non une virgule pour les décimales.</div>
-
-          <span class="field-label">Région</span>
-          <span class="field-val">Côte d'Ivoire</span>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Le pays ou la région où se situe l'actif. 8 pays UEMOA disponibles.</div>
-
-          <span class="field-label">Type d'actif</span>
-          <span class="field-val">Agro business — Cultures de rente (cacao, café, hévéa, palmier)</span>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">Choisissez la classification la plus adaptée à votre bien :</div>
-          <div style="margin-bottom:12px;">
-            <span class="tag">Cultures vivrières</span>
-            <span class="tag">Cultures de rente</span>
-            <span class="tag">Élevage</span>
-            <span class="tag">Aquaculture</span>
-            <span class="tag">Agroforesterie</span>
-            <span class="tag">Maraîchage</span>
-            <span class="tag">Immobilier urbain</span>
-            <span class="tag">Commercial</span>
-          </div>
-
-          <span class="field-label">Prix (GTCπ)</span>
-          <span class="field-val">100</span>
-          <div style="font-size:10px;color:var(--muted);">La valeur de l'actif en GTCπ. Pour un premier test, utilisez 1 GTCπ.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 5 -->
-  <div class="step-card" id="step-4">
-    <div class="step-header" onclick="toggleStep(4)">
-      <div class="step-num">5</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 5 — Comprendre le calcul burn</div>
-        <div class="step-desc">Mécanisme déflationnaire GTCπ automatique</div>
-      </div>
-      <span class="step-status pending">À FAIRE</span>
-    </div>
-    <div class="step-body hidden" id="body-4">
-      <div style="padding-top:16px;">
-        <div class="alert blue">
-          <div class="pill" style="background:#3A9BD5"></div>
-          <div><strong style="color:#3A9BD5">Burn déflationnaire</strong> — À chaque tokenisation, 0,5% du prix est automatiquement brûlé (détruit définitivement). Cela réduit progressivement l'offre totale de GTCπ. Ce mécanisme ne garantit aucune valeur ni aucun rendement.</div>
-        </div>
-
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Exemple avec un actif à 100 GTCπ :</div>
-        <div class="burn-demo">
-          <div style="font-size:9px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;">CALCUL ON-CHAIN AUTOMATIQUE</div>
-          <div class="burn-row"><span class="burn-label">Prix brut de l'actif</span><span class="burn-val">100 GTCπ</span></div>
-          <div class="burn-row"><span class="burn-label" style="color:var(--red);">Burn déflationnaire (0,5%)</span><span class="burn-val red">− 0.5 GTCπ</span></div>
-          <div class="burn-row"><span class="burn-label" style="color:var(--gold);">Net reçu par le propriétaire</span><span class="burn-val green">99.5 GTCπ</span></div>
-        </div>
-
-        <div style="margin-top:14px;">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Calculateur interactif :</div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <input type="number" id="calc-prix" value="100" min="1" oninput="calcBurn()" style="background:#050505;border:1px solid var(--gold-dark);color:var(--text);padding:7px 10px;font-family:Georgia,serif;width:120px;outline:none;font-size:12px;"/>
-            <span style="font-size:11px;color:var(--muted);">GTCπ →</span>
-            <span id="calc-result" style="font-size:12px;color:var(--green);">Burn: 0.5 · Net: 99.5 GTCπ</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 6 -->
-  <div class="step-card" id="step-5">
-    <div class="step-header" onclick="toggleStep(5)">
-      <div class="step-num">6</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 6 — Confirmer la transaction Pi</div>
-        <div class="step-desc">Signature avec votre passphrase et confirmation blockchain</div>
-      </div>
-      <span class="step-status pending">À FAIRE</span>
-    </div>
-    <div class="step-body hidden" id="body-5">
-      <div style="padding-top:16px;">
-        <div class="instruction">
-          <div class="inst-num">1</div>
-          <div class="inst-content">
-            <div class="inst-title">Cliquer sur "◈ Tokeniser la parcelle"</div>
-            <div class="inst-detail">Le bouton doré en bas du formulaire lance la transaction Pi.</div>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">2</div>
-          <div class="inst-content">
-            <div class="inst-title">Fenêtre de confirmation Pi Network</div>
-            <div class="inst-detail">Pi Network affiche un récapitulatif de la transaction :</div>
-            <code class="inst-code">Application : GeoTerraChain QFS
-Montant     : X.X Test-Pi
-Destinataire: GB2AR...UPW6R
-Mémo        : Tokenisation: [Nom du bien]</code>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">3</div>
-          <div class="inst-content">
-            <div class="inst-title">Déverrouiller votre Pi Wallet</div>
-            <div class="inst-detail">Le Pi Wallet officiel peut vous demander de se déverrouiller (phrase secrète ou empreinte) pour signer le paiement. Vérifiez d'abord que l'écran est bien celui du Pi Wallet (wallet.pinet.com) et non une page web.</div>
-            <div class="inst-tip"><span class="inst-tip-icon">🔒</span><span>Votre passphrase est confidentielle. Ne la partagez jamais avec personne. Aucune page de GeoTerraChain QFS ne vous demandera jamais votre phrase secrète : si une page de l'app la demande, c'est une arnaque.</span></div>
-          </div>
-        </div>
-        <div class="instruction">
-          <div class="inst-num">4</div>
-          <div class="inst-content">
-            <div class="inst-title">Confirmer la transaction</div>
-            <div class="inst-detail">Appuyez sur le bouton de confirmation. La transaction est envoyée sur le ledger Stellar / Pi Network.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 7 -->
-  <div class="step-card" id="step-6">
-    <div class="step-header" onclick="toggleStep(6)">
-      <div class="step-num">7</div>
-      <div class="step-title-wrap">
-        <div class="step-title">Étape 7 — Demande enregistrée, en attente de vérification</div>
-        <div class="step-desc">Votre dossier est vérifié avant toute tokenisation définitive</div>
-      </div>
-      <span class="step-status pending">À FAIRE</span>
-    </div>
-    <div class="step-body hidden" id="body-6">
-      <div style="padding-top:16px;">
-        <div class="completion-box">
-          <div class="completion-icon">✓</div>
-          <div class="completion-title">Demande enregistrée</div>
-          <div class="completion-text">Votre dossier reçoit un numéro de demande et le statut « En attente de vérification ». Phase pilote : un jeton de test GTCπ (code GTCP) peut être émis sur le réseau de test Stellar. Ce jeton n'a aucune valeur et ne vaut pas titre de propriété.</div>
-        </div>
-
-        <div style="font-size:11px;color:var(--muted);margin:14px 0 8px;">Exemple fictif de récapitulatif :</div>
-        <div style="background:#030303;border:1px solid var(--border);padding:14px;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);line-height:1.8;white-space:pre-wrap;">DEMANDE    : GTC-EXEMPLE-0001
-ACTIF      : Plantation (exemple)
-RÉGION     : Côte d'Ivoire
-PIONEER    : @exemple
-OFFRE      : 100 GTCπ
-BURN 0,5 % : − 0,5 GTCπ
-NET        : 99,5 GTCπ
-STATUT     : EN ATTENTE DE VÉRIFICATION
-JETON TEST : GTCP · réseau de test Stellar</div>
-
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
-          <span class="tag">● EN ATTENTE</span>
-          <span class="tag">GTCπ</span>
-          <span class="tag blue">Testnet</span>
-          <span class="tag">Exemple fictif</span>
-        </div>
-
-        <div class="alert green" style="margin-top:14px;">
-          <div class="pill" style="background:var(--green)"></div>
-          <div>Retrouvez votre demande dans <strong style="color:var(--green)">Mon espace → Mes actifs</strong>. Gardez aussi la référence de demande et le TXID Pi affichés à la fin de la tokenisation.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SÉPARATEUR -->
-  <div class="sec-sep"></div>
-
-  <!-- FAQ -->
-  <div class="sec-title" style="margin-bottom:16px;">Questions fréquentes</div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Pourquoi le KYC est-il obligatoire ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      Le KYC (Know Your Customer) garantit que chaque tokenisation est effectuée par un humain réel et vérifié. Cela protège l'intégrité du registre foncier on-chain et prévient la fraude. Pi Network vérifie votre identité via une pièce officielle et un selfie avant d'approuver votre compte Pioneer.
-    </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Qu'est-ce que le burn déflationnaire de 0,5% ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      À chaque tokenisation, 0,5% du montant en GTCπ est détruit définitivement. Ce mécanisme réduit progressivement la supply totale de GTCπ (3 141 592), selon les paramètres de conception du projet. Ce mécanisme ne garantit aucune valeur ni aucun rendement, et reste sous réserve de son implémentation technique et de son cadre réglementaire.
-    </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Quels types d'actifs peut-on tokeniser ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      GeoTerraChain QFS accepte 9 types d'actifs : Cultures vivrières, Cultures de rente (cacao, café, hévéa, palmier), Élevage et pastorale, Aquaculture et pisciculture, Agroforesterie et sylviculture, Maraîchage et horticulture, Immobilier urbain, Commercial, et Résidentiel. Tous les actifs situés dans la zone UEMOA sont éligibles.
-    </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Que signifie "on-chain" ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      "On-chain" signifie que votre tokenisation est enregistrée de façon permanente et immuable sur le ledger (registre) Stellar — la blockchain sous-jacente de Pi Network. Chaque token possède un hash de transaction unique, vérifiable publiquement. Personne ne peut modifier ou effacer cet enregistrement.
-    </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Combien de Test-Pi dois-je avoir pour tokeniser ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      Vous avez besoin d'au moins le montant du prix en GTCπ + 0,01 Pi de frais de transaction. Pour un premier test, utilisez 1 GTCπ — vous aurez besoin d'environ 1,01 Test-Pi dans votre wallet. Vous pouvez obtenir des Test-Pi gratuitement via developer.minepi.com/faucet dans Pi Browser.
-    </div>
-  </div>
-
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">
-      Comment voir mes tokenisations passées ?
-      <span>+</span>
-    </div>
-    <div class="faq-a">
-      Ouvrez « Mon espace » depuis le menu de l'accueil, onglet « Mes actifs » : vos demandes de tokenisation y sont listées. À la fin de chaque tokenisation, l'app affiche aussi la référence de la demande et le TXID de votre paiement Pi : notez-les.
-    </div>
-  </div>
-
-  <!-- CTA FINAL -->
-  <div class="sec-sep"></div>
-  <div style="text-align:center;padding:32px 0;">
-    <div style="font-size:10px;color:var(--gold-dark);letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;">Prêt à commencer ?</div>
-    <div style="font-size:24px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Tokenisez votre première parcelle</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:24px;">Rejoignez les Pioneers africains qui tokenisent leurs terres sur Pi Network</div>
-    <a href="https://hilaila.github.io" style="text-decoration:none;">
-      <button class="btn" style="font-size:11px;padding:12px 32px;">◈ Accéder à GeoTerraChain QFS</button>
+<header class="top">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+      <span><b>GeoTerraChain QFS</b><small><span class="fr">Guide · 7 étapes</span><span class="en">Guide · 7 steps</span></small></span>
     </a>
+    <span class="badge"><span class="fr">PHASE PILOTE</span><span class="en">PILOT PHASE</span></span>
   </div>
-
-  <!-- FOOTER -->
-  <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-    <span style="font-size:9px;color:#222;letter-spacing:2px;">GEOTERRRACHAIN QFS · PI NETWORK · NOTRE TERRE · NOTRE RICHESSE</span>
-    <span style="font-size:9px;color:#222;">Développé par @Hilaila · Côte d'Ivoire · UEMOA</span>
+  <div class="sub">
+    <div class="lang" role="group" aria-label="Langue / Language"><span class="globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/></svg></span><button type="button" data-l="fr">FR</button><button type="button" data-l="en">EN</button></div>
+    <span class="msep" aria-hidden="true"></span>
+    <a href="index.html"><span class="fr">← Accueil</span><span class="en">← Home</span></a>
   </div>
+  <nav class="nav" aria-label="Sections"><a href="#avant" data-s="avant"><span class="fr">Avant</span><span class="en">Before</span></a><a href="#etapes" data-s="etapes"><span class="fr">7 étapes</span><span class="en">7 steps</span></a><a href="#paiement" data-s="paiement"><span class="fr">Paiement</span><span class="en">Payment</span></a><a href="#suivi" data-s="suivi"><span class="fr">Suivi</span><span class="en">Tracking</span></a><a href="#securite" data-s="securite"><span class="fr">Sécurité</span><span class="en">Security</span></a><a href="#faq" data-s="faq"><span class="fr">FAQ</span><span class="en">FAQ</span></a></nav>
+</header>
+<div class="ticker" aria-hidden="true"><div><span class="fr">GUIDE OFFICIEL · 7 ÉTAPES · <b>PHASE PILOTE</b> · CONNEXION PI · KYC PI · BURN 0,5 % · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp; GUIDE OFFICIEL · 7 ÉTAPES · <b>PHASE PILOTE</b> · CONNEXION PI · KYC PI · BURN 0,5 % · GTCπ · NOTRE TERRE · NOTRE RICHESSE ·&nbsp;</span><span class="en">OFFICIAL GUIDE · 7 STEPS · <b>PILOT PHASE</b> · PI SIGN-IN · PI KYC · 0.5% BURN · GTCπ · OUR LAND · OUR WEALTH ·&nbsp; OFFICIAL GUIDE · 7 STEPS · <b>PILOT PHASE</b> · PI SIGN-IN · PI KYC · 0.5% BURN · GTCπ · OUR LAND · OUR WEALTH ·&nbsp;</span></div></div>
 
-</div>
+<main>
+  <section class="hero">
+    <span class="eyebrow"><i></i><span class="fr">Guide officiel · Phase pilote</span><span class="en">Official guide · Pilot phase</span></span>
+    <h1><span class="fr">Tokeniser votre actif, <em>étape par étape</em></span><span class="en">Tokenize your asset, <em>step by step</em></span></h1>
+    <p class="lead"><span class="fr">Ce guide suit exactement l'écran « Tokeniser » de l'application&nbsp;: 7 étapes, puis un paiement test de 0,001 π. Comptez une dizaine de minutes.</span><span class="en">This guide follows the app's “Tokenize” screen exactly: 7 steps, then a 0.001 π test payment. Allow about ten minutes.</span></p>
+    <div class="chips">
+      <span class="chip"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="fr">≈ 10 minutes</span><span class="en">≈ 10 minutes</span></span>
+      <span class="chip"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity=".5"/></svg></span><span class="fr">7 étapes</span><span class="en">7 steps</span></span>
+      <span class="chip"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span class="fr">KYC Pi requis</span><span class="en">Pi KYC required</span></span>
+      <span class="chip"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.3" fill="currentColor"/></svg></span><span class="fr">Paiement test 0,001 π</span><span class="en">0.001 π test payment</span></span>
+    </div>
+  </section>
+
+  <section class="block" id="avant">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><div><small class="mono">00</small><h2><span class="fr">Avant de commencer</span><span class="en">Before you start</span></h2><p class="sh-sub"><span class="fr">Préparez ces éléments&nbsp;: le parcours ira plus vite.</span><span class="en">Get these ready: the journey will go faster.</span></p></div></div>
+    <div class="need"><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span><span><b><span class="fr">Le Pi Browser installé</span><span class="en">The Pi Browser installed</span></b><span class="t"><span class="fr">L'app ne fonctionne que dans le Pi Browser, pas dans Chrome ni WhatsApp.</span><span class="en">The app only works inside the Pi Browser, not in Chrome or WhatsApp.</span></span></span></div><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="fr">Un compte Pioneer avec KYC validé</span><span class="en">A Pioneer account with validated KYC</span></b><span class="t"><span class="fr">Le KYC est fait sur Pi Network&nbsp;: l'app ne vous demande aucun document d'identité.</span><span class="en">KYC is done on Pi Network: the app never asks for an ID document.</span></span></span></div><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.3" fill="currentColor"/></svg></span><span><b><span class="fr">Un peu de π dans votre Pi Wallet</span><span class="en">A little π in your Pi Wallet</span></b><span class="t"><span class="fr">0,001 π pour le paiement test, plus les frais de réseau affichés par le Pi Wallet.</span><span class="en">0.001 π for the test payment, plus the network fees shown by the Pi Wallet.</span></span></span></div><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span><span><b><span class="fr">Les informations du bien</span><span class="en">The property details</span></b><span class="t"><span class="fr">Type, nom ou référence, pays, région, ville, superficie, statut de propriété.</span><span class="en">Type, name or reference, country, region, city, area, ownership status.</span></span></span></div><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b><span class="fr">Sa localisation</span><span class="en">Its location</span></b><span class="t"><span class="fr">Être sur place pour utiliser le GPS du téléphone, ou connaître la latitude et la longitude.</span><span class="en">Be on site to use the phone's GPS, or know the latitude and longitude.</span></span></span></div><div><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span><span><b><span class="fr">Un document foncier</span><span class="en">A land document</span></b><span class="t"><span class="fr">Fichier PDF, JPG ou PNG, ou un lien vers le document.</span><span class="en">A PDF, JPG or PNG file, or a link to the document.</span></span></span></div></div>
+    <div class="glass" style="margin-top:12px">
+      <div class="card-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span><h3><span class="fr">Ouvrir l'écran « Tokeniser »</span><span class="en">Open the “Tokenize” screen</span></h3></div>
+      <div class="open-app"><span class="fr">Ouvrez le Pi Browser</span><span class="en">Open the Pi Browser</span> <span class="arrow">→</span> <span class="fr">tapez</span><span class="en">type</span> <span class="url">hilaila.github.io</span> <span class="arrow">→</span> <span class="ui"><span class="fr">◈ Tokeniser un actif</span><span class="en">◈ Tokenize an asset</span></span></div>
+      <p class="warn"><span class="fr">Un lien ouvert depuis WhatsApp ou Chrome ne permet pas la connexion Pi&nbsp;: passez toujours par le Pi Browser.</span><span class="en">A link opened from WhatsApp or Chrome cannot sign in with Pi: always go through the Pi Browser.</span></p>
+    </div>
+  </section>
+
+  <section class="block" id="etapes">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5" opacity=".5"/></svg></span><div><small class="mono">01</small><h2><span class="fr">Les 7 étapes</span><span class="en">The 7 steps</span></h2><p class="sh-sub"><span class="fr">Une barre en haut de l'écran montre l'étape en cours.</span><span class="en">A bar at the top of the screen shows the current step.</span></p></div></div>
+    <ol class="steps"><li class="step" id="etape-1">
+      <div class="node"><span class="mono">1</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span><h3><span class="fr">Connexion Pi</span><span class="en">Pi sign-in</span></h3></div>
+        <p><span class="fr">Appuyez sur <span class="ui"><span class="fr">π Connexion</span><span class="en">π Sign in</span></span>. Une fenêtre Pi Network s'ouvre&nbsp;: acceptez le partage de votre nom d'utilisateur.</span><span class="en">Tap <span class="ui"><span class="fr">π Connexion</span><span class="en">π Sign in</span></span>. A Pi Network window opens: accept sharing your username.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">Votre nom @Pioneer s'affiche.</span><span class="en">Your @Pioneer name appears.</span></span></div><p class="tip"><span class="fr">Si « Pi ne répond pas encore » s'affiche, vérifiez que vous êtes bien dans le Pi Browser.</span><span class="en">If “Pi is not responding yet” appears, check that you are inside the Pi Browser.</span></p>
+      </div>
+    </li><li class="step" id="etape-2">
+      <div class="node"><span class="mono">2</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><h3><span class="fr">Vérification d'identité</span><span class="en">Identity check</span></h3></div>
+        <p><span class="fr">Appuyez sur <span class="ui"><span class="fr">Vérifier mon identité</span><span class="en">Check my identity</span></span>. Le serveur confirme votre identité Pi auprès de Pi Network.</span><span class="en">Tap <span class="ui"><span class="fr">Vérifier mon identité</span><span class="en">Check my identity</span></span>. The server confirms your Pi identity with Pi Network.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">« Identité backend&nbsp;: ✓ Confirmée » et « Accès tokenisation&nbsp;: ✓ Autorisé ».</span><span class="en">“Server identity: ✓ Confirmed” and “Tokenization access: ✓ Authorized”.</span></span></div><p class="tip"><span class="fr">Le contrôle KYC complet est appliqué par Pi Network au moment du paiement.</span><span class="en">Full KYC is enforced by Pi Network at payment time.</span></p>
+      </div>
+    </li><li class="step" id="etape-3">
+      <div class="node"><span class="mono">3</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span><h3><span class="fr">Informations de l'actif</span><span class="en">Asset information</span></h3></div>
+        <p><span class="fr">Remplissez le formulaire (champs ci-dessous), puis appuyez sur <span class="ui"><span class="fr">Continuer →</span><span class="en">Continue →</span></span>.</span><span class="en">Fill in the form (fields below), then tap <span class="ui"><span class="fr">Continuer →</span><span class="en">Continue →</span></span>.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">Les champs marqués * sont obligatoires.</span><span class="en">Fields marked * are required.</span></span></div><div class="fields"><div class="fld"><b><span class="fr">Type</span><span class="en">Type</span><i>*</i></b><span><span class="fr">Terrain agricole, rural, urbain, immobilier, agro-pastoral, mine, énergie.</span><span class="en">Agricultural, rural or urban land, real estate, agro-pastoral, mining, energy.</span></span></div><div class="fld"><b><span class="fr">Nom / référence</span><span class="en">Name / reference</span><i>*</i></b><span><span class="fr">Exemple&nbsp;: TER-ABJ-0001.</span><span class="en">Example: TER-ABJ-0001.</span></span></div><div class="fld"><b><span class="fr">Pays</span><span class="en">Country</span><i>*</i></b><span><span class="fr">Côte d'Ivoire et pays de l'UEMOA, Ghana, Gabon, Cameroun, RDC.</span><span class="en">Côte d'Ivoire and WAEMU countries, Ghana, Gabon, Cameroon, DRC.</span></span></div><div class="fld"><b><span class="fr">Région / district</span><span class="en">Region / district</span><i>*</i></b></div><div class="fld"><b><span class="fr">Ville / commune</span><span class="en">City / municipality</span><i>*</i></b></div><div class="fld"><b><span class="fr">Localité / village</span><span class="en">Locality / village</span></b><span><span class="fr">Village, quartier, localité.</span><span class="en">Village, neighbourhood, locality.</span></span></div><div class="fld"><b><span class="fr">Superficie (ha)</span><span class="en">Area (ha)</span><i>*</i></b><span><span class="fr">En hectares.</span><span class="en">In hectares.</span></span></div><div class="fld"><b><span class="fr">Statut de propriété</span><span class="en">Ownership status</span><i>*</i></b><span><span class="fr">Titre foncier, certificat foncier, attestation, droit coutumier, bail / concession, autre.</span><span class="en">Land title, land certificate, attestation letter, customary right, lease / concession, other.</span></span></div><div class="fld"><b><span class="fr">Latitude / Longitude</span><span class="en">Latitude / Longitude</span><i>*</i></b><span><span class="fr">Remplies automatiquement à l'étape 4, ou saisies à la main.</span><span class="en">Filled in automatically at step 4, or typed by hand.</span></span></div><div class="fld"><b><span class="fr">Valeur estimée + Unité</span><span class="en">Estimated value + Unit</span></b><span><span class="fr">Unité en Pi par défaut&nbsp;; XOF, USD et EUR sont indicatifs.</span><span class="en">Unit in Pi by default; XOF, USD and EUR are indicative.</span></span></div><div class="fld"><b><span class="fr">Nombre cible de GTCπ</span><span class="en">Target number of GTCπ</span><i>*</i></b><span><span class="fr">Pour un premier essai&nbsp;: 1.</span><span class="en">For a first try: 1.</span></span></div><div class="fld"><b><span class="fr">Lien document foncier</span><span class="en">Land document link</span></b><span><span class="fr">Lien vers votre document, si vous en avez un.</span><span class="en">Link to your document, if you have one.</span></span></div><div class="fld"><b><span class="fr">Description</span><span class="en">Description</span><i>*</i></b><span><span class="fr">Situation, usage, tout élément utile à la vérification.</span><span class="en">Location, use, anything useful for verification.</span></span></div></div>
+      </div>
+    </li><li class="step" id="etape-4">
+      <div class="node"><span class="mono">4</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><h3><span class="fr">Localisation</span><span class="en">Location</span></h3></div>
+        <p><span class="fr">Sur place, appuyez sur <span class="ui"><span class="fr">📍 Utiliser ma position</span><span class="en">📍 Use my location</span></span> et autorisez la localisation. <span class="ui"><span class="fr">Afficher la localisation</span><span class="en">Show location</span></span> ouvre la carte pour vérifier. Puis <span class="ui"><span class="fr">Confirmer localisation →</span><span class="en">Confirm location →</span></span>.</span><span class="en">On site, tap <span class="ui"><span class="fr">📍 Utiliser ma position</span><span class="en">📍 Use my location</span></span> and allow location access. <span class="ui"><span class="fr">Afficher la localisation</span><span class="en">Show location</span></span> opens the map to check. Then <span class="ui"><span class="fr">Confirmer localisation →</span><span class="en">Confirm location →</span></span>.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">« 📍 Actif localisé » avec la latitude et la longitude.</span><span class="en">“📍 Asset located” with latitude and longitude.</span></span></div><p class="tip"><span class="fr">Les coordonnées doivent correspondre à l'emplacement réel de l'actif.</span><span class="en">The coordinates must match the asset's real location.</span></p>
+      </div>
+    </li><li class="step" id="etape-5">
+      <div class="node"><span class="mono">5</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span><h3><span class="fr">Documents fonciers</span><span class="en">Land documents</span></h3></div>
+        <p><span class="fr">Appuyez sur <span class="ui"><span class="fr">📎 Ajouter les documents</span><span class="en">📎 Add documents</span></span> et choisissez vos fichiers (PDF, JPG, PNG). Il faut au moins un document, ou le lien saisi à l'étape 3.</span><span class="en">Tap <span class="ui"><span class="fr">📎 Ajouter les documents</span><span class="en">📎 Add documents</span></span> and choose your files (PDF, JPG, PNG). At least one document is needed, or the link entered at step 3.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">La liste de vos fichiers s'affiche.</span><span class="en">Your file list appears.</span></span></div><p class="tip"><span class="fr">Phase pilote&nbsp;: l'app enregistre le nom, le type et la taille des fichiers. Gardez les originaux&nbsp;: ils pourront vous être demandés pour la vérification.</span><span class="en">Pilot phase: the app records the name, type and size of the files. Keep the originals: they may be requested for verification.</span></p>
+      </div>
+    </li><li class="step" id="etape-6">
+      <div class="node"><span class="mono">6</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-2.8 7-6.8 0-4.2-3.3-6.7-4.6-10.2-.3 2.5-1.6 4-3 4.5C11.6 7 11 4.5 9 2c.4 3.3-4 6.3-4 12.2C5 19.2 8 22 12 22z"/></svg></span><h3><span class="fr">Calcul du burn de 0,5 %</span><span class="en">0.5% burn calculation</span></h3></div>
+        <p><span class="fr">L'app calcule l'offre, le burn (offre × 0,005) et l'offre nette. Appuyez sur <span class="ui"><span class="fr">Confirmer le calcul →</span><span class="en">Confirm calculation →</span></span>.</span><span class="en">The app calculates the offer, the burn (offer × 0.005) and the net offer. Tap <span class="ui"><span class="fr">Confirmer le calcul →</span><span class="en">Confirm calculation →</span></span>.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">Le serveur recalcule ce montant à la soumission.</span><span class="en">The server recalculates this amount on submission.</span></span></div><div class="calc"><label for="calcIn"><span class="fr">Calculateur</span><span class="en">Calculator</span></label>
+              <input id="calcIn" type="number" min="0" step="any" value="1" inputmode="decimal">
+              <div class="burn" style="margin-top:10px">
+                <div><b id="cOffer">1</b><span><span class="fr">offre</span><span class="en">offer</span></span></div><em>−</em>
+                <div class="fire"><b id="cBurn">0,005</b><span><span class="fr">brûlé</span><span class="en">burned</span></span></div><em>=</em>
+                <div class="net"><b id="cNet">0,995</b><span><span class="fr">net</span><span class="en">net</span></span></div>
+              </div></div>
+      </div>
+    </li><li class="step hot" id="etape-7">
+      <div class="node"><span class="mono">7</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7z"/><path d="M11 13l9-9"/></svg></span><h3><span class="fr">Soumission</span><span class="en">Submission</span></h3></div>
+        <p><span class="fr">Relisez le récapitulatif, puis appuyez sur <span class="ui"><span class="fr">◈ SOUMETTRE À LA TOKENISATION</span><span class="en">◈ SUBMIT FOR TOKENIZATION</span></span>.</span><span class="en">Review the summary, then tap <span class="ui"><span class="fr">◈ SOUMETTRE À LA TOKENISATION</span><span class="en">◈ SUBMIT FOR TOKENIZATION</span></span>.</span></p><div class="see"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><span class="fr">« ✓ DEMANDE ENREGISTRÉE », avec une référence GTC-… et le statut « En attente de vérification ».</span><span class="en">“✓ REQUEST RECORDED”, with a GTC-… reference and the status “Awaiting verification”.</span></span></div><p class="tip"><span class="fr">Notez la référence de votre demande.</span><span class="en">Write down your request reference.</span></p>
+      </div>
+    </li></ol>
+  </section>
+
+  <section class="block" id="paiement">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14.5" r="1.3" fill="currentColor"/></svg></span><div><small class="mono">02</small><h2><span class="fr">Le paiement test</span><span class="en">The test payment</span></h2><p class="sh-sub"><span class="fr">Juste après la soumission, sous votre demande.</span><span class="en">Right after submission, under your request.</span></p></div></div>
+    <ol class="flow"><li><span class="fr">Appuyez sur</span><span class="en">Tap</span> <span class="ui"><span class="fr">π Payer 0,001 π (test)</span><span class="en">π Pay 0.001 π (test)</span></span> <span class="fr">sous votre demande.</span><span class="en">under your request.</span></li><li><span class="fr">Le</span><span class="en">The</span> <b>Pi Wallet officiel</b> <span class="fr">s'ouvre. Vérifiez le montant (0,001 π) et le mémo « Tokenisation&nbsp;: GTC-… ».</span><span class="en">opens. Check the amount (0.001 π) and the memo “Tokenisation: GTC-…”.</span></li><li><span class="fr">Si le Pi Wallet le demande, déverrouillez-le (phrase secrète ou empreinte), puis confirmez le paiement.</span><span class="en">If the Pi Wallet asks, unlock it (secret phrase or fingerprint), then confirm the payment.</span></li><li><span class="fr">L'app affiche</span><span class="en">The app shows</span> « Paiement test confirmé sur Pi Network » <span class="fr">avec votre TXID Pi.</span><span class="en">with your Pi TXID.</span></li><li><span class="fr">Phase pilote&nbsp;: un</span><span class="en">Pilot phase: a</span> jeton de test GTCπ <span class="fr">est émis sur le réseau de test Stellar. Il n'a aucune valeur et ne vaut ni tokenisation ni titre de propriété.</span><span class="en">is issued on the Stellar test network. It has no value and is neither a tokenization nor a property title.</span></li></ol>
+    <div class="glass" style="margin-top:12px"><p class="lead2" style="font-size:14.5px"><span class="fr">L'écran se termine par&nbsp;: « <b>Votre dossier va maintenant être vérifié.</b> La tokenisation définitive n'aura lieu qu'après cette vérification. »</span><span class="en">The screen ends with: “<b>Your file will now be verified.</b> Final tokenization only happens after this verification.”</span></p></div>
+  </section>
+
+  <section class="block" id="suivi">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><div><small class="mono">03</small><h2><span class="fr">Suivre votre demande</span><span class="en">Track your request</span></h2></div></div>
+    <div class="states"><div class="state now"><small><span class="fr">Aujourd'hui</span><span class="en">Today</span></small><b><span class="fr">En attente de vérification</span><span class="en">Awaiting verification</span></b><p><span class="fr">Votre demande est enregistrée et sera examinée.</span><span class="en">Your request is recorded and will be reviewed.</span></p></div><div class="state "><small><span class="fr">Ensuite</span><span class="en">Next</span></small><b><span class="fr">Vérifié</span><span class="en">Verified</span></b><p><span class="fr">Les informations et les documents ont été contrôlés.</span><span class="en">The information and documents have been checked.</span></p></div><div class="state later"><small><span class="fr">À venir · Mainnet</span><span class="en">Upcoming · Mainnet</span></small><b><span class="fr">Tokenisation définitive</span><span class="en">Final tokenization</span></b><p><span class="fr">Émission du jeton de l'actif, après vérification. Prévue avec le Mainnet.</span><span class="en">Issuance of the asset token, after verification. Planned with Mainnet.</span></p></div></div>
+    <div class="glass" style="margin-top:12px"><div class="card-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span><h3><span class="fr">Où la retrouver</span><span class="en">Where to find it</span></h3></div>
+      <p class="lead2" style="font-size:14.5px"><span class="fr">Dans <b>Mon espace → Mes actifs</b>. Gardez aussi la référence GTC-… et le TXID Pi affichés à la fin.</span><span class="en">In <b>My space → My assets</b>. Also keep the GTC-… reference and the Pi TXID shown at the end.</span></p></div>
+  </section>
+
+  <section class="block" id="securite">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><div><small class="mono">04</small><h2><span class="fr">Sécurité</span><span class="en">Security</span></h2></div></div>
+    <div class="glass danger">
+      <div class="card-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><h3><span class="fr">Votre phrase secrète de 24 mots</span><span class="en">Your 24-word secret phrase</span></h3></div>
+      <ul class="checks ok">
+        <li><i>✓</i><span><span class="fr">Ne la partagez jamais, avec personne, ni en capture ni par message.</span><span class="en">Never share it with anyone, in a screenshot or a message.</span></span></li>
+        <li><i>✓</i><span><span class="fr">Aucune page de GeoTerraChain QFS ne vous la demandera jamais.</span><span class="en">No GeoTerraChain QFS page will ever ask for it.</span></span></li>
+        <li><i>✓</i><span><span class="fr">Seul le Pi Wallet officiel peut vous demander de se déverrouiller&nbsp;: vérifiez que c'est bien lui avant de taper quoi que ce soit.</span><span class="en">Only the official Pi Wallet may ask you to unlock it: check that it really is the Pi Wallet before typing anything.</span></span></li>
+        <li><i>✓</i><span><span class="fr">Arrêtez tout enregistrement d'écran avant de la saisir.</span><span class="en">Stop any screen recording before entering it.</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="faq">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".8" fill="currentColor"/></svg></span><div><small class="mono">05</small><h2><span class="fr">Questions fréquentes</span><span class="en">Frequently asked questions</span></h2></div></div>
+    <details class="q"><summary><span class="fr">Pourquoi faut-il un KYC Pi&nbsp;?</span><span class="en">Why is Pi KYC required?</span></summary><p><span class="fr">Pour que chaque demande vienne d'une personne réelle et vérifiée. Le KYC est fait et contrôlé par Pi Network&nbsp;; GeoTerraChain QFS ne vous demande aucun document d'identité.</span><span class="en">So that every request comes from a real, verified person. KYC is done and checked by Pi Network; GeoTerraChain QFS never asks for an ID document.</span></p></details><details class="q"><summary><span class="fr">Qu'est-ce que le burn de 0,5 %&nbsp;?</span><span class="en">What is the 0.5% burn?</span></summary><p><span class="fr">À chaque tokenisation, 0,5 % de l'offre en GTCπ est destiné au burn. Exemple&nbsp;: pour 1 GTCπ, 0,005 est brûlé et 0,995 reste. Ce mécanisme ne garantit aucune valeur ni aucun rendement.</span><span class="en">For each tokenization, 0.5% of the GTCπ offer goes to the burn. Example: for 1 GTCπ, 0.005 is burned and 0.995 remains. This mechanism guarantees no value and no return.</span></p></details><details class="q"><summary><span class="fr">Le jeton de test a-t-il une valeur&nbsp;?</span><span class="en">Does the test token have any value?</span></summary><p><span class="fr">Non. En phase pilote, le jeton GTCπ est émis sur le réseau de test Stellar pour tester le parcours. Il ne s'échange pas et ne représente aucun droit sur l'actif.</span><span class="en">No. During the pilot phase, the GTCπ token is issued on the Stellar test network to test the journey. It cannot be traded and grants no right over the asset.</span></p></details><details class="q"><summary><span class="fr">Combien de π faut-il&nbsp;?</span><span class="en">How much π do I need?</span></summary><p><span class="fr">0,001 π pour le paiement test, plus les frais de réseau affichés par le Pi Wallet avant confirmation.</span><span class="en">0.001 π for the test payment, plus the network fees shown by the Pi Wallet before you confirm.</span></p></details><details class="q"><summary><span class="fr">Mes documents sont-ils envoyés&nbsp;?</span><span class="en">Are my documents uploaded?</span></summary><p><span class="fr">En phase pilote, l'app enregistre le nom, le type et la taille des fichiers choisis&nbsp;; le fichier reste sur votre téléphone. Le lien vers votre document (étape 3) est enregistré avec la demande.</span><span class="en">During the pilot phase, the app records the name, type and size of the chosen files; the file stays on your phone. The link to your document (step 3) is recorded with the request.</span></p></details><details class="q"><summary><span class="fr">« Pi ne répond pas encore »&nbsp;: que faire&nbsp;?</span><span class="en">“Pi is not responding yet”: what should I do?</span></summary><p><span class="fr">La connexion ne fonctionne que dans le Pi Browser. Si le lien s'est ouvert dans Chrome ou WhatsApp, ouvrez le Pi Browser et tapez hilaila.github.io. Sinon, appuyez de nouveau sur « π Connexion ».</span><span class="en">Sign-in only works inside the Pi Browser. If the link opened in Chrome or WhatsApp, open the Pi Browser and type hilaila.github.io. Otherwise, tap “π Sign in” again.</span></p></details><details class="q"><summary><span class="fr">Le paiement a été interrompu&nbsp;: que faire&nbsp;?</span><span class="en">The payment was interrupted: what should I do?</span></summary><p><span class="fr">Reconnectez-vous avec Pi&nbsp;: un paiement commencé est finalisé automatiquement à la connexion suivante. Un paiement sans transaction est annulé par Pi Network.</span><span class="en">Sign in with Pi again: a started payment is completed automatically at the next sign-in. A payment with no transaction is cancelled by Pi Network.</span></p></details><details class="q"><summary><span class="fr">Où voir mes demandes&nbsp;?</span><span class="en">Where can I see my requests?</span></summary><p><span class="fr">Dans « Mon espace », onglet « Mes actifs ». Gardez aussi la référence GTC-… et le TXID affichés à la fin.</span><span class="en">In “My space”, “My assets” tab. Also keep the GTC-… reference and the TXID shown at the end.</span></p></details>
+    <div class="cta">
+      <a class="btn btn-gold" href="tokenisation.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg></span><span class="fr">Tokeniser un actif</span><span class="en">Tokenize an asset</span></a>
+      <a class="btn" href="guide-aide-geoterrachain-qfs.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".8" fill="currentColor"/></svg></span><span class="fr">Guide & Aide</span><span class="en">Guide & Help</span></a>
+      <a class="btn" href="campagne.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg></span><span class="fr">Le film</span><span class="en">The film</span></a>
+    </div>
+    <p class="note"><span class="fr">Projet indépendant · Phase pilote. La technologie ne remplace ni les documents légaux ni les autorités compétentes.</span><span class="en">Independent project · Pilot phase. Technology does not replace legal documents or the competent authorities.</span></p>
+  </section>
+</main>
+<footer><b>GeoTerraChain QFS</b><br><span class="fr">Développé par @Hilaila · Côte d'Ivoire · UEMOA · 2026</span><span class="en">Built by @Hilaila · Côte d'Ivoire · WAEMU · 2026</span></footer>
+<a class="totop" id="totop" href="#avant" aria-label="Haut de page">↑</a>
 
 <script>
-// SPLASH
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1600);
-});
+(function () {
+  var root = document.documentElement;
+  var TITLES = { fr: "Guide de tokenisation — GeoTerraChain QFS", en: "Tokenization guide — GeoTerraChain QFS" };
+  function fmt(n) { return Number(n).toLocaleString(root.getAttribute("data-lang") === "en" ? "en-US" : "fr-FR", { maximumFractionDigits: 8 }); }
+  function calc() {
+    var v = parseFloat(String(document.getElementById("calcIn").value).replace(",", "."));
+    if (!isFinite(v) || v < 0) v = 0;
+    var burn = Math.round(v * 0.005 * 1e8) / 1e8, net = Math.round((v - burn) * 1e8) / 1e8;
+    document.getElementById("cOffer").textContent = fmt(v);
+    document.getElementById("cBurn").textContent = fmt(burn);
+    document.getElementById("cNet").textContent = fmt(net);
+  }
+  function setLang(l) {
+    root.setAttribute("data-lang", l); root.lang = l; document.title = TITLES[l];
+    document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-l") === l); });
+    calc();
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var l = b.getAttribute("data-l");
+      try { localStorage.setItem("gtcLang", l); } catch (e) {}
+      setLang(l);
+    });
+  });
+  document.getElementById("calcIn").addEventListener("input", calc);
+  setLang(root.getAttribute("data-lang") || "fr");
 
-// TOGGLE STEP
-function toggleStep(idx) {
-  const body = document.getElementById('body-' + idx);
-  body.classList.toggle('hidden');
-}
-
-function showStep(idx) {
-  const body = document.getElementById('body-' + idx);
-  body.classList.remove('hidden');
-  document.getElementById('step-' + idx).scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// BURN CALC
-function calcBurn() {
-  const prix = parseFloat(document.getElementById('calc-prix').value) || 0;
-  const burn = parseFloat((prix * 0.005).toFixed(6));
-  const net = parseFloat((prix - burn).toFixed(6));
-  document.getElementById('calc-result').textContent = `Burn: ${burn} GTCπ · Net: ${net} GTCπ`;
-}
-
-// FAQ TOGGLE
-function toggleFaq(el) {
-  const answer = el.nextElementSibling;
-  const icon = el.querySelector('span');
-  answer.classList.toggle('open');
-  icon.textContent = answer.classList.contains('open') ? '−' : '+';
-}
-
-// Ouvrir le premier step par défaut
-toggleStep(0);
+  var links = Array.prototype.slice.call(document.querySelectorAll(".nav a"));
+  var secs = links.map(function (a) { return document.getElementById(a.getAttribute("data-s")); });
+  var nav = document.querySelector(".nav"), current = null;
+  function onScroll() {
+    var y = window.scrollY + 170, idx = 0;
+    secs.forEach(function (s, i) { if (s && s.offsetTop <= y) idx = i; });
+    if (idx !== current) {
+      current = idx;
+      links.forEach(function (a, i) { a.classList.toggle("on", i === idx); });
+      var a = links[idx];
+      if (a && nav) nav.scrollTo({ left: a.offsetLeft - 16, behavior: "smooth" });
+    }
+    document.getElementById("totop").classList.toggle("on", window.scrollY > 600);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+})();
 </script>
 </body>
 </html>
