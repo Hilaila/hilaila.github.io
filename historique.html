@@ -46,6 +46,8 @@
       k_pay: "Paiements test",
       k_tok: "Jetons émis",
       k_pi: "Pi reçus",
+      pi_unknown: "+ {n} paiement(s) sans montant connu",
+      amt_unknown: "montant inconnu",
       pio_h: "Pioneers",
       pio_s: "Parcours : connexion → demande → paiement → jeton",
       first: "1re activité",
@@ -138,6 +140,8 @@
       k_pay: "Test payments",
       k_tok: "Tokens issued",
       k_pi: "Pi received",
+      pi_unknown: "+ {n} payment(s) with unknown amount",
+      amt_unknown: "amount unknown",
       pio_h: "Pioneers",
       pio_s: "Journey: sign-in → request → payment → token",
       first: "first activity",
@@ -307,6 +311,7 @@
   .kpi::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg, transparent, var(--gold-2), transparent); opacity:.7; }
   .kpi small { display:block; font:500 10px 'JetBrains Mono', monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
   .kpi b { display:block; margin-top:6px; font:700 24px 'JetBrains Mono', monospace; color:var(--text); }
+  .kpi b i { display:block; margin-top:4px; font:500 10px 'JetBrains Mono', monospace; color:var(--muted); font-style:normal; }
   .kpi.g b { color:var(--green); } .kpi.v b { color:var(--violet-2); } .kpi.o b { color:var(--gold-2); }
 
   /* Pioneers */
@@ -606,7 +611,10 @@ function render() {
   $("kReq").textContent = count("demande");
   $("kPay").textContent = count("paiement");
   $("kTok").textContent = count("jeton");
-  $("kPi").textContent = fmtNum(ev.filter(e => e.type === "paiement").reduce((s, e) => s + (Number(e.amount) || 0), 0)) + " π";
+  const pays = ev.filter(e => e.type === "paiement");
+  const unknown = pays.filter(e => e.amount == null || !Number.isFinite(Number(e.amount))).length;
+  $("kPi").innerHTML = esc(fmtNum(pays.reduce((s, e) => s + (Number(e.amount) || 0), 0))) + " π" +
+    (unknown ? `<i>${esc(t("pi_unknown", { n: unknown }))}</i>` : "");
 
   // Pioneers
   const steps = ["connexion", "demande", "paiement", "jeton"];
@@ -630,7 +638,7 @@ function render() {
     const parts = [];
     if (e.page) parts.push(e.page === "index" ? t("p_index") : t("p_page", { p: esc(e.page) }));
     if (e.reference) parts.push(`<span class="mono">${esc(e.reference)}</span>`);
-    if (e.amount != null && e.type === "paiement") parts.push(fmtNum(e.amount) + " π");
+    if (e.type === "paiement") parts.push(e.amount != null ? fmtNum(e.amount) + " π" : t("amt_unknown"));
     if (e.amount != null && e.type === "demande") parts.push(t("targeted", { n: fmtNum(e.amount, 0) }));
     let hash = "";
     if (e.txid) hash += `<div class="hash"><code><b>${t("txid")}</b> ${esc(e.txid)}</code><button type="button" data-copy="${esc(e.txid)}">${t("copy")}</button></div>`;
