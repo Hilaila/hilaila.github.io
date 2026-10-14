@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="i18n/tokenisation-en.js"></script>
+<script src="i18n/gtc-i18n.js"></script>
 
 <title>GeoTerraChain QFS — Tokenisation Foncière</title>
 
@@ -814,6 +816,7 @@ input::placeholder, textarea::placeholder {
         <a href="pioneer.html" class="back-home">Mon espace</a>
         <div class="brand">
             <img src="logo-final-complet.png" alt="GeoTerraChain QFS" style="height:34px; width:auto;">
+            <span data-gtc-lang-slot></span>
         </div>
         <div class="status">
             <span class="status-dot"></span>
@@ -2090,7 +2093,7 @@ function calculateBurn() {
 
 
 function formatNumber(number) {
-    return Number(number).toLocaleString("fr-FR", { maximumFractionDigits: 8 });
+    return Number(number).toLocaleString(window.GTC_LANG === "en" ? "en-US" : "fr-FR", { maximumFractionDigits: 8 });
 }
 
 
