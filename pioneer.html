@@ -79,9 +79,10 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .item-row span:last-child { color: #eee; font-weight: 600; text-align: right; }
 
 .status-pill { display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; margin-bottom: 8px; }
-.status-pill.pending_review, .status-pill.pilote_testnet, .status-pill.en_attente { background: rgba(217,164,65,.1); color: var(--gold-light); border: 1px solid var(--border); }
+.status-pill.pending_review, .status-pill.pilote_testnet, .status-pill.en_attente, .status-pill.en_attente_validation, .status-pill.actif { background: rgba(217,164,65,.1); color: var(--gold-light); border: 1px solid var(--border); }
+.status-pill.archive { background: rgba(255,255,255,.05); color: #a9a29a; border: 1px solid rgba(255,255,255,.14); }
 .status-pill.verifie, .status-pill.confirme { background: rgba(50,213,131,.1); color: #78e8ad; border: 1px solid rgba(50,213,131,.3); }
-.status-pill.rejete { background: rgba(255,93,93,.1); color: #ff9292; border: 1px solid rgba(255,93,93,.3); }
+.status-pill.rejete, .status-pill.refuse { background: rgba(255,93,93,.1); color: #ff9292; border: 1px solid rgba(255,93,93,.3); }
 
 .empty-state { text-align: center; padding: 34px 15px; color: var(--muted); font-size: 12px; }
 .empty-state .icon { font-size: 26px; margin-bottom: 10px; display: block; }
@@ -119,6 +120,24 @@ const CONFIG = {
 let accessToken = null;
 
 function $(id) { return document.getElementById(id); }
+
+/* Statuts lisibles (les codes techniques restent dans la classe CSS) */
+const STATUS_LABELS = {
+    pending_review: "En attente de vérification",
+    en_attente: "En attente",
+    en_attente_validation: "En attente de validation",
+    pilote_testnet: "Publié · phase pilote",
+    actif: "Publié",
+    refuse: "Non publié",
+    archive: "Archivé (test)",
+    verifie: "Vérifié",
+    rejete: "Rejeté",
+    confirme: "Confirmé"
+};
+function statusLabel(code) {
+    const c = String(code || "").toLowerCase();
+    return STATUS_LABELS[c] || c.replace(/_/g, " ");
+}
 
 function escapeHtml(value) {
     return String(value)
@@ -220,7 +239,7 @@ function renderActifs(actifs) {
         const asset = p.asset || {};
         return `
             <div class="item-card">
-                <span class="status-pill ${escapeHtml(p.status || 'pending_review')}">${escapeHtml((p.status || 'PENDING_REVIEW').replace(/_/g, ' '))}</span>
+                <span class="status-pill ${escapeHtml(String(p.status || 'pending_review').toLowerCase())}">${escapeHtml(statusLabel(p.status || 'pending_review'))}</span>
                 <div class="item-title">${escapeHtml(asset.reference || p.requestId || 'Actif')}</div>
                 <div class="item-meta">${escapeHtml(asset.type || '—')} · ${escapeHtml(asset.city || asset.region || '—')}</div>
                 <div class="item-row"><span>Référence</span><span>${escapeHtml(p.requestId || '—')}</span></div>
@@ -241,7 +260,7 @@ function renderProjets(projets) {
         const pct = objectif > 0 ? Math.min(100, (collecte / objectif) * 100) : 0;
         return `
             <div class="item-card">
-                <span class="status-pill ${escapeHtml(p.statut)}">${escapeHtml(p.statut.replace(/_/g, ' '))}</span>
+                <span class="status-pill ${escapeHtml(p.statut)}">${escapeHtml(statusLabel(p.statut))}</span>
                 <div class="item-title">${escapeHtml(p.titre)}</div>
                 <div class="item-meta">${escapeHtml(p.type_projet || '—')} · ${escapeHtml(p.commune || '—')}</div>
                 <div class="item-row"><span>Collecté</span><span>${formatNumber(collecte)} / ${formatNumber(objectif)} GTCπ</span></div>
@@ -260,7 +279,7 @@ function renderParticipations(participations) {
         const projet = p.gtc_projets_collectifs || {};
         return `
             <div class="item-card">
-                <span class="status-pill ${escapeHtml(p.payment_statut || 'confirme')}">${escapeHtml((p.payment_statut || 'confirme').replace(/_/g, ' '))}</span>
+                <span class="status-pill ${escapeHtml(p.payment_statut || 'confirme')}">${escapeHtml(statusLabel(p.payment_statut || 'confirme'))}</span>
                 <div class="item-title">${escapeHtml(projet.titre || 'Projet')}</div>
                 <div class="item-meta">${escapeHtml(projet.type_projet || '—')} · ${escapeHtml(projet.commune || '—')}</div>
                 <div class="item-row"><span>Unités détenues</span><span>${formatNumber(p.unites)}</span></div>

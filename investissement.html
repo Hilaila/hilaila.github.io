@@ -408,7 +408,7 @@ function renderProjectCard(p) {
     return `
         <div class="card">
             <div class="project-title">${escapeHtml(p.titre)}</div>
-            <div class="project-meta">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")} · ${escapeHtml(p.statut)}</div>
+            <div class="project-meta">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")} · ${escapeHtml(p.statut === "pilote_testnet" ? "Publié · phase pilote" : String(p.statut || "").replace(/_/g, " "))}</div>
             <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">${escapeHtml(p.description || "")}</p>
 
             <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>

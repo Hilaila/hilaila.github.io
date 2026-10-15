@@ -2,6 +2,7 @@
 window.GTC_EN = {
   title: "GeoTerraChain QFS — Land Tokenization",
   exact: {
+ "PI TESTNET · PILOTE": "PI TESTNET · PILOT",
  "GeoTerraChain QFS — Tokenisation Foncière": "GeoTerraChain QFS — Land Tokenization",
  "← Accueil": "← Home",
  "Pourquoi ?": "Why?",
