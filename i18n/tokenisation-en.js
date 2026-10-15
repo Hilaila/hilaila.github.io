@@ -39,6 +39,8 @@ window.GTC_EN = {
  "Terrain agricole": "Agricultural land",
  "Terrain rural": "Rural land",
  "Terrain urbain": "Urban land",
+ "Raniculture (élevage de grenouilles)": "Frog farming (raniculture)",
+ "Myciculture (champignons)": "Mushroom farming (myciculture)",
  "Immobilier": "Real estate",
  "Mine": "Mining",
  "Énergie": "Energy",
