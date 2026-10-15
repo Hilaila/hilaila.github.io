@@ -583,8 +583,13 @@ async function createProject() {
         const data = await response.json();
         if (!response.ok || !data.ok) throw new Error(data.error || "Échec de la création.");
 
-        setAlert("createAlert", "✓ Projet créé avec succès.", "success");
-        showToast("Projet créé.", "success");
+        if (data.pendingReview) {
+            setAlert("createAlert", "✓ Projet envoyé. Il sera publié après validation par l'administrateur de GeoTerraChain QFS.", "success");
+            showToast("Projet envoyé pour validation.", "success");
+        } else {
+            setAlert("createAlert", "✓ Projet créé avec succès.", "success");
+            showToast("Projet créé.", "success");
+        }
         loadProjects();
 
     } catch (error) {

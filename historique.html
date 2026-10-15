@@ -71,6 +71,19 @@
       doc_open: "Ouvrir",
       doc_opening: "Ouverture…",
       doc_fail: "Impossible d'ouvrir le document.",
+      pr_h: "Projets à valider",
+      pr_s: "Projets créés par des Pioneers : ils ne sont visibles publiquement qu'après votre validation.",
+      pr_none: "Aucun projet en attente de validation.",
+      pr_by: "par @{u}",
+      pr_goal: "Objectif {n} GTCπ",
+      pr_units: "{n} unités × {p} GTCπ",
+      pr_ok: "✓ Valider",
+      pr_ko: "Refuser",
+      pr_wait: "…",
+      pr_sure_ko: "Confirmer le refus",
+      pr_done_ok: "Projet validé : il est maintenant visible sur l'app.",
+      pr_done_ko: "Projet refusé : il ne sera pas publié.",
+      pr_fail: "Action impossible ({e}).",
       p_index: "page d'accueil",
       p_page: "page {p}",
       targeted: "{n} GTCπ visés",
@@ -169,6 +182,19 @@
       doc_open: "Open",
       doc_opening: "Opening…",
       doc_fail: "Could not open the document.",
+      pr_h: "Projects to review",
+      pr_s: "Projects created by Pioneers: they only become public after you approve them.",
+      pr_none: "No project waiting for review.",
+      pr_by: "by @{u}",
+      pr_goal: "Target {n} GTCπ",
+      pr_units: "{n} units × {p} GTCπ",
+      pr_ok: "✓ Approve",
+      pr_ko: "Reject",
+      pr_wait: "…",
+      pr_sure_ko: "Confirm rejection",
+      pr_done_ok: "Project approved: it is now visible in the app.",
+      pr_done_ko: "Project rejected: it will not be published.",
+      pr_fail: "Action failed ({e}).",
       p_index: "home page",
       p_page: "{p} page",
       targeted: "{n} GTCπ targeted",
@@ -367,6 +393,18 @@
   .hash button { flex-shrink:0; border:1px solid var(--line); background:transparent; color:var(--gold-2); border-radius:999px; font:600 10.5px 'Space Grotesk', sans-serif; padding:3px 9px; cursor:pointer; }
   .hash a { color:var(--gold-2); }
   .empty { text-align:center; color:var(--muted); font-size:13px; padding:14px; }
+  .projs { display:grid; gap:10px; }
+  .proj { min-width:0; padding:14px; border:1px solid rgba(232,200,114,.35); border-radius:16px; background:linear-gradient(160deg, rgba(232,200,114,.08), rgba(0,0,8,.4)); }
+  .proj b { display:block; font-size:15px; line-height:1.3; overflow-wrap:anywhere; }
+  .proj small { display:block; margin-top:3px; font-size:12px; color:var(--muted); overflow-wrap:anywhere; }
+  .proj p { margin-top:8px; font-size:13px; color:#D5CDBB; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .proj .facts { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .proj .facts span { font:600 11px 'JetBrains Mono', monospace; color:var(--gold-2); padding:3px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(232,200,114,.06); }
+  .proj .acts { display:flex; gap:8px; margin-top:12px; }
+  .proj .acts button { flex:1; min-height:42px; border-radius:999px; font:700 13.5px 'Space Grotesk', sans-serif; cursor:pointer; }
+  .proj .acts .ok { border:0; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); }
+  .proj .acts .ko { border:1px solid rgba(255,141,141,.45); color:var(--red); background:rgba(255,141,141,.08); }
+  .proj .acts button[disabled] { opacity:.5; }
   .actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
   .actions small { color:var(--muted); font:500 11px 'JetBrains Mono', monospace; margin-left:auto; }
 
@@ -461,6 +499,11 @@
       <div class="kpi g"><small data-i18n="k_pi"></small><b id="kPi">0 π</b></div>
     </div>
 
+    <section class="glass" id="projCard">
+      <div class="head"><div><h2 data-i18n="pr_h"></h2><div class="hs" data-i18n="pr_s"></div></div><span class="hs mono" id="prCount"></span></div>
+      <div class="projs" id="projList"></div>
+    </section>
+
     <section class="glass">
       <div class="head"><div><h2 data-i18n="pio_h"></h2><div class="hs" data-i18n="pio_s"></div></div></div>
       <div class="pios" id="pioneers"></div>
@@ -518,7 +561,7 @@
 const CONFIG = { API_BASE_URL: "https://geoterrachain-qfs-vercel.vercel.app", TIMEOUT_MS: 25000, GOAL_MIN: 5, GOAL_IDEAL: 8 };
 const ICON = { connexion: "π", identite: "π", demande: "◈", paiement: "✓", jeton: "⬡", documents: "📄" };
 const $ = id => document.getElementById(id);
-const state = { events: [], admins: [], diag: null, filter: "", q: "", token: null, loadedAt: null };
+const state = { events: [], admins: [], diag: null, projects: [], filter: "", q: "", token: null, loadedAt: null };
 
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const loc = () => (LANG === "en" ? "en-GB" : "fr-FR");
@@ -597,11 +640,12 @@ async function load() {
     if (err.indexOf("AUDIT_READ_FAILED") === 0) throw new Error(t("e_table"));
     throw new Error(err || t("e_bad", { c: status }));
   }
-  setData(data.events || [], data.admins || [], data.diag || null);
+  setData(data.events || [], data.admins || [], data.diag || null, data.pendingProjects || []);
 }
 
-function setData(events, admins, diag) {
+function setData(events, admins, diag, projects) {
   state.diag = diag || null;
+  state.projects = Array.isArray(projects) ? projects : [];
   state.events = events.map(e => ({ ...e, at: new Date(e.created_at) })).sort((a, b) => b.at - a.at);
   state.admins = admins.map(a => String(a).toLowerCase());
   state.loadedAt = new Date();
@@ -678,6 +722,45 @@ function render() {
   $("timeline").innerHTML = html ? html + "</div>" : `<div class="empty">${t("empty_f")}</div>`;
   $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) : "";
   renderDiag();
+  renderProjects();
+}
+
+/* Projets créés par des Pioneers, en attente de validation par l'administrateur */
+function renderProjects() {
+  const list = state.projects;
+  $("prCount").textContent = list.length ? String(list.length) : "";
+  $("projList").innerHTML = list.length ? list.map(p => {
+    const facts = [];
+    if (p.objectif_gtcp != null) facts.push(t("pr_goal", { n: fmtNum(p.objectif_gtcp, 2) }));
+    if (p.total_unites != null && p.prix_unite_gtcp != null) facts.push(t("pr_units", { n: fmtNum(p.total_unites, 0), p: fmtNum(p.prix_unite_gtcp, 4) }));
+    const meta = [p.type_projet, p.commune].filter(Boolean).map(esc).join(" · ");
+    return `<div class="proj"><b>${esc(p.titre)}</b>
+      <small>${meta ? meta + " · " : ""}${p.createur ? esc(t("pr_by", { u: p.createur })) + " · " : ""}${p.created_at ? fmtShort(new Date(p.created_at)) : ""}</small>
+      ${p.description ? `<p>${esc(p.description)}</p>` : ""}
+      <div class="facts">${facts.map(f => `<span>${esc(f)}</span>`).join("")}</div>
+      <div class="acts"><button type="button" class="ok" data-review="valider" data-id="${esc(p.id)}">${t("pr_ok")}</button><button type="button" class="ko" data-review="refuser" data-id="${esc(p.id)}">${t("pr_ko")}</button></div></div>`;
+  }).join("") : `<div class="empty">${t("pr_none")}</div>`;
+}
+
+async function reviewProject(btn) {
+  const id = btn.getAttribute("data-id"), decision = btn.getAttribute("data-review");
+  // Refus en deux temps (le Pi Browser n'affiche pas toujours les boîtes de confirmation)
+  if (decision === "refuser" && btn.dataset.armed !== "1") { btn.dataset.armed = "1"; btn.textContent = t("pr_sure_ko"); return; }
+  const box = btn.closest(".proj"); box.querySelectorAll("button").forEach(b => { b.disabled = true; });
+  const label = btn.textContent; btn.textContent = t("pr_wait");
+  try {
+    if (state.token) {
+      const { ok, data } = await postJSON("/api/pi-auth", { action: "project-review", accessToken: state.token, projetId: id, decision });
+      if (!ok || !data.ok) throw new Error((data && data.error) || "");
+    }
+    state.projects = state.projects.filter(p => p.id !== id);
+    renderProjects();
+    toast(decision === "valider" ? t("pr_done_ok") : t("pr_done_ko"));
+  } catch (e) {
+    box.querySelectorAll("button").forEach(b => { b.disabled = false; });
+    btn.textContent = label;
+    toast(t("pr_fail", { e: e.message || "?" }));
+  }
 }
 
 function renderDiag() {
@@ -798,6 +881,9 @@ $("filters").addEventListener("click", e => {
   [...$("filters").children].forEach(x => x.classList.toggle("on", x === b));
   render();
 });
+$("projList").addEventListener("click", e => {
+  const b = e.target.closest("button[data-review]"); if (b) reviewProject(b);
+});
 $("timeline").addEventListener("click", e => {
   const d = e.target.closest("button[data-doc]");
   if (d) { openDocument(d); return; }
@@ -821,7 +907,11 @@ if (new URLSearchParams(location.search).get("demo") === "1") {
     { created_at: "2026-10-12T15:41:00Z", type: "connexion", username: "Exemple_B", page: "index" },
     { created_at: "2026-10-12T15:43:00Z", type: "demande", username: "Exemple_B", page: "tokenisation", reference: "GTC-EXEMPLE-0001", amount: 500 },
     { created_at: "2026-10-11T21:40:00Z", type: "connexion", username: "Hilaila", page: "index" }
-  ], ["hilaila"]);
+  ], ["hilaila"], null, [
+    { id: "00000000-0000-4000-8000-000000000001", titre: "Champignonnière de volvaire — exemple", type_projet: "agriculture", commune: "Yamoussoukro",
+      description: "Projet fictif pour l'aperçu : culture de volvaire sur paille, 3 bassins de production.", objectif_gtcp: 500,
+      total_unites: 100, prix_unite_gtcp: 5, createur: "Exemple_C", created_at: "2026-10-15T08:00:00Z" }
+  ]);
 }
 </script>
 </body>
