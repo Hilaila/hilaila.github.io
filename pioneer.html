@@ -121,6 +121,32 @@ let accessToken = null;
 
 function $(id) { return document.getElementById(id); }
 
+/* Types d'actifs et de projets : libellés lisibles */
+const TYPE_LABELS = {
+    terrain_agricole: "Terrain agricole",
+    terrain_rural: "Terrain rural",
+    terrain_urbain: "Terrain urbain",
+    immobilier: "Immobilier",
+    agro_pastoral: "Agro-pastoral",
+    mine: "Mine",
+    energie: "Énergie",
+    agricole: "Agricole",
+    agriculture: "Agriculture",
+    residentiel: "Résidentiel",
+    commercial: "Commercial",
+    mixte: "Mixte",
+    foncier: "Foncier",
+    minier: "Minier",
+    infrastructure: "Infrastructure"
+};
+function typeLabel(code) {
+    const c = String(code || "").toLowerCase();
+    if (!c) return "—";
+    if (TYPE_LABELS[c]) return TYPE_LABELS[c];
+    const s = c.replace(/_/g, " ");
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 /* Statuts lisibles (les codes techniques restent dans la classe CSS) */
 const STATUS_LABELS = {
     pending_review: "En attente de vérification",
@@ -241,7 +267,7 @@ function renderActifs(actifs) {
             <div class="item-card">
                 <span class="status-pill ${escapeHtml(String(p.status || 'pending_review').toLowerCase())}">${escapeHtml(statusLabel(p.status || 'pending_review'))}</span>
                 <div class="item-title">${escapeHtml(asset.reference || p.requestId || 'Actif')}</div>
-                <div class="item-meta">${escapeHtml(asset.type || '—')} · ${escapeHtml(asset.city || asset.region || '—')}</div>
+                <div class="item-meta">${escapeHtml(typeLabel(asset.type))} · ${escapeHtml(asset.city || asset.region || '—')}</div>
                 <div class="item-row"><span>Référence</span><span>${escapeHtml(p.requestId || '—')}</span></div>
                 <div class="item-row"><span>Offre GTCπ</span><span>${formatNumber(p.tokenomics ? p.tokenomics.targetOffer : 0)}</span></div>
                 <div class="item-row"><span>Soumis le</span><span>${formatDate(e.created_at)}</span></div>
@@ -262,7 +288,7 @@ function renderProjets(projets) {
             <div class="item-card">
                 <span class="status-pill ${escapeHtml(p.statut)}">${escapeHtml(statusLabel(p.statut))}</span>
                 <div class="item-title">${escapeHtml(p.titre)}</div>
-                <div class="item-meta">${escapeHtml(p.type_projet || '—')} · ${escapeHtml(p.commune || '—')}</div>
+                <div class="item-meta">${escapeHtml(typeLabel(p.type_projet))} · ${escapeHtml(p.commune || '—')}</div>
                 <div class="item-row"><span>Collecté</span><span>${formatNumber(collecte)} / ${formatNumber(objectif)} GTCπ</span></div>
                 <div class="item-row"><span>Progression</span><span>${pct.toFixed(1)}%</span></div>
                 <div class="item-row"><span>Créé le</span><span>${formatDate(p.created_at)}</span></div>
@@ -281,7 +307,7 @@ function renderParticipations(participations) {
             <div class="item-card">
                 <span class="status-pill ${escapeHtml(p.payment_statut || 'confirme')}">${escapeHtml(statusLabel(p.payment_statut || 'confirme'))}</span>
                 <div class="item-title">${escapeHtml(projet.titre || 'Projet')}</div>
-                <div class="item-meta">${escapeHtml(projet.type_projet || '—')} · ${escapeHtml(projet.commune || '—')}</div>
+                <div class="item-meta">${escapeHtml(typeLabel(projet.type_projet))} · ${escapeHtml(projet.commune || '—')}</div>
                 <div class="item-row"><span>Unités détenues</span><span>${formatNumber(p.unites)}</span></div>
                 <div class="item-row"><span>Montant investi</span><span>${formatNumber(p.montant_gtcp)} GTCπ</span></div>
                 <div class="item-row"><span>Part du projet</span><span>${Number(p.pourcentage_parts || 0).toFixed(2)}%</span></div>

@@ -113,6 +113,21 @@
       "t_fail": "Connexion impossible. Ouvrez l'app dans le Pi Browser et réessayez.",
       "t_notpi": "Pi ne répond pas. La connexion ne fonctionne que dans l'application Pi Browser : si ce lien s'est ouvert dans Chrome, WhatsApp ou une autre app, ouvrez Pi Browser et tapez hilaila.github.io",
       "pst_pilote_testnet": "Publié · phase pilote",
+      "pty_terrain_agricole": "Terrain agricole",
+      "pty_terrain_rural": "Terrain rural",
+      "pty_terrain_urbain": "Terrain urbain",
+      "pty_immobilier": "Immobilier",
+      "pty_agro_pastoral": "Agro-pastoral",
+      "pty_mine": "Mine",
+      "pty_energie": "Énergie",
+      "pty_agricole": "Agricole",
+      "pty_agriculture": "Agriculture",
+      "pty_residentiel": "Résidentiel",
+      "pty_commercial": "Commercial",
+      "pty_mixte": "Mixte",
+      "pty_foncier": "Foncier",
+      "pty_minier": "Minier",
+      "pty_infrastructure": "Infrastructure",
       "hint": "🌐 Langue / Language : touchez FR ou EN en haut à gauche du menu."
     },
     en: {
@@ -212,6 +227,21 @@
       "t_fail": "Sign-in failed. Open the app in the Pi Browser and try again.",
       "t_notpi": "Pi is not responding. Sign-in only works inside the Pi Browser app: if this link opened in Chrome, WhatsApp or another app, open Pi Browser and type hilaila.github.io",
       "pst_pilote_testnet": "Published · pilot phase",
+      "pty_terrain_agricole": "Agricultural land",
+      "pty_terrain_rural": "Rural land",
+      "pty_terrain_urbain": "Urban land",
+      "pty_immobilier": "Real estate",
+      "pty_agro_pastoral": "Agro-pastoral",
+      "pty_mine": "Mining",
+      "pty_energie": "Energy",
+      "pty_agricole": "Agricultural",
+      "pty_agriculture": "Agriculture",
+      "pty_residentiel": "Residential",
+      "pty_commercial": "Commercial",
+      "pty_mixte": "Mixed-use",
+      "pty_foncier": "Land",
+      "pty_minier": "Mining",
+      "pty_infrastructure": "Infrastructure",
       "hint": "🌐 Language / Langue: tap EN or FR at the top left of the menu."
     }
   };
@@ -771,7 +801,7 @@
     return `<div class="card project">
       <span class="project-status ${statut}">${GTC_I18N.fr["pst_" + p.statut] ? escapeHtml(t("pst_" + p.statut)) : statut.replace(/_/g, " ")}</span>
       <h3>${escapeHtml(p.titre)}</h3>
-      <div class="meta">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")}</div>
+      <div class="meta">${escapeHtml(GTC_I18N.fr["pty_" + String(p.type_projet || "").toLowerCase()] ? t("pty_" + String(p.type_projet).toLowerCase()) : String(p.type_projet || "—").replace(/_/g, " "))} · ${escapeHtml(p.commune || "—")}</div>
       <div class="progress"><i style="width:${pct}%;"></i></div>
       <div class="stats"><span>${escapeHtml(t("p_raised"))} ${formatNumber(collecte)} GTCπ</span><span>${pct.toFixed(1)}%</span></div>
       <a href="investissement.html">${escapeHtml(t("p_view"))}</a>

@@ -313,6 +313,32 @@ function switchTab(tab) {
     if (tab === "institution") loadInstitutionPanel();
 }
 
+/* Types d'actifs et de projets : libellés lisibles */
+const TYPE_LABELS = {
+    terrain_agricole: "Terrain agricole",
+    terrain_rural: "Terrain rural",
+    terrain_urbain: "Terrain urbain",
+    immobilier: "Immobilier",
+    agro_pastoral: "Agro-pastoral",
+    mine: "Mine",
+    energie: "Énergie",
+    agricole: "Agricole",
+    agriculture: "Agriculture",
+    residentiel: "Résidentiel",
+    commercial: "Commercial",
+    mixte: "Mixte",
+    foncier: "Foncier",
+    minier: "Minier",
+    infrastructure: "Infrastructure"
+};
+function typeLabel(code) {
+    const c = String(code || "").toLowerCase();
+    if (!c) return "—";
+    if (TYPE_LABELS[c]) return TYPE_LABELS[c];
+    const s = c.replace(/_/g, " ");
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function escapeHtml(value) {
     return String(value)
         .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -408,7 +434,7 @@ function renderProjectCard(p) {
     return `
         <div class="card">
             <div class="project-title">${escapeHtml(p.titre)}</div>
-            <div class="project-meta">${escapeHtml(p.type_projet || "—")} · ${escapeHtml(p.commune || "—")} · ${escapeHtml(p.statut === "pilote_testnet" ? "Publié · phase pilote" : String(p.statut || "").replace(/_/g, " "))}</div>
+            <div class="project-meta">${escapeHtml(typeLabel(p.type_projet))} · ${escapeHtml(p.commune || "—")} · ${escapeHtml(p.statut === "pilote_testnet" ? "Publié · phase pilote" : String(p.statut || "").replace(/_/g, " "))}</div>
             <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">${escapeHtml(p.description || "")}</p>
 
             <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
