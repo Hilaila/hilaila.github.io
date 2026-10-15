@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000008">
+<meta name="color-scheme" content="dark">
+<title>Marketplace — GeoTerraChain QFS</title>
+<meta name="description" content="GeoTerraChain QFS — Marketplace agro-pastorale (démonstration) : du champ au panier, producteurs de l'UEMOA, raniculture et myciculture. Projet indépendant, phase pilote.">
+<meta property="og:title" content="GeoTerraChain QFS — Marketplace">
+<meta property="og:description" content="Du champ au panier. Marketplace agro-pastorale en démonstration — projet indépendant, phase pilote.">
+<meta property="og:image" content="https://hilaila.github.io/videos/apercu-lien.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
+<script>
+  // Langue : même réglage que le reste du site (localStorage gtcLang).
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("gtcLang"); } catch (e) {}
+    if (l !== "fr" && l !== "en") l = (navigator.language || "fr").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.setAttribute("data-lang", l);
+    document.documentElement.lang = l;
+  })();
+</script>
+<style>
+  :root {
+    --bg:#000008; --gold:#C9A84C; --gold-2:#E8C872; --gold-3:#8B6914;
+    --text:#E8E2D4; --muted:#9A9384; --line:rgba(201,168,76,.18);
+    --glass:rgba(255,255,255,.035); --green:#3DDC97; --violet:#7B5CD6; --violet-2:#A88BFF; --red:#FF8D8D;
+    --shine:linear-gradient(100deg, #A87A14 0%, #F6D978 28%, #FFF5CF 42%, #E2B33A 58%, #B8871A 100%);
+  }
+  [data-lang="fr"] .en, [data-lang="en"] .fr { display:none !important; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:150px; }
+  body {
+    background:var(--bg); color:var(--text); font-family:'Space Grotesk', system-ui, sans-serif; line-height:1.6; font-size:15px; min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 0%, rgba(201,168,76,.14), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 100% 25%, rgba(123,92,214,.16), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,168,76,.08), transparent 70%);
+    background-attachment:fixed;
+  }
+  body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.35;
+    background-image:linear-gradient(rgba(201,168,76,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,.05) 1px, transparent 1px);
+    background-size:44px 44px; mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); }
+  header, main, footer, .ticker { position:relative; z-index:1; }
+  a { color:var(--gold-2); text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; }
+
+  /* ---------- En-tête ---------- */
+  .top { position:sticky; top:0; z-index:20; background:rgba(0,0,8,.78); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--line); }
+  .top::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px; max-width:1040px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:10px; color:var(--text); min-width:0; }
+  .brand img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:1.5px solid var(--gold); box-shadow:0 0 18px rgba(201,168,76,.25); flex-shrink:0; }
+  .brand b { display:block; font-family:'Playfair Display', Georgia, serif; font-size:17px; color:var(--gold-2); font-weight:700; line-height:1.15; white-space:nowrap; }
+  .brand small { display:block; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; }
+  .badge { flex-shrink:0; font:700 10px 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--violet-2); border:1px solid rgba(168,139,255,.45); background:rgba(123,92,214,.12); border-radius:999px; padding:5px 10px; }
+  .sub { display:flex; align-items:center; gap:8px; padding:2px 16px 10px; max-width:1040px; margin:0 auto; }
+  .lang { display:flex; align-items:center; flex-shrink:0; gap:2px; padding:3px; border:1.5px solid var(--gold-2); border-radius:999px; background:rgba(232,200,114,.10); box-shadow:0 0 14px rgba(232,200,114,.35); }
+  .lang .globe { display:grid; place-items:center; width:24px; color:var(--gold-2); padding-left:3px; }
+  .lang .globe svg { width:17px; height:17px; }
+  .lang button { border:0; border-radius:999px; background:transparent; color:#D9CFB4; font:700 12.5px 'JetBrains Mono', monospace; letter-spacing:.06em; padding:6px 10px; min-width:38px; cursor:pointer; }
+  .lang button.on { background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); color:#000008; box-shadow:0 0 10px rgba(232,200,114,.5); }
+  .msep { flex-shrink:0; width:1px; align-self:stretch; margin:4px 2px; background:linear-gradient(180deg, transparent, rgba(232,200,114,.6), transparent); }
+  .sub > a { font-size:13.5px; color:var(--text); padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--glass); white-space:nowrap; }
+  .nav { display:flex; gap:6px; overflow-x:auto; padding:0 16px 10px; max-width:1040px; margin:0 auto; scrollbar-width:none; }
+  .nav::-webkit-scrollbar { display:none; }
+  .nav a { flex-shrink:0; font:600 12px 'JetBrains Mono', monospace; letter-spacing:.06em; color:#CFC6B2; padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:rgba(0,0,8,.4); transition:all .2s; }
+  .nav a.on { color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-color:transparent; box-shadow:0 0 12px rgba(232,200,114,.4); }
+  .ticker { overflow:hidden; border-bottom:1px solid var(--line); background:rgba(201,168,76,.03); }
+  .ticker div { display:inline-block; white-space:nowrap; padding:8px 0; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); letter-spacing:.08em; animation:defile 38s linear infinite; }
+  .ticker b { color:var(--green); font-weight:500; }
+  @keyframes defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+  main { max-width:1040px; margin:0 auto; padding:18px 16px 0; }
+
+  /* ---------- Héros ---------- */
+  .hero { position:relative; overflow:hidden; padding:26px 20px 24px; border:1px solid var(--line); border-radius:28px; background:linear-gradient(135deg, rgba(201,168,76,.13), rgba(123,92,214,.09) 60%, rgba(255,255,255,.02)); text-align:center; }
+  .hero::after { content:""; position:absolute; width:300px; height:300px; right:-130px; top:-140px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.22), transparent 65%); pointer-events:none; }
+  .emblem { position:relative; width:min(230px, 64vw); aspect-ratio:1; margin:2px auto 10px; }
+  .emblem svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .emblem img { position:absolute; left:50%; top:50%; width:54%; height:54%; transform:translate(-50%, -50%); border-radius:50%; object-fit:cover; border:1.5px solid rgba(232,200,114,.6); box-shadow:0 0 40px rgba(232,200,114,.35); }
+  .ring { transform-origin:50% 50%; animation:tourne 30s linear infinite; }
+  .ring2 { transform-origin:50% 50%; animation:tourne 46s linear infinite reverse; }
+  @keyframes tourne { to { transform:rotate(360deg); } }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:rgba(0,0,8,.4); }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { position:relative; z-index:1; margin-top:14px; font-family:'Playfair Display', Georgia, serif; font-size:clamp(34px, 10vw, 58px); line-height:1.02; font-weight:800; }
+  .hero h1 em, .shine { font-style:normal; background:var(--shine); background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:brille 4s linear infinite; }
+  @keyframes brille { from { background-position:100% 0; } to { background-position:-160% 0; } }
+  .tagline { margin-top:8px; font:500 12px 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:var(--gold-2); }
+  .hero p.lead { position:relative; z-index:1; margin:12px auto 0; color:#CFC6B2; font-size:15px; max-width:640px; }
+  .chips { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; position:relative; z-index:1; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font:600 11.5px 'JetBrains Mono', monospace; letter-spacing:.05em; color:var(--text); padding:6px 11px; border:1px solid var(--line); border-radius:999px; background:rgba(0,0,8,.45); }
+  .chip .ic { width:15px; height:15px; color:var(--gold-2); }
+  .chip .ic svg { width:15px; height:15px; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 6px; }
+  @media (min-width:760px) { .stats { grid-template-columns:repeat(4, 1fr); } }
+  .stat { position:relative; overflow:hidden; padding:14px; border:1px solid var(--line); border-radius:18px; background:var(--glass); }
+  .stat::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background:linear-gradient(90deg, transparent, var(--gold-2), transparent); opacity:.7; }
+  .stat b { display:block; font:700 clamp(20px, 6vw, 26px) 'JetBrains Mono', monospace; color:var(--gold-2); line-height:1.15; }
+  .stat span { display:block; margin-top:4px; font-size:12px; color:var(--muted); line-height:1.35; }
+
+  /* ---------- Sections ---------- */
+  section.block { margin-top:30px; }
+  .sh { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+  .sh-ic { flex-shrink:0; width:44px; height:44px; display:grid; place-items:center; border-radius:14px; color:var(--gold-2); background:linear-gradient(135deg, rgba(232,200,114,.18), rgba(123,92,214,.12)); border:1px solid rgba(232,200,114,.35); box-shadow:0 0 18px rgba(201,168,76,.18); }
+  .sh-ic svg { width:22px; height:22px; }
+  .sh small { display:block; font-size:11px; letter-spacing:.18em; color:var(--muted); }
+  .sh h2 { font-family:'Playfair Display', Georgia, serif; font-size:clamp(23px, 6.4vw, 32px); line-height:1.15; color:var(--text); }
+  .sh-sub { margin-top:4px; font-size:13.5px; color:var(--muted); }
+  .glass { position:relative; border:1px solid var(--line); border-radius:20px; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:18px; }
+  .glass + .glass { margin-top:12px; }
+  .lead2 { font-size:15.5px; color:#DDD5C3; }
+  .lead2 b { color:var(--gold-2); font-weight:600; }
+  .cols { display:grid; gap:12px; }
+  @media (min-width:760px) { .cols.c2 { grid-template-columns:1fr 1fr; } .cols.c3 { grid-template-columns:repeat(3, 1fr); } }
+  .cols .glass + .glass { margin-top:0; }
+  .kv small { display:block; font:500 10.5px 'JetBrains Mono', monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+  .kv b { display:block; margin-top:4px; font-family:'Playfair Display', Georgia, serif; font-size:21px; color:var(--gold-2); }
+  .kv > span { display:block; font-size:12.5px; color:var(--muted); }
+  h3 { font-size:16px; font-weight:700; color:var(--text); line-height:1.3; }
+  .card-h { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .ic { flex-shrink:0; width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:rgba(232,200,114,.10); border:1px solid var(--line); color:var(--gold-2); }
+  .ic svg { width:18px; height:18px; }
+  ul.dots { list-style:none; display:grid; gap:7px; }
+  ul.dots li { position:relative; padding-left:20px; font-size:14px; color:#DDD5C3; }
+  ul.dots li::before { content:""; position:absolute; left:2px; top:.62em; width:8px; height:8px; transform:rotate(45deg); background:linear-gradient(135deg, #FFF3C4, var(--gold)); box-shadow:0 0 8px rgba(232,200,114,.5); }
+  ul.checks { list-style:none; display:grid; gap:8px; }
+  ul.checks li { display:flex; gap:10px; align-items:flex-start; font-size:14px; }
+  ul.checks li i { flex-shrink:0; width:20px; height:20px; border-radius:50%; display:grid; place-items:center; margin-top:1px; font-style:normal; font-size:12px; font-weight:700; }
+  ul.checks.ok li i { background:rgba(61,220,151,.14); color:var(--green); border:1px solid rgba(61,220,151,.4); }
+  ul.checks.goal li i { background:rgba(168,139,255,.12); color:var(--violet-2); border:1px solid rgba(168,139,255,.4); }
+  .pill-h { display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; font:600 11px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; padding:5px 10px; border-radius:999px; }
+  .pill-h.ok { color:var(--green); border:1px solid rgba(61,220,151,.35); background:rgba(61,220,151,.08); }
+  .pill-h.goal { color:var(--violet-2); border:1px solid rgba(168,139,255,.35); background:rgba(123,92,214,.10); }
+
+  /* Actifs */
+  .sector { display:flex; align-items:center; gap:10px; margin:4px 0 10px; }
+  .sector h3 { font-family:'Playfair Display', Georgia, serif; font-size:19px; color:var(--gold-2); }
+  .assets { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (min-width:760px) { .assets { grid-template-columns:repeat(3, 1fr); } }
+  .asset { position:relative; display:flex; flex-direction:column; gap:4px; padding:13px; border:1px solid var(--line); border-radius:16px; background:rgba(0,0,8,.42); overflow:hidden; }
+  .asset::after { content:""; position:absolute; right:-24px; top:-24px; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(232,200,114,.14), transparent 70%); }
+  .asset .n { font-size:11px; color:var(--gold); letter-spacing:.1em; }
+  .asset.star { border-color:rgba(232,200,114,.6); background:linear-gradient(160deg, rgba(232,200,114,.16), rgba(0,0,8,.45)); box-shadow:0 0 22px rgba(201,168,76,.16); }
+  .asset .nrow { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 6px; }
+  .asset .star-tag { position:relative; z-index:1; font-size:9.5px; font-weight:700; letter-spacing:.04em; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-radius:999px; padding:2px 7px; }
+  .asset b { font-size:14.5px; line-height:1.3; }
+  .asset > span:last-child { font-size:12px; color:var(--muted); line-height:1.4; }
+
+  /* Processus */
+  .steps { list-style:none; position:relative; display:grid; gap:12px; padding-left:46px; }
+  .steps::before { content:""; position:absolute; left:17px; top:10px; bottom:10px; width:2px; background:linear-gradient(180deg, var(--gold-2), var(--violet), var(--gold-2)); opacity:.55; }
+  .step { position:relative; }
+  .step .node { position:absolute; left:-46px; top:14px; width:36px; height:36px; display:grid; place-items:center; clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 50%, var(--gold-3)); }
+  .step .node span { font-weight:700; font-size:14px; color:#000008; }
+  .step.hot .card { border-color:rgba(232,200,114,.55); background:linear-gradient(160deg, rgba(232,200,114,.14), rgba(123,92,214,.08)); box-shadow:0 0 30px rgba(201,168,76,.18); }
+  .step.hot .node { box-shadow:0 0 0 4px rgba(232,200,114,.2); animation:glow 2.4s ease-in-out infinite; }
+  @keyframes glow { 50% { filter:drop-shadow(0 0 10px rgba(232,200,114,.9)); } }
+  .step-h { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .step p { font-size:14px; color:#D5CDBB; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .tag { font:600 11px 'JetBrains Mono', monospace; letter-spacing:.04em; color:var(--gold-2); padding:4px 9px; border:1px solid var(--line); border-radius:999px; background:rgba(232,200,114,.06); }
+
+  /* Architecture */
+  .stack { display:grid; gap:10px; }
+  .layer { position:relative; padding:16px; border-radius:18px; border:1px solid var(--line); background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.012)); }
+  .layer::before { content:""; position:absolute; left:16px; right:16px; bottom:-11px; height:10px; border-radius:0 0 14px 14px; border:1px solid var(--line); border-top:0; background:rgba(201,168,76,.04); }
+  .layer.l3::before { display:none; }
+  .layer.l1 { border-color:rgba(168,139,255,.38); }
+  .layer.l3 { border-color:rgba(232,200,114,.5); background:linear-gradient(160deg, rgba(232,200,114,.12), rgba(255,255,255,.015)); }
+  .layer-h { display:flex; align-items:center; gap:10px; }
+  .layer-h h3 { flex:1; }
+  .lvl { font-size:11px; color:var(--muted); letter-spacing:.12em; }
+
+  /* GTCπ */
+  .supply { text-align:center; padding:22px 18px; }
+  .supply small { display:block; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
+  .supply b { display:block; margin-top:6px; font:800 clamp(34px, 11vw, 54px)/1.05 'JetBrains Mono', monospace; }
+  .supply span { display:block; margin-top:4px; font-size:13px; color:var(--muted); }
+  .prms { display:grid; gap:0; }
+  .prm { display:flex; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid rgba(201,168,76,.12); font-size:14px; }
+  .prm:last-child { border-bottom:0; }
+  .prm > span { color:var(--muted); }
+  .prm b { color:var(--gold-2); font-size:13.5px; text-align:right; }
+  .burn { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:6px; margin-top:12px; text-align:center; }
+  .burn div { padding:10px 6px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.45); }
+  .burn div b { display:block; font:700 15px 'JetBrains Mono', monospace; }
+  .burn div span { display:block; font-size:11px; color:var(--muted); }
+  .burn .fire b { color:#FFB28A; }
+  .burn .net b { color:var(--green); }
+  .burn em { font-style:normal; color:var(--gold-2); font-weight:700; }
+  .util { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .util div { display:flex; gap:8px; align-items:flex-start; padding:10px; border:1px solid var(--line); border-radius:12px; background:rgba(0,0,8,.4); font-size:13px; line-height:1.35; }
+  .util div i { flex-shrink:0; font-style:normal; color:var(--gold-2); font-weight:700; }
+  .fine { margin-top:12px; font-size:12.5px; color:var(--muted); }
+
+  /* Impact */
+  .case-h { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .case-h small { display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+  .imp { padding:16px; border:1px solid var(--line); border-radius:18px; background:rgba(0,0,8,.4); }
+  .imp h3 { margin:10px 0 10px; }
+
+  /* Vision long terme + conclusion */
+  .goals { list-style:none; display:grid; gap:8px; counter-reset:g; }
+  .goals li { counter-increment:g; display:flex; gap:12px; align-items:center; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:rgba(0,0,8,.4); font-size:14.5px; }
+  .goals li::before { content:counter(g, decimal-leading-zero); font:700 12px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); border-radius:8px; padding:4px 7px; }
+  .quote { margin-top:14px; text-align:center; padding:26px 20px; border-color:rgba(232,200,114,.4); background:linear-gradient(135deg, rgba(232,200,114,.12), rgba(123,92,214,.10)); }
+  .quote p { font-family:'Playfair Display', Georgia, serif; font-size:clamp(19px, 5.4vw, 26px); line-height:1.35; }
+  .quote small { display:block; margin-top:12px; font:500 11px 'JetBrains Mono', monospace; letter-spacing:.2em; color:var(--gold-2); }
+  .concl { font-size:14.5px; color:#D5CDBB; }
+
+  .cta { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:18px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:var(--glass); color:var(--text); font:700 14px 'Space Grotesk', system-ui, sans-serif; }
+  .btn .ic { width:22px; height:22px; border:0; background:transparent; }
+  .btn .ic svg { width:18px; height:18px; }
+  .btn-gold { border:0; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); color:#000008; box-shadow:0 0 22px rgba(201,168,76,.35); }
+  .btn-gold .ic { color:#000008; }
+  .note { margin-top:22px; padding:14px 16px; border:1px dashed rgba(201,168,76,.35); border-radius:16px; font-size:12.5px; color:var(--muted); text-align:center; }
+  footer { max-width:1040px; margin:0 auto; padding:20px 16px 34px; text-align:center; font:500 11px/1.8 'JetBrains Mono', monospace; letter-spacing:.12em; color:var(--muted); }
+  footer b { color:var(--gold-2); font-weight:500; }
+  .totop { position:fixed; right:14px; bottom:16px; z-index:30; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2)); box-shadow:0 0 18px rgba(201,168,76,.45); opacity:0; pointer-events:none; transition:opacity .25s; font-weight:700; }
+  .totop.on { opacity:1; pointer-events:auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation:none !important; transition:none !important; }
+    html { scroll-behavior:auto; }
+  }
+
+  button { font:inherit; }
+  button.btn { cursor:pointer; }
+  .gold { color:var(--gold-2); }
+  .sub .cartbtn { margin-left:auto; display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 8px 0 12px; border:1px solid rgba(232,200,114,.45); border-radius:999px; background:rgba(232,200,114,.08); color:var(--text); font:600 13px 'Space Grotesk', sans-serif; cursor:pointer; }
+  .cartbtn svg { width:18px; height:18px; color:var(--gold-2); }
+  .cnt { min-width:21px; height:21px; padding:0 6px; border-radius:999px; display:inline-grid; place-items:center; font:700 11px 'JetBrains Mono', monospace; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); }
+
+  /* Héros */
+  .hero .chip svg { width:15px; height:15px; color:var(--gold-2); }
+  .flow { position:relative; display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; max-width:560px; margin:20px auto 2px; }
+  .flow::before { content:""; position:absolute; left:12%; right:12%; top:22px; height:2px; background:linear-gradient(90deg, var(--gold-2), var(--violet-2), var(--green)); opacity:.65; }
+  .fnode { position:relative; display:flex; flex-direction:column; align-items:center; gap:7px; font-size:11.5px; line-height:1.25; color:#CFC6B2; }
+  .fnode .hx { width:44px; height:44px; display:grid; place-items:center; clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 50%, var(--gold-3)); color:#000008; }
+  .fnode .hx svg { width:20px; height:20px; }
+  .fnode:nth-child(2) .hx { animation:glow 2.4s ease-in-out infinite; }
+  .demo { display:flex; gap:12px; align-items:flex-start; margin-top:14px; padding:14px 16px; border:1px dashed rgba(168,139,255,.55); border-radius:18px; background:rgba(123,92,214,.09); font-size:13.5px; color:#DDD5C3; }
+  .demo .ic { color:var(--violet-2); background:rgba(123,92,214,.15); border-color:rgba(168,139,255,.4); }
+  .demo b { color:var(--violet-2); }
+
+  /* Filières phares */
+  .flagships { display:grid; gap:12px; }
+  @media (min-width:760px) { .flagships { grid-template-columns:1fr 1fr; } }
+  .fs { position:relative; overflow:hidden; display:flex; flex-direction:column; gap:12px; padding:18px; border-radius:22px; border:1px solid rgba(232,200,114,.5); background:linear-gradient(150deg, var(--fa), rgba(0,0,8,.55) 72%); box-shadow:0 0 26px rgba(201,168,76,.12); }
+  .fs::after { content:""; position:absolute; right:-60px; top:-60px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle, var(--fa), transparent 70%); pointer-events:none; }
+  .fs-h { display:flex; align-items:center; gap:14px; }
+  .fs .big { flex-shrink:0; width:64px; height:64px; display:grid; place-items:center; border-radius:20px; color:#FFF8E1; background:radial-gradient(circle at 30% 20%, var(--a), var(--b) 80%); border:1px solid rgba(255,255,255,.25); box-shadow:0 10px 26px rgba(0,0,0,.35); }
+  .fs .big svg { width:36px; height:36px; }
+  .fs small { display:block; font:700 10.5px 'JetBrains Mono', monospace; letter-spacing:.16em; color:var(--gold-2); }
+  .fs h3 { font-family:'Playfair Display', Georgia, serif; font-size:22px; }
+  .fs p { position:relative; z-index:1; font-size:14px; color:#DDD5C3; }
+  .fs .bs { position:relative; z-index:1; align-self:flex-start; }
+
+  /* Catalogue */
+  .cats { display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none; }
+  .cats::-webkit-scrollbar { display:none; }
+  .cat { flex-shrink:0; display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px; border-radius:999px; border:1px solid var(--line); background:rgba(0,0,8,.45); color:#D9CFB4; font:600 13px 'Space Grotesk', sans-serif; cursor:pointer; transition:all .2s; }
+  .cat svg { width:17px; height:17px; color:var(--gold-2); }
+  .cat.star { border-color:rgba(232,200,114,.45); }
+  .cat .st { color:var(--gold-2); font-size:12px; }
+  .cat.on { color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-color:transparent; box-shadow:0 0 14px rgba(232,200,114,.4); }
+  .cat.on svg, .cat.on .st { color:#000008; }
+  .tools { display:flex; gap:8px; align-items:center; margin-top:4px; }
+  .search { flex:1; min-width:0; display:flex; align-items:center; gap:8px; height:46px; padding:0 14px; border:1px solid var(--line); border-radius:999px; background:rgba(0,0,8,.55); transition:border-color .2s, box-shadow .2s; }
+  .search svg { width:18px; height:18px; flex-shrink:0; color:var(--gold-2); }
+  .search input { flex:1; min-width:0; height:100%; border:0; outline:0; background:transparent; color:var(--text); font:500 14.5px 'Space Grotesk', sans-serif; }
+  .search input::placeholder { color:#7F7867; }
+  .search:focus-within { border-color:var(--gold-2); box-shadow:0 0 0 3px rgba(232,200,114,.14); }
+  .fbtn { position:relative; flex-shrink:0; display:inline-flex; align-items:center; gap:7px; height:46px; padding:0 15px; border-radius:999px; border:1px solid var(--line); background:rgba(0,0,8,.55); color:var(--text); font:600 13.5px 'Space Grotesk', sans-serif; cursor:pointer; }
+  .fbtn svg { width:18px; height:18px; color:var(--gold-2); }
+  .fbtn[aria-expanded="true"] { border-color:var(--gold-2); }
+  .fbtn .dot { position:absolute; right:9px; top:9px; width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); display:none; }
+  .fbtn .dot.on { display:block; }
+  .fpanel { display:none; margin-top:10px; gap:12px; }
+  .fpanel.open { display:grid; }
+  @media (min-width:760px) { .fpanel.open { grid-template-columns:repeat(3, minmax(0, 1fr)); align-items:end; } }
+  .fld { display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .fld small { font:600 10.5px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .fld select { width:100%; height:42px; padding:0 12px; border-radius:12px; border:1px solid var(--line); background:#05050F; color:var(--text); font:500 14px 'Space Grotesk', sans-serif; }
+  .fld .rng { display:flex; align-items:center; gap:10px; }
+  .fld input[type=range] { flex:1; min-width:0; accent-color:var(--gold-2); }
+  .fld .rng b { flex-shrink:0; font-size:12.5px; color:var(--gold-2); min-width:74px; text-align:right; }
+  .tg { display:flex; align-items:center; gap:10px; min-height:42px; padding:0 12px; border:1px solid var(--line); border-radius:12px; background:rgba(0,0,8,.4); font-size:13.5px; cursor:pointer; }
+  .tg input { width:18px; height:18px; accent-color:var(--gold-2); }
+  .count { margin:14px 2px 10px; font-size:12px; letter-spacing:.06em; color:var(--muted); }
+  .pgrid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+  @media (min-width:760px) { .pgrid { grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; } }
+  .pcard { position:relative; display:flex; flex-direction:column; min-width:0; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.012)); transition:transform .2s, border-color .2s, box-shadow .2s; animation:monte .35s ease both; }
+  @keyframes monte { from { opacity:0; transform:translateY(8px); } }
+  .pcard:hover { transform:translateY(-3px); border-color:rgba(232,200,114,.55); box-shadow:0 12px 30px rgba(0,0,0,.45), 0 0 22px rgba(201,168,76,.14); }
+  .pcard.star { border-color:rgba(232,200,114,.45); }
+  .art, .md-art { position:relative; display:grid; place-items:center; overflow:hidden; background:radial-gradient(circle at 30% 18%, var(--a), var(--b) 78%); }
+  .art { height:120px; }
+  .art .pat, .md-art .pat { position:absolute; inset:0; width:100%; height:100%; opacity:.2; }
+  .art::after, .md-art::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 55%, rgba(0,0,8,.45)); }
+  .aic { position:relative; z-index:1; width:62px; height:62px; display:grid; place-items:center; border-radius:20px; color:#FFF8E1; background:rgba(0,0,8,.32); border:1px solid rgba(255,255,255,.28); box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18); }
+  .aic svg { width:34px; height:34px; }
+  .ex { position:absolute; z-index:2; left:8px; top:8px; font:700 9.5px 'JetBrains Mono', monospace; letter-spacing:.12em; color:#EDE6D6; background:rgba(0,0,8,.6); border:1px solid rgba(255,255,255,.22); border-radius:999px; padding:3px 7px; }
+  .flag { position:absolute; z-index:2; left:8px; bottom:8px; font:700 9.5px 'JetBrains Mono', monospace; letter-spacing:.04em; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-radius:999px; padding:2px 8px; }
+  .fav { position:absolute; z-index:2; right:8px; top:8px; width:34px; height:34px; display:grid; place-items:center; border-radius:50%; border:1px solid rgba(255,255,255,.22); background:rgba(0,0,8,.6); color:#F3EEE2; cursor:pointer; transition:transform .15s; }
+  .fav svg { width:17px; height:17px; }
+  .fav.on { color:#FF8D8D; border-color:rgba(255,141,141,.5); }
+  .fav.on svg { fill:currentColor; }
+  .fav:active { transform:scale(.88); }
+  .pb { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; padding:11px 12px 12px; }
+  .pb small { font:600 9.5px 'JetBrains Mono', monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pb h3 { font-size:14.5px; line-height:1.25; }
+  .loc { display:flex; align-items:flex-start; gap:4px; font-size:12px; color:var(--muted); min-width:0; }
+  .loc svg { width:13px; height:13px; flex-shrink:0; margin-top:2px; }
+  .loc span { min-width:0; overflow-wrap:anywhere; }
+  .price { margin-top:5px; font:700 16px 'JetBrains Mono', monospace; color:var(--gold-2); line-height:1.25; }
+  .price span { font:500 11px 'Space Grotesk', sans-serif; color:var(--muted); }
+  .prod { font-size:11.5px; color:#B9B09C; }
+  .pact { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:6px; margin-top:auto; padding-top:10px; }
+  .bs { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:38px; padding:0 12px; border-radius:999px; border:1px solid var(--line); background:var(--glass); color:var(--text); font:700 12.5px 'Space Grotesk', sans-serif; cursor:pointer; white-space:nowrap; }
+  .bs svg { width:15px; height:15px; flex-shrink:0; }
+  .bs.gold { border:0; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2) 45%, var(--gold)); box-shadow:0 0 14px rgba(201,168,76,.25); }
+  .bs.icon { width:38px; padding:0; }
+  .bs:active, .btn:active { transform:scale(.97); }
+  .empty { grid-column:1 / -1; padding:30px 18px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:18px; }
+  .empty button { margin-top:12px; }
+
+  /* Journal */
+  .jl { list-style:none; display:grid; gap:10px; }
+  .jr { display:flex; gap:12px; align-items:flex-start; padding-bottom:10px; border-bottom:1px solid rgba(201,168,76,.12); }
+  .jr:last-child { padding-bottom:0; border-bottom:0; }
+  .ji { flex-shrink:0; width:34px; height:34px; display:grid; place-items:center; clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 50%, var(--gold-3)); color:#000008; }
+  .ji svg { width:16px; height:16px; }
+  .jr div { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .jr b { font-size:13.5px; overflow-wrap:anywhere; }
+  .jr small { font:500 11.5px 'JetBrains Mono', monospace; color:var(--muted); }
+  .jr code { font:500 11.5px 'JetBrains Mono', monospace; color:var(--green); overflow-wrap:anywhere; }
+  .jr em { font-style:normal; font-size:10.5px; letter-spacing:.06em; color:var(--violet-2); }
+  .jempty { font-size:13.5px; color:var(--muted); text-align:center; padding:6px 0; }
+  .steps .tag.plan { color:var(--violet-2); border-color:rgba(168,139,255,.4); background:rgba(123,92,214,.10); }
+
+  /* Panier (tiroir) */
+  .overlay { position:fixed; inset:0; z-index:40; background:rgba(0,0,8,.7); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity .25s; }
+  .overlay.on { opacity:1; pointer-events:auto; }
+  .drawer { position:fixed; z-index:41; top:0; right:0; bottom:0; width:min(400px, 100%); display:flex; flex-direction:column; background:linear-gradient(180deg, #08081C, #000008 60%); border-left:1px solid var(--line); box-shadow:-20px 0 60px rgba(0,0,0,.5); transform:translateX(102%); transition:transform .3s cubic-bezier(.2,.8,.2,1); visibility:hidden; }
+  .drawer.on { transform:none; visibility:visible; }
+  .dh { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px; border-bottom:1px solid var(--line); }
+  .dh h2 { display:flex; align-items:center; gap:10px; font-family:'Playfair Display', Georgia, serif; font-size:21px; }
+  .dh h2 svg { width:22px; height:22px; color:var(--gold-2); }
+  .icb { flex-shrink:0; width:40px; height:40px; display:grid; place-items:center; border-radius:50%; border:1px solid var(--line); background:rgba(0,0,8,.5); color:var(--text); cursor:pointer; }
+  .icb svg { width:18px; height:18px; }
+  .dl { flex:1; overflow-y:auto; padding:4px 16px; }
+  .crow { display:grid; grid-template-columns:46px minmax(0, 1fr); gap:12px; padding:12px 0; border-bottom:1px solid rgba(201,168,76,.12); }
+  .mini { width:46px; height:46px; display:grid; place-items:center; border-radius:14px; color:#FFF8E1; background:radial-gradient(circle at 30% 20%, var(--a), var(--b) 80%); border:1px solid rgba(255,255,255,.2); }
+  .mini svg { width:24px; height:24px; }
+  .crow b { display:block; font-size:13.5px; line-height:1.3; }
+  .crow small { display:block; font:500 11.5px 'JetBrains Mono', monospace; color:var(--muted); }
+  .qty { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .qty button { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; border:1px solid var(--line); background:rgba(0,0,8,.5); color:var(--text); cursor:pointer; }
+  .qty button svg { width:15px; height:15px; }
+  .qty output { min-width:20px; text-align:center; font:700 13px 'JetBrains Mono', monospace; }
+  .qty .lt { margin-left:auto; font:700 13px 'JetBrains Mono', monospace; color:var(--gold-2); }
+  .qty .rm { color:#FF9E9E; border-color:rgba(255,141,141,.3); }
+  .cempty { display:flex; flex-direction:column; align-items:center; gap:6px; padding:40px 10px; text-align:center; color:var(--muted); font-size:13.5px; }
+  .cempty svg { width:40px; height:40px; color:var(--gold); opacity:.7; margin-bottom:6px; }
+  .cempty b { color:var(--text); font-size:15px; }
+  .df { padding:14px 16px calc(16px + env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:rgba(0,0,8,.6); }
+  .tot { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:14px; color:var(--muted); }
+  .tot b { font:700 19px 'JetBrains Mono', monospace; color:var(--gold-2); }
+  .df .fine { margin:8px 0 12px; }
+  .wide { width:100%; }
+  .btn[disabled] { opacity:.45; pointer-events:none; }
+
+  /* Fenêtres */
+  .mwrap { position:fixed; inset:0; z-index:50; display:none; place-items:center; padding:16px; background:rgba(0,0,8,.78); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+  .mwrap.on { display:grid; }
+  .modal { position:relative; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; padding:20px; border-radius:24px; background:linear-gradient(160deg, #0B0B22, #04040F); border:1px solid rgba(232,200,114,.4); box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 40px rgba(201,168,76,.12); animation:monte .25s ease both; }
+  .modal .mx { position:absolute; right:12px; top:12px; z-index:3; }
+  .modal h2 { font-family:'Playfair Display', Georgia, serif; font-size:24px; line-height:1.2; padding-right:44px; }
+  .modal p { margin-top:10px; font-size:14px; color:#D5CDBB; }
+  .md-art { height:150px; margin:-20px -20px 16px; }
+  .md-art .aic { width:74px; height:74px; border-radius:24px; }
+  .md-art .aic svg { width:40px; height:40px; }
+  .kick { display:block; font:700 10.5px 'JetBrains Mono', monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+  .kvs { display:grid; gap:0; margin-top:14px; border:1px solid var(--line); border-radius:16px; padding:2px 14px; background:rgba(0,0,8,.4); }
+  .kvs div { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid rgba(201,168,76,.12); font-size:13.5px; }
+  .kvs div:last-child { border-bottom:0; }
+  .kvs span { color:var(--muted); flex-shrink:0; }
+  .kvs b { text-align:right; font-weight:600; overflow-wrap:anywhere; }
+  .kvs code { font:500 12px 'JetBrains Mono', monospace; color:var(--green); overflow-wrap:anywhere; text-align:right; }
+  .md-h { display:flex; align-items:center; gap:8px; margin:18px 0 10px; font-size:15px; }
+  .md-h svg { width:18px; height:18px; color:var(--gold-2); }
+  .tl { list-style:none; position:relative; display:grid; gap:10px; }
+  .tl::before { content:""; position:absolute; left:13px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, var(--gold-2), var(--violet-2)); opacity:.5; }
+  .tl li { position:relative; display:grid; grid-template-columns:28px minmax(0, 1fr) auto; gap:10px; align-items:start; }
+  .tl i { width:28px; height:28px; display:grid; place-items:center; font:700 12px 'JetBrains Mono', monospace; font-style:normal; color:#000008; clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 50%, var(--gold-3)); }
+  .tl li.s-plan i { background:linear-gradient(135deg, #D9CCFF, var(--violet-2)); }
+  .tl b { display:block; font-size:13.5px; }
+  .tl span { display:block; font-size:12.5px; color:var(--muted); line-height:1.4; }
+  .tl em { font-style:normal; font:700 9.5px 'JetBrains Mono', monospace; letter-spacing:.08em; text-transform:uppercase; padding:3px 7px; border-radius:999px; white-space:nowrap; }
+  .st-ex { color:var(--gold-2); border:1px solid var(--line); background:rgba(232,200,114,.08); }
+  .st-plan { color:var(--violet-2); border:1px solid rgba(168,139,255,.4); background:rgba(123,92,214,.10); }
+  .olist { list-style:none; margin-top:12px; border:1px solid var(--line); border-radius:16px; padding:2px 14px; background:rgba(0,0,8,.4); }
+  .olist li { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid rgba(201,168,76,.12); font-size:13.5px; }
+  .olist li:last-child { border-bottom:0; }
+  .olist b { flex-shrink:0; color:var(--gold-2); }
+  .mact { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  .mact .btn { flex:1 1 auto; }
+  .okbadge { display:inline-flex; align-items:center; gap:8px; margin-bottom:10px; font:700 10.5px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--violet-2); border:1px solid rgba(168,139,255,.45); background:rgba(123,92,214,.12); border-radius:999px; padding:5px 10px; }
+
+  /* Bouton panier flottant + notification */
+  .fab { position:fixed; right:14px; bottom:16px; z-index:30; width:56px; height:56px; display:grid; place-items:center; border:0; border-radius:50%; color:#000008; background:linear-gradient(135deg, #FFF3C4, var(--gold-2) 55%, var(--gold)); box-shadow:0 0 24px rgba(201,168,76,.5), 0 10px 24px rgba(0,0,0,.4); cursor:pointer; }
+  .fab svg { width:25px; height:25px; }
+  .fab .cnt { position:absolute; right:-3px; top:-3px; color:var(--text); background:#14142E; border:1.5px solid var(--gold-2); }
+  .fab.bump { animation:bump .45s ease; }
+  @keyframes bump { 30% { transform:scale(1.15); } 60% { transform:scale(.95); } }
+  .toast { position:fixed; left:0; right:0; bottom:86px; z-index:60; width:fit-content; max-width:min(92vw, 440px); margin:0 auto; transform:translateY(20px); opacity:0; pointer-events:none; padding:12px 16px; border-radius:14px; background:rgba(10,30,22,.95); border:1px solid rgba(61,220,151,.45); color:#D8FFE9; font-size:13.5px; box-shadow:0 12px 30px rgba(0,0,0,.45); transition:all .25s; }
+  .toast.on { opacity:1; transform:none; }
+  footer { padding-bottom:90px; }
+  .ftlinks { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; margin-top:8px; }
+  .ftlinks a { color:var(--muted); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><pattern id="hexp" width="28" height="50" patternUnits="userSpaceOnUse"><path d="M14 33L0 25V8l14-8 14 8v17l-14 8v17M14 0v17L0 25v17l14 8 14-8V25l-14-8" fill="none" stroke="#fff" stroke-width="1"/></pattern></defs></svg>
+<header class="top">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <img src="logo-final-complet.png" alt="GeoTerraChain QFS">
+      <span><b>GeoTerraChain QFS</b><small>Marketplace · <span class="fr">Démo</span><span class="en">Demo</span></small></span>
+    </a>
+    <span class="badge"><span class="fr">PHASE PILOTE</span><span class="en">PILOT PHASE</span></span>
+  </div>
+  <div class="sub">
+    <div class="lang" role="group" aria-label="Langue / Language"><span class="globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9M12 3C9.4 5.6 8.1 8.6 8.1 12s1.3 6.4 3.9 9"/></svg></span><button type="button" data-l="fr">FR</button><button type="button" data-l="en">EN</button></div>
+    <button type="button" class="cartbtn" id="cartbtn" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span><span class="fr">Panier</span><span class="en">Basket</span></span><span class="cnt" id="cartc">0</span></button>
+  </div>
+  <nav class="nav" aria-label="Navigation"><a href="index.html"><span class="fr">Accueil</span><span class="en">Home</span></a><a href="investissement.html"><span class="fr">Investir</span><span class="en">Invest</span></a><a href="tokenisation.html"><span class="fr">Tokeniser</span><span class="en">Tokenize</span></a><a href="marketplace.html" class="on" aria-current="page"><span class="fr">Marketplace</span><span class="en">Marketplace</span></a><a href="historique.html"><span class="fr">Journal</span><span class="en">Activity log</span></a><a href="guide.html"><span class="fr">Guide</span><span class="en">Guide</span></a><a href="vision.html"><span class="fr">Vision</span><span class="en">Vision</span></a></nav>
+</header>
+<div class="ticker" aria-hidden="true"><div><span class="fr">MARKETPLACE · DU CHAMP AU PANIER · <b>DÉMONSTRATION</b> · RANICULTURE · MYCICULTURE · UEMOA · TRAÇABILITÉ · PAIEMENT EN PI · <b>PHASE PILOTE</b> ·&nbsp; MARKETPLACE · DU CHAMP AU PANIER · <b>DÉMONSTRATION</b> · RANICULTURE · MYCICULTURE · UEMOA · TRAÇABILITÉ · PAIEMENT EN PI · <b>PHASE PILOTE</b> ·&nbsp;</span><span class="en">MARKETPLACE · FROM FIELD TO BASKET · <b>DEMO</b> · FROG FARMING · MUSHROOM FARMING · WAEMU · TRACEABILITY · PAYMENT IN PI · <b>PILOT PHASE</b> ·&nbsp; MARKETPLACE · FROM FIELD TO BASKET · <b>DEMO</b> · FROG FARMING · MUSHROOM FARMING · WAEMU · TRACEABILITY · PAYMENT IN PI · <b>PILOT PHASE</b> ·&nbsp;</span></div></div>
+
+<main>
+  <section class="hero" id="haut">
+    <span class="eyebrow"><i></i><span class="fr">Marketplace agro-pastorale · Démonstration</span><span class="en">Agro-pastoral marketplace · Demo</span></span>
+    <h1><span class="fr">Du champ<br><em>au panier</em></span><span class="en">From field<br><em>to basket</em></span></h1>
+    <p class="tagline"><span class="fr">PRODUIRE · VENDRE · TRACER</span><span class="en">PRODUCE · SELL · TRACE</span></p>
+    <p class="lead"><span class="fr">Le marché numérique qui reliera les producteurs africains aux consommateurs, avec la traçabilité de chaque lot et un paiement en Pi.</span><span class="en">The digital market that will connect African producers with consumers, with traceability for every batch and payment in Pi.</span></p>
+    <div class="chips"><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9M10 20v-5h4v5"/></svg><span class="fr">Producteurs locaux</span><span class="en">Local producers</span></span><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></svg><span class="fr">Lots traçables</span><span class="en">Traceable batches</span></span><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M9 7v11M15 7v8.5c0 1.5.8 2.5 2.2 2.5"/></svg><span class="fr">Paiement en Pi · prévu</span><span class="en">Pi payment · planned</span></span><span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span class="fr">Filières phares</span><span class="en">Flagship sectors</span></span></div>
+    <div class="flow" aria-hidden="true"><div class="fnode"><span class="hx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9M10 20v-5h4v5"/></svg></span><span><span class="fr">Producteur vérifié</span><span class="en">Verified producer</span></span></div><div class="fnode"><span class="hx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></svg></span><span><span class="fr">Lot horodaté</span><span class="en">Timestamped batch</span></span></div><div class="fnode"><span class="hx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M9 7v11M15 7v8.5c0 1.5.8 2.5 2.2 2.5"/></svg></span><span><span class="fr">Paiement π</span><span class="en">π payment</span></span></div><div class="fnode"><span class="hx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg></span><span><span class="fr">Livraison</span><span class="en">Delivery</span></span></div></div>
+  </section>
+  <div class="stats"><div class="stat"><b>9</b><span><span class="fr">filières</span><span class="en">sectors</span></span></div><div class="stat"><b>22</b><span><span class="fr">produits d'exemple</span><span class="en">sample products</span></span></div><div class="stat"><b>8</b><span><span class="fr">pays de l'UEMOA</span><span class="en">WAEMU countries</span></span></div><div class="stat"><b>π</b><span><span class="fr">paiement prévu en Pi</span><span class="en">payment planned in Pi</span></span></div></div>
+  <div class="demo" role="note"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".9" fill="currentColor"/></svg></span><p><span class="fr"><b>Mode démonstration.</b> Les produits, prix et producteurs sont des exemples. Aucune vente, aucun paiement, aucune donnée personnelle collectée et aucune inscription sur la blockchain.</span><span class="en"><b>Demo mode.</b> Products, prices and producers are examples. No sale, no payment, no personal data collected and nothing written to the blockchain.</span></p></div>
+
+  <section class="block" id="phares">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg></span><div><small class="mono">★</small><h2><span class="fr">Filières phares</span><span class="en">Flagship sectors</span></h2><p class="sh-sub"><span class="fr">Deux filières au cœur du projet GeoTerraChain QFS.</span><span class="en">Two sectors at the heart of GeoTerraChain QFS.</span></p></div></div>
+    <div class="flagships"><article class="fs" style="--fa:rgba(61,220,151,.20);--a:#3DDC97;--b:#0B4434">
+      <div class="fs-h"><span class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.2" cy="7.2" r="2.4"/><circle cx="15.8" cy="7.2" r="2.4"/><circle cx="8.2" cy="7.2" r=".7" fill="currentColor"/><circle cx="15.8" cy="7.2" r=".7" fill="currentColor"/><path d="M5.9 8.6C3.8 10.1 3.2 13.2 4.6 15.6c2 3.4 12.8 3.4 14.8 0 1.4-2.4.8-5.5-1.3-7"/><path d="M9 13.8c1.9 1.2 4.1 1.2 6 0"/><path d="M4.6 15.6l-2 3.6h3M19.4 15.6l2 3.6h-3"/></svg></span><div><small><span class="fr">★ FILIÈRE PHARE</span><span class="en">★ FLAGSHIP SECTOR</span></small><h3><span class="fr">Raniculture</span><span class="en">Frog farming</span></h3></div></div>
+      <p><span class="fr">Élevage de grenouilles en bassins&nbsp;: écloseries, grossissement, transformation et chaîne du froid.</span><span class="en">Frog rearing in ponds: hatcheries, grow-out, processing and cold chain.</span></p>
+      <button type="button" class="bs gold" data-go="rani"><span class="fr">Voir les produits</span><span class="en">See the products</span> →</button>
+    </article><article class="fs" style="--fa:rgba(168,139,255,.22);--a:#A88BFF;--b:#2E1F63">
+      <div class="fs-h"><span class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12.5a9 7.5 0 0 1 18 0z"/><path d="M9.5 12.5v6a2.5 2.5 0 0 0 5 0v-6"/><circle cx="8.6" cy="9" r="1" fill="currentColor"/><circle cx="14.6" cy="7.8" r="1" fill="currentColor"/><circle cx="12" cy="10.4" r=".7" fill="currentColor"/></svg></span><div><small><span class="fr">★ FILIÈRE PHARE</span><span class="en">★ FLAGSHIP SECTOR</span></small><h3><span class="fr">Myciculture (fongiculture)</span><span class="en">Mushroom farming (fungiculture)</span></h3></div></div>
+      <p><span class="fr">Champignons comestibles, dont la volvaire (Volvariella volvacea), champignon local africain cultivé sur paille.</span><span class="en">Edible mushrooms, including the paddy-straw mushroom (Volvariella volvacea), a local African species grown on straw.</span></p>
+      <button type="button" class="bs gold" data-go="myci"><span class="fr">Voir les produits</span><span class="en">See the products</span> →</button>
+    </article></div>
+  </section>
+
+  <section class="block" id="catalogue">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg></span><div><small class="mono">01</small><h2><span class="fr">Catalogue</span><span class="en">Catalogue</span></h2><p class="sh-sub"><span class="fr">Prix d'exemple en francs CFA (XOF), donnés à titre indicatif.</span><span class="en">Sample prices in CFA francs (XOF), for illustration only.</span></p></div></div>
+    <div class="cats" id="cats" role="group" aria-label="Catégories"></div>
+    <div class="tools">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Produit, ville, filière…"></label>
+      <button type="button" class="fbtn" id="fbtn" aria-expanded="false" aria-controls="fpanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span><span class="fr">Filtres</span><span class="en">Filters</span></span><i class="dot" id="fdot"></i></button>
+    </div>
+    <div class="fpanel glass" id="fpanel">
+      <label class="fld"><small><span class="fr">Pays</span><span class="en">Country</span></small><select id="fc"></select></label>
+      <label class="fld"><small><span class="fr">Prix maximum</span><span class="en">Maximum price</span></small><span class="rng"><input type="range" id="fp" min="500" max="30000" step="500" value="30000"><b class="mono" id="fpv"></b></span></label>
+      <label class="fld"><small><span class="fr">Trier par</span><span class="en">Sort by</span></small><select id="fs"></select></label>
+      <label class="tg"><input type="checkbox" id="fstar"><span><span class="fr">Filières phares uniquement</span><span class="en">Flagship sectors only</span></span></label>
+      <label class="tg"><input type="checkbox" id="ffav"><span><span class="fr">Mes favoris uniquement</span><span class="en">My favourites only</span></span></label>
+      <button type="button" class="bs" id="freset"><span class="fr">Réinitialiser les filtres</span><span class="en">Reset filters</span></button>
+    </div>
+    <p class="count mono" id="count" aria-live="polite"></p>
+    <div class="pgrid" id="grid"></div>
+  </section>
+
+  <section class="block" id="journal">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><div><small class="mono">02</small><h2><span class="fr">Journal de traçabilité</span><span class="en">Traceability log</span></h2><p class="sh-sub"><span class="fr">Démonstration&nbsp;: les évènements restent sur votre appareil, le temps de la visite.</span><span class="en">Demo: events stay on your device, for this visit only.</span></p></div></div>
+    <div class="glass"><ol class="jl" id="jl"></ol></div>
+  </section>
+
+  <section class="block" id="fonctionnement">
+    <div class="sh"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-3-3c1.5-4.5 4.5-8 10-9-1 5.5-4.5 8.5-9 10z"/><path d="M9 12l-4 1-2 3 4 1M12 15l-1 4 3 2 1-4"/><circle cx="15" cy="9" r="1.4"/></svg></span><div><small class="mono">03</small><h2><span class="fr">Comment fonctionnera la Marketplace</span><span class="en">How the Marketplace will work</span></h2><p class="sh-sub"><span class="fr">Après la phase pilote, étape par étape.</span><span class="en">After the pilot phase, step by step.</span></p></div></div>
+    <ol class="steps"><li class="step">
+      <div class="node"><span class="mono">1</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span><h3><span class="fr">Producteur vérifié</span><span class="en">Verified producer</span></h3></div>
+        <p><span class="fr">Le producteur se connecte avec Pi Network (KYC fait sur Pi). Son exploitation est contrôlée avant toute publication.</span><span class="en">The producer signs in with Pi Network (KYC done on Pi). Their farm is checked before anything is published.</span></p>
+        <div class="tags"><span class="tag plan"><span class="fr">Prévu</span><span class="en">Planned</span></span><span class="tag"><span class="fr">KYC Pi</span><span class="en">Pi KYC</span></span><span class="tag"><span class="fr">Contrôle de l'exploitation</span><span class="en">Farm inspection</span></span></div>
+      </div>
+    </li><li class="step">
+      <div class="node"><span class="mono">2</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9M10 20v-5h4v5"/></svg></span><h3><span class="fr">Annonce et lot</span><span class="en">Listing and batch</span></h3></div>
+        <p><span class="fr">Chaque produit est publié avec son origine, son numéro de lot et sa date de récolte.</span><span class="en">Each product is listed with its origin, batch number and harvest date.</span></p>
+        <div class="tags"><span class="tag plan"><span class="fr">Prévu</span><span class="en">Planned</span></span><span class="tag"><span class="fr">Origine</span><span class="en">Origin</span></span><span class="tag"><span class="fr">Lot</span><span class="en">Batch</span></span><span class="tag"><span class="fr">Récolte</span><span class="en">Harvest</span></span></div>
+      </div>
+    </li><li class="step">
+      <div class="node"><span class="mono">3</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M9 7v11M15 7v8.5c0 1.5.8 2.5 2.2 2.5"/></svg></span><h3><span class="fr">Commande et paiement en Pi</span><span class="en">Order and payment in Pi</span></h3></div>
+        <p><span class="fr">Le consommateur commande et paie en Pi dans le Pi Browser. Le serveur vérifie le paiement avant de confirmer la commande.</span><span class="en">The consumer orders and pays in Pi inside the Pi Browser. The server verifies the payment before confirming the order.</span></p>
+        <div class="tags"><span class="tag plan"><span class="fr">Prévu</span><span class="en">Planned</span></span><span class="tag"><span class="fr">Pi SDK</span><span class="en">Pi SDK</span></span><span class="tag"><span class="fr">Vérification serveur</span><span class="en">Server verification</span></span></div>
+      </div>
+    </li><li class="step">
+      <div class="node"><span class="mono">4</span></div>
+      <div class="card glass">
+        <div class="step-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><h3><span class="fr">Traçabilité vérifiable</span><span class="en">Verifiable traceability</span></h3></div>
+        <p><span class="fr">Récolte, expédition et livraison sont inscrites au journal d'audit&nbsp;; les preuves vérifiées sont ancrées sur Stellar.</span><span class="en">Harvest, shipping and delivery are recorded in the audit log; verified proofs are anchored on Stellar.</span></p>
+        <div class="tags"><span class="tag plan"><span class="fr">Prévu</span><span class="en">Planned</span></span><span class="tag"><span class="fr">Journal d'audit</span><span class="en">Audit log</span></span><span class="tag"><span class="fr">Stellar</span><span class="en">Stellar</span></span></div>
+      </div>
+    </li></ol>
+    <div class="cta">
+      <button type="button" class="btn btn-gold" id="sell"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 11v9h14v-9M10 20v-5h4v5"/></svg></span><span class="fr">Vendre mes produits</span><span class="en">Sell my products</span></button>
+      <a class="btn" href="tokenisation.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg></span><span class="fr">Tokeniser un actif agro-pastoral</span><span class="en">Tokenize an agro-pastoral asset</span></a>
+      <a class="btn" href="guide.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h7"/></svg></span><span class="fr">Guide</span><span class="en">Guide</span></a>
+      <a class="btn" href="index.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="fr">Accueil</span><span class="en">Home</span></a>
+    </div>
+    <p class="note"><span class="fr">Projet indépendant · Phase pilote. Catalogue de démonstration&nbsp;: produits, prix et producteurs donnés à titre d'exemple. GeoTerraChain QFS ne vous demandera jamais votre phrase secrète de 24 mots.</span><span class="en">Independent project · Pilot phase. Demo catalogue: products, prices and producers are examples. GeoTerraChain QFS will never ask for your 24-word secret phrase.</span></p>
+  </section>
+</main>
+<footer><b>GeoTerraChain QFS</b> · Marketplace<br><span class="fr">Développé par @Hilaila · Côte d'Ivoire · UEMOA · 2026</span><span class="en">Built by @Hilaila · Côte d'Ivoire · WAEMU · 2026</span>
+  <div class="ftlinks"><a href="privacy.html"><span class="fr">Confidentialité</span><span class="en">Privacy</span></a><a href="termes.html"><span class="fr">Conditions d'utilisation</span><span class="en">Terms of use</span></a><a href="guide-aide-geoterrachain-qfs.html"><span class="fr">Guide & Aide</span><span class="en">Guide & Help</span></a></div>
+</footer>
+
+<button type="button" class="fab" id="fab" aria-haspopup="dialog" aria-label="Mon panier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span class="cnt" id="fabc">0</span></button>
+<div class="overlay" id="ov"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dt" aria-hidden="true">
+  <div class="dh"><h2 id="dt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span class="fr">Mon panier</span><span class="en">My basket</span></h2><button type="button" class="icb" id="dclose" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="dl" id="dl"></div>
+  <div class="df">
+    <div class="tot"><span><span class="fr">Sous-total</span><span class="en">Subtotal</span></span><b id="subt">0 XOF</b></div>
+    <p class="fine"><span class="fr">Paiement en Pi prévu après la phase pilote. Aucun taux de conversion n'est appliqué dans cette démonstration.</span><span class="en">Payment in Pi is planned after the pilot phase. No conversion rate is applied in this demo.</span></p>
+    <button type="button" class="btn btn-gold wide" id="checkout"><span class="fr">Simuler la commande</span><span class="en">Simulate the order</span> →</button>
+  </div>
+</aside>
+<div class="mwrap" id="mw" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="modal"><button type="button" class="icb mx" id="mclose" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="mbody"></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "Frog farming"}, "ic": "frog", "a": "#3DDC97", "b": "#0B4434", "star": true}, {"id": "myci", "name": {"fr": "Myciculture", "en": "Mushroom farming"}, "ic": "mushroom", "a": "#A88BFF", "b": "#2E1F63", "star": true}, {"id": "cereales", "name": {"fr": "Céréales", "en": "Cereals"}, "ic": "grain", "a": "#E8C872", "b": "#5E460C"}, {"id": "tubercules", "name": {"fr": "Tubercules & légumes", "en": "Roots & vegetables"}, "ic": "tuber", "a": "#D49A5A", "b": "#45290F"}, {"id": "fruits", "name": {"fr": "Fruits & noix", "en": "Fruits & nuts"}, "ic": "banana", "a": "#F2A541", "b": "#633006"}, {"id": "cacao", "name": {"fr": "Cacao & café", "en": "Cocoa & coffee"}, "ic": "cocoa", "a": "#C27448", "b": "#30170A"}, {"id": "elevage", "name": {"fr": "Élevage & pisciculture", "en": "Livestock & fish farming"}, "ic": "fish", "a": "#4FB3D9", "b": "#0E3049"}, {"id": "transfo", "name": {"fr": "Produits transformés", "en": "Processed goods"}, "ic": "jar", "a": "#F4D35E", "b": "#6E4600"}, {"id": "artisanat", "name": {"fr": "Artisanat", "en": "Crafts"}, "ic": "basket", "a": "#E07A5F", "b": "#4A1A10"}], "products": [{"id": "ra1", "cat": "rani", "ic": "frog", "name": {"fr": "Cuisses de grenouille fraîches", "en": "Fresh frog legs"}, "city": "Grand-Bassam", "c": "CI", "price": 6000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme ranicole", "en": "Frog farm"}, "desc": {"fr": "Grenouilles élevées en bassins contrôlés, préparées puis conditionnées au froid.", "en": "Frogs raised in controlled ponds, then prepared and cold-packed."}}, {"id": "ra2", "cat": "rani", "ic": "frog", "name": {"fr": "Juvéniles de grenouilles", "en": "Frog juveniles"}, "city": "Abidjan", "c": "CI", "price": 150, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Écloserie", "en": "Hatchery"}, "desc": {"fr": "Juvéniles issus d'écloserie, destinés au démarrage de nouveaux bassins d'élevage.", "en": "Hatchery-raised juveniles to stock new rearing ponds."}}, {"id": "my1", "cat": "myci", "ic": "mushroom", "name": {"fr": "Volvaire fraîche", "en": "Fresh paddy-straw mushroom"}, "city": "Yamoussoukro", "c": "CI", "price": 3000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Volvariella volvacea, champignon local africain, cultivé sur paille et récolté le jour même.", "en": "Volvariella volvacea, a local African mushroom grown on straw and harvested the same day."}}, {"id": "my2", "cat": "myci", "ic": "mushroom", "name": {"fr": "Pleurotes séchés", "en": "Dried oyster mushrooms"}, "city": "Bouaké", "c": "CI", "price": 2500, "unit": {"fr": "250 g", "en": "250 g"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Pleurotes séchés à basse température pour une longue conservation.", "en": "Oyster mushrooms dried at low temperature for long storage."}}, {"id": "my3", "cat": "myci", "ic": "spawn", "name": {"fr": "Semence de champignons", "en": "Mushroom spawn"}, "city": "Abidjan", "c": "CI", "price": 2000, "unit": {"fr": "sachet de 1 kg", "en": "1 kg bag"}, "prod": {"fr": "Laboratoire de semences", "en": "Spawn laboratory"}, "desc": {"fr": "Semence (blanc) pour démarrer une culture de volvaire ou de pleurotes.", "en": "Spawn to start growing paddy-straw or oyster mushrooms."}}, {"id": "ce1", "cat": "cereales", "ic": "grain", "name": {"fr": "Riz local blanchi", "en": "Local milled rice"}, "city": "Korhogo", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative rizicole", "en": "Rice cooperative"}, "desc": {"fr": "Riz paddy local, décortiqué et blanchi près des parcelles.", "en": "Local paddy rice, hulled and milled near the fields."}}, {"id": "ce2", "cat": "cereales", "ic": "grain", "name": {"fr": "Maïs grain", "en": "Grain maize"}, "city": "Bobo-Dioulasso", "c": "BF", "price": 300, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement céréalier", "en": "Grain producers' group"}, "desc": {"fr": "Maïs séché et trié, pour la consommation ou l'alimentation animale.", "en": "Dried and sorted maize for food or animal feed."}}, {"id": "tu1", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Manioc frais", "en": "Fresh cassava"}, "city": "Dimbokro", "c": "CI", "price": 250, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative vivrière", "en": "Food-crop cooperative"}, "desc": {"fr": "Racines de manioc récoltées à maturité, pour l'attiéké, le placali ou la cuisson.", "en": "Cassava roots harvested at maturity, for attiéké, placali or cooking."}}, {"id": "tu2", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Igname", "en": "Yam"}, "city": "Bouaké", "c": "CI", "price": 500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement de producteurs", "en": "Producers' group"}, "desc": {"fr": "Igname de la région du Gbêkê, triée par calibre.", "en": "Yam from the Gbêkê region, sorted by size."}}, {"id": "tu3", "cat": "tubercules", "ic": "tomato", "name": {"fr": "Tomates fraîches", "en": "Fresh tomatoes"}, "city": "Thiès", "c": "SN", "price": 700, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Maraîchers", "en": "Market gardeners"}, "desc": {"fr": "Tomates de plein champ, cueillies à maturité.", "en": "Field-grown tomatoes, picked ripe."}}, {"id": "fr1", "cat": "fruits", "ic": "banana", "name": {"fr": "Banane plantain", "en": "Plantain"}, "city": "Agboville", "c": "CI", "price": 400, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme vivrière", "en": "Food-crop farm"}, "desc": {"fr": "Régimes de plantain, mûrs ou verts selon l'usage.", "en": "Plantain bunches, ripe or green depending on use."}}, {"id": "fr2", "cat": "fruits", "ic": "nut", "name": {"fr": "Noix de cajou", "en": "Cashew nuts"}, "city": "Bondoukou", "c": "CI", "price": 4200, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative d'anacarde", "en": "Cashew cooperative"}, "desc": {"fr": "Amandes de cajou décortiquées et séchées.", "en": "Shelled and dried cashew kernels."}}, {"id": "fr3", "cat": "fruits", "ic": "pineapple", "name": {"fr": "Ananas pain de sucre", "en": "Sugarloaf pineapple"}, "city": "Allada", "c": "BJ", "price": 800, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Planteurs d'ananas", "en": "Pineapple growers"}, "desc": {"fr": "Variété douce et peu acide, récoltée à maturité.", "en": "A sweet, low-acid variety, harvested ripe."}}, {"id": "ca1", "cat": "cacao", "ic": "cocoa", "name": {"fr": "Fèves de cacao séchées", "en": "Dried cocoa beans"}, "city": "Soubré", "c": "CI", "price": 2800, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative cacaoyère", "en": "Cocoa cooperative"}, "desc": {"fr": "Fèves fermentées et séchées au soleil.", "en": "Fermented, sun-dried beans."}}, {"id": "ca2", "cat": "cacao", "ic": "bean", "name": {"fr": "Café robusta torréfié", "en": "Roasted robusta coffee"}, "city": "Daloa", "c": "CI", "price": 4000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative caféière", "en": "Coffee cooperative"}, "desc": {"fr": "Robusta torréfié localement, en grains ou moulu.", "en": "Locally roasted robusta, whole bean or ground."}}, {"id": "el1", "cat": "elevage", "ic": "fish", "name": {"fr": "Tilapia frais", "en": "Fresh tilapia"}, "city": "Jacqueville", "c": "CI", "price": 2500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme piscicole", "en": "Fish farm"}, "desc": {"fr": "Tilapia élevé en étangs, vendu entier et frais.", "en": "Pond-raised tilapia, sold whole and fresh."}}, {"id": "el2", "cat": "elevage", "ic": "egg", "name": {"fr": "Œufs fermiers", "en": "Farm eggs"}, "city": "Bingerville", "c": "CI", "price": 2500, "unit": {"fr": "plateau de 30", "en": "tray of 30"}, "prod": {"fr": "Ferme avicole", "en": "Poultry farm"}, "desc": {"fr": "Œufs de poules élevées en plein air.", "en": "Eggs from free-range hens."}}, {"id": "pt1", "cat": "transfo", "ic": "bowl", "name": {"fr": "Attiéké frais", "en": "Fresh attiéké"}, "city": "Dabou", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Transformatrices de manioc", "en": "Cassava processors"}, "desc": {"fr": "Semoule de manioc fermenté, préparée de façon traditionnelle.", "en": "Fermented cassava semolina, traditionally prepared."}}, {"id": "pt2", "cat": "transfo", "ic": "jar", "name": {"fr": "Beurre de karité", "en": "Shea butter"}, "city": "Koudougou", "c": "BF", "price": 3000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative de femmes", "en": "Women's cooperative"}, "desc": {"fr": "Beurre de karité non raffiné, extrait à la main.", "en": "Unrefined shea butter, hand-extracted."}}, {"id": "pt3", "cat": "transfo", "ic": "comb", "name": {"fr": "Miel pur", "en": "Pure honey"}, "city": "Korhogo", "c": "CI", "price": 5000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Apiculteurs", "en": "Beekeepers"}, "desc": {"fr": "Miel de savane, filtré à froid.", "en": "Savannah honey, cold-filtered."}}, {"id": "ar1", "cat": "artisanat", "ic": "cloth", "name": {"fr": "Toile de Korhogo", "en": "Korhogo cloth"}, "city": "Korhogo", "c": "CI", "price": 25000, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Artisans peintres", "en": "Painter artisans"}, "desc": {"fr": "Toile de coton peinte à la main selon la tradition sénoufo.", "en": "Cotton cloth hand-painted in the Senufo tradition."}}, {"id": "ar2", "cat": "artisanat", "ic": "basket", "name": {"fr": "Paniers tressés", "en": "Woven baskets"}, "city": "Ségou", "c": "ML", "price": 7500, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Vanniers", "en": "Basket weavers"}, "desc": {"fr": "Paniers tressés à la main en fibres naturelles.", "en": "Hand-woven baskets in natural fibres."}}], "countries": {"CI": {"fr": "Côte d'Ivoire", "en": "Côte d'Ivoire"}, "SN": {"fr": "Sénégal", "en": "Senegal"}, "BF": {"fr": "Burkina Faso", "en": "Burkina Faso"}, "BJ": {"fr": "Bénin", "en": "Benin"}, "ML": {"fr": "Mali", "en": "Mali"}, "TG": {"fr": "Togo", "en": "Togo"}, "NE": {"fr": "Niger", "en": "Niger"}, "GW": {"fr": "Guinée-Bissau", "en": "Guinea-Bissau"}}, "icons": {"grain": "<path d=\"M12 21V9\"/><path d=\"M12 9c-2.2-.8-3.4-2.8-3.4-5.4 2.2.3 3.4 2.3 3.4 5.4zM12 9c2.2-.8 3.4-2.8 3.4-5.4-2.2.3-3.4 2.3-3.4 5.4z\"/><path d=\"M12 14c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 14c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/><path d=\"M12 19c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 19c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/>", "tuber": "<path d=\"M5.5 19.5c2.5-.8 8.5-5.5 11.6-10.4 1.6-2.6.2-5-2.1-4C10.6 7 6.6 12.8 5.5 19.5z\"/><path d=\"M15.5 5l2.2-2.2M17.2 6.6l3-.9M9 14.5l2 .8M11.6 10.7l2 .8\"/>", "tomato": "<circle cx=\"12\" cy=\"13.5\" r=\"7.2\"/><path d=\"M12 6.3V3.2M8.6 6.8L12 8.6l3.4-1.8M12 8.6l-1.8 2M12 8.6l1.8 2\"/>", "banana": "<path d=\"M4 12.5c2.8 5.6 11.4 6.8 16.5-.8\"/><path d=\"M4 12.5c4.4 2.7 11.6 2.2 16.5-.8\"/><path d=\"M20.5 11.7l.8-3.2M4 12.5L3 11\"/>", "nut": "<path d=\"M7.2 5.2c5-2.2 11 1.6 11 7.8 0 4.2-3 7-6 6.2-2.2-.6-2.3-3-4.3-4.1S3.2 13.4 4 9.3c.4-1.8 1.6-3.3 3.2-4.1z\"/><path d=\"M9 7.5c3-.6 6 1.5 6.6 4.8\"/>", "pineapple": "<path d=\"M12 9.5c3 0 5 2.9 5 6.2S15 21 12 21s-5-2-5-5.3 2-6.2 5-6.2z\"/><path d=\"M12 9.5V3.5M12 6.5L9 3.8M12 6.5l3-2.7M9.6 13l4.8 5M14.4 13l-4.8 5\"/>", "cocoa": "<path d=\"M12 3c3.9 0 6 4 6 9s-2.1 9-6 9-6-4-6-9 2.1-9 6-9z\"/><path d=\"M12 3v18M9 5.2c-.9 4-.9 9.6 0 13.6M15 5.2c.9 4 .9 9.6 0 13.6\"/>", "bean": "<path d=\"M8.2 19.6c-3.6-2.1-4.4-7.6-1.8-12.1s7.8-6.6 11.4-4.5 4.4 7.6 1.8 12.1-7.8 6.6-11.4 4.5z\"/><path d=\"M15.6 3.6c-1.6 2.8-.4 5.6-2.4 8.4s-4.9 3.4-6.2 7.2\"/>", "frog": "<circle cx=\"8.2\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"15.8\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"8.2\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><circle cx=\"15.8\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><path d=\"M5.9 8.6C3.8 10.1 3.2 13.2 4.6 15.6c2 3.4 12.8 3.4 14.8 0 1.4-2.4.8-5.5-1.3-7\"/><path d=\"M9 13.8c1.9 1.2 4.1 1.2 6 0\"/><path d=\"M4.6 15.6l-2 3.6h3M19.4 15.6l2 3.6h-3\"/>", "mushroom": "<path d=\"M3 12.5a9 7.5 0 0 1 18 0z\"/><path d=\"M9.5 12.5v6a2.5 2.5 0 0 0 5 0v-6\"/><circle cx=\"8.6\" cy=\"9\" r=\"1\" fill=\"currentColor\"/><circle cx=\"14.6\" cy=\"7.8\" r=\"1\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"10.4\" r=\".7\" fill=\"currentColor\"/>", "spawn": "<path d=\"M7 7h10l1.5 13.5h-13z\"/><path d=\"M9 7V5.5a3 3 0 0 1 6 0V7\"/><path d=\"M9.5 15.5a2.5 2 0 0 1 5 0z\"/><path d=\"M11 15.5v2h2v-2\"/>", "fish": "<path d=\"M2.5 12c3-4.2 8.2-5.6 12.5-3.4l4.5-3.2v13.2L15 15.4c-4.3 2.2-9.5.8-12.5-3.4z\"/><circle cx=\"7.6\" cy=\"11\" r=\".9\" fill=\"currentColor\"/><path d=\"M10.5 9.5c.8 1.6.8 3.4 0 5\"/>", "egg": "<path d=\"M12 3c3.6 0 6.2 5.2 6.2 10.2a6.2 6.2 0 0 1-12.4 0C5.8 8.2 8.4 3 12 3z\"/><path d=\"M9.2 14.5a3 3 0 0 0 2.8 2.6\"/>", "bowl": "<path d=\"M3 11.5h18a9 8.5 0 0 1-18 0z\"/><path d=\"M8 21h8\"/><path d=\"M9 8.5c0-2 2-2.2 2-4.3M13.2 8.5c0-2 2-2.2 2-4.3\"/>", "jar": "<path d=\"M8 3.5h8M7 6.5h10l1 3.2v8.3a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9.7z\"/><path d=\"M6.4 12h11.2\"/><path d=\"M12 14.3l1.6.9v1.9l-1.6.9-1.6-.9v-1.9z\"/>", "comb": "<path d=\"M12 2.8l4 2.3v4.6L12 12 8 9.7V5.1z\"/><path d=\"M8 9.7L4 12v4.6l4 2.3 4-2.3V12M16 9.7l4 2.3v4.6l-4 2.3-4-2.3\"/>", "cloth": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1.5\"/><path d=\"M7.5 7l2.2 3 2.3-3 2.3 3 2.2-3M7.5 14h9M7.5 17.5h5.5\"/>", "basket": "<path d=\"M3 10h18l-2.2 10H5.2z\"/><path d=\"M8 10l3.2-6M16 10l-3.2-6\"/><path d=\"M6.8 14h10.4M7.4 17h9.2\"/>"}, "ui": {"cart": "<path d=\"M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3\"/><circle cx=\"9.5\" cy=\"19.5\" r=\"1.4\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.4\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M16 16l4.5 4.5\"/>", "filter": "<path d=\"M4 6h16M7 12h10M10 18h4\"/>", "heart": "<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z\"/>", "pin": "<path d=\"M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5\"/><circle cx=\"12\" cy=\"7.8\" r=\".9\" fill=\"currentColor\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "minus": "<path d=\"M5 12h14\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "x": "<path d=\"M6 6l12 12M18 6L6 18\"/>", "store": "<path d=\"M4 9l1.5-5h13L20 9\"/><path d=\"M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0\"/><path d=\"M5 11v9h14v-9M10 20v-5h4v5\"/>", "hash": "<path d=\"M5 9h14M5 15h14M10 4L8 20M16 4l-2 16\"/>", "truck": "<path d=\"M3 6h11v10H3zM14 10h4l3 3v3h-7\"/><circle cx=\"7\" cy=\"18\" r=\"1.8\"/><circle cx=\"17.5\" cy=\"18\" r=\"1.8\"/>", "star": "<path d=\"M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z\"/>", "grid": "<rect x=\"4\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"4\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/>", "link": "<path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>"}};
+</script>
+<script>
+(function () {
+  "use strict";
+  var D = window.GTC_MARKET || {};
+  var CATS = D.cats || [], P = D.products || [], C = D.countries || {}, PIC = D.icons || {}, UI = D.ui || {};
+  var root = document.documentElement;
+  var LANG = root.getAttribute("data-lang") === "en" ? "en" : "fr";
+  var MAX = 30000;
+
+  var S = {
+    fr: {
+      title: "Marketplace — GeoTerraChain QFS",
+      all: "Tous", example: "EXEMPLE", flagship: "★ Filière phare", add: "Ajouter", details: "Détails",
+      added: "{name} ajouté au panier.", favOn: "Ajouté à vos favoris.", favOff: "Retiré de vos favoris.",
+      fav: "Ajouter aux favoris", count1: "1 produit", countN: "{n} produits", count0: "Aucun produit",
+      empty: "Aucun produit ne correspond à votre recherche.", reset: "Réinitialiser les filtres",
+      cartEmpty: "Votre panier est vide.", cartEmptySub: "Ajoutez un produit pour commencer.",
+      remove: "Retirer", less: "Diminuer la quantité", more: "Augmenter la quantité",
+      allCountries: "Tous les pays de l'UEMOA", sortDef: "Filières phares d'abord", sortAsc: "Prix croissant",
+      sortDesc: "Prix décroissant", sortName: "Nom (A → Z)", ph: "Produit, ville, filière…", noLimit: "Sans limite",
+      producer: "Producteur", exSuffix: " · exemple", origin: "Origine", price: "Prix d'exemple", trace: "Traçabilité du lot",
+      tr1: "Origine déclarée", tr1d: "{place}, déclarée par le producteur.",
+      tr2: "Producteur vérifié", tr2d: "Identité Pi (KYC fait sur Pi Network) et contrôle de l'exploitation.",
+      tr3: "Lot horodaté", tr3d: "Récolte, conditionnement et expédition inscrits au journal d'audit.",
+      tr4: "Preuve on-chain", tr4d: "Empreinte du lot ancrée sur Stellar après vérification.",
+      stEx: "Exemple", stPlan: "Prévu", addCart: "Ajouter au panier", close: "Fermer",
+      orderTitle: "Commande de démonstration", orderIntro: "Votre panier contient {n} article(s) pour un total de {total}.",
+      orderInfo: "En confirmant, une référence et une empreinte SHA-256 sont calculées sur votre appareil. Aucun paiement n'est demandé, aucune donnée n'est envoyée et rien n'est inscrit sur la blockchain.",
+      confirm: "Créer la commande de démonstration", cancel: "Annuler",
+      doneBadge: "Démonstration", doneTitle: "Commande de démonstration créée", ref: "Référence", time: "Horodatage (appareil)",
+      hash: "Empreinte SHA-256", status: "Statut", statusV: "Démo · non on-chain · aucun paiement",
+      hashNA: "Indisponible sur ce navigateur",
+      doneNote: "Cette référence n'a aucune valeur commerciale. Dans la version réelle, une commande ne sera confirmée qu'après la vérification du paiement Pi par le serveur.",
+      ok: "Compris", toastOrder: "Commande de démonstration créée : {ref}", needItem: "Ajoutez au moins un produit avant de commander.",
+      jEmpty: "Aucun évènement pour l'instant. Ajoutez un produit ou simulez une commande.",
+      jAdd: "Ajout au panier", jOrder: "Commande de démonstration", jLocal: "Horodaté sur l'appareil · non on-chain",
+      sellTitle: "Espace producteur",
+      sellBody: "<p>L'espace producteur ouvrira après la phase pilote : publication d'annonces par des producteurs vérifiés (KYC fait sur Pi Network), gestion des lots et commandes payées en Pi.</p><p>Vous pouvez dès aujourd'hui tokeniser un actif agro-pastoral : bassin ranicole, champignonnière, plantation, élevage…</p>",
+      sellCta: "Tokeniser un actif", cart: "Mon panier", cats: "Catégories"
+    },
+    en: {
+      title: "Marketplace — GeoTerraChain QFS",
+      all: "All", example: "EXAMPLE", flagship: "★ Flagship", add: "Add", details: "Details",
+      added: "{name} added to your basket.", favOn: "Added to your favourites.", favOff: "Removed from your favourites.",
+      fav: "Add to favourites", count1: "1 product", countN: "{n} products", count0: "No product",
+      empty: "No product matches your search.", reset: "Reset filters",
+      cartEmpty: "Your basket is empty.", cartEmptySub: "Add a product to get started.",
+      remove: "Remove", less: "Decrease quantity", more: "Increase quantity",
+      allCountries: "All WAEMU countries", sortDef: "Flagship sectors first", sortAsc: "Price: low to high",
+      sortDesc: "Price: high to low", sortName: "Name (A → Z)", ph: "Product, city, sector…", noLimit: "No limit",
+      producer: "Producer", exSuffix: " · example", origin: "Origin", price: "Sample price", trace: "Batch traceability",
+      tr1: "Declared origin", tr1d: "{place}, declared by the producer.",
+      tr2: "Verified producer", tr2d: "Pi identity (KYC done on Pi Network) and farm inspection.",
+      tr3: "Timestamped batch", tr3d: "Harvest, packing and shipping recorded in the audit log.",
+      tr4: "On-chain proof", tr4d: "Batch fingerprint anchored on Stellar after verification.",
+      stEx: "Example", stPlan: "Planned", addCart: "Add to basket", close: "Close",
+      orderTitle: "Demo order", orderIntro: "Your basket holds {n} item(s) for a total of {total}.",
+      orderInfo: "When you confirm, a reference and a SHA-256 fingerprint are computed on your device. No payment is requested, no data is sent and nothing is written to the blockchain.",
+      confirm: "Create the demo order", cancel: "Cancel",
+      doneBadge: "Demo", doneTitle: "Demo order created", ref: "Reference", time: "Timestamp (device)",
+      hash: "SHA-256 fingerprint", status: "Status", statusV: "Demo · not on-chain · no payment",
+      hashNA: "Not available in this browser",
+      doneNote: "This reference has no commercial value. In the real version, an order will only be confirmed after the server verifies the Pi payment.",
+      ok: "Got it", toastOrder: "Demo order created: {ref}", needItem: "Add at least one product before ordering.",
+      jEmpty: "No events yet. Add a product or simulate an order.",
+      jAdd: "Added to basket", jOrder: "Demo order", jLocal: "Device timestamp · not on-chain",
+      sellTitle: "Producer space",
+      sellBody: "<p>The producer space will open after the pilot phase: listings by verified producers (KYC done on Pi Network), batch management and orders paid in Pi.</p><p>You can already tokenize an agro-pastoral asset today: frog ponds, a mushroom farm, a plantation, livestock…</p>",
+      sellCta: "Tokenize an asset", cart: "My basket", cats: "Categories"
+    }
+  };
+  function t(k) { return (S[LANG] && S[LANG][k] != null) ? S[LANG][k] : (S.fr[k] != null ? S.fr[k] : k); }
+  function tx(o) { return o ? (o[LANG] || o.fr || "") : ""; }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function svg(inner) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (inner || "") + "</svg>"; }
+  function num(n) { return new Intl.NumberFormat(LANG === "en" ? "en-US" : "fr-FR").format(n); }
+  function money(n) { return num(n) + " XOF"; }
+  function when(iso) {
+    try { return new Date(iso).toLocaleString(LANG === "en" ? "en-GB" : "fr-FR", { dateStyle: "medium", timeStyle: "medium" }); }
+    catch (e) { return iso; }
+  }
+  function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function byId(id) { for (var i = 0; i < P.length; i++) if (P[i].id === id) return P[i]; return null; }
+  function catOf(p) { for (var i = 0; i < CATS.length; i++) if (CATS[i].id === p.cat) return CATS[i]; return CATS[0]; }
+  var PAT = '<svg class="pat" aria-hidden="true"><rect width="100%" height="100%" fill="url(#hexp)"/></svg>';
+
+  /* ---------- Préférences locales (favoris, panier) ---------- */
+  function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v && typeof v === "object" ? v : d; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var favs = load("gtcMarketFav", []); if (!Array.isArray(favs)) favs = [];
+  favs = favs.filter(function (id) { return !!byId(id); });
+  var cart = load("gtcMarketCart", {}); var clean = {};
+  Object.keys(cart).forEach(function (id) { var q = Math.floor(Number(cart[id])); if (byId(id) && q > 0 && q < 1000) clean[id] = q; });
+  cart = clean;
+  var journal = [];
+
+  var state = { cat: "all", q: "", country: "all", max: MAX, sort: "def", star: false, fav: false };
+  try {
+    var qc = new URLSearchParams(location.search).get("cat");
+    if (qc && CATS.some(function (c) { return c.id === qc; })) state.cat = qc;
+  } catch (e) {}
+
+  /* ---------- Catégories ---------- */
+  function renderCats() {
+    var h = '<button type="button" class="cat' + (state.cat === "all" ? " on" : "") + '" data-cat="all" aria-pressed="' + (state.cat === "all") + '">' + svg(UI.grid) + "<span>" + t("all") + "</span></button>";
+    CATS.forEach(function (c) {
+      var on = state.cat === c.id;
+      h += '<button type="button" class="cat' + (c.star ? " star" : "") + (on ? " on" : "") + '" data-cat="' + c.id + '" aria-pressed="' + on + '">' + svg(PIC[c.ic]) + "<span>" + esc(tx(c.name)) + "</span>" + (c.star ? '<b class="st" aria-hidden="true">★</b>' : "") + "</button>";
+    });
+    $("cats").innerHTML = h;
+    $("cats").setAttribute("aria-label", t("cats"));
+  }
+
+  /* ---------- Filtres ---------- */
+  function renderFilterControls() {
+    var fc = $("fc"), fs = $("fs");
+    var codes = Object.keys(C);
+    fc.innerHTML = '<option value="all">' + esc(t("allCountries")) + "</option>" + codes.map(function (k) { return '<option value="' + k + '">' + esc(tx(C[k])) + "</option>"; }).join("");
+    fc.value = state.country;
+    fs.innerHTML = [["def", "sortDef"], ["asc", "sortAsc"], ["desc", "sortDesc"], ["name", "sortName"]].map(function (o) { return '<option value="' + o[0] + '">' + esc(t(o[1])) + "</option>"; }).join("");
+    fs.value = state.sort;
+    $("q").setAttribute("placeholder", t("ph"));
+    $("q").setAttribute("aria-label", t("ph"));
+    paintPrice();
+  }
+  function paintPrice() { $("fpv").textContent = state.max >= MAX ? t("noLimit") : money(state.max); }
+  function filtersActive() { return state.country !== "all" || state.max < MAX || state.sort !== "def" || state.star || state.fav; }
+
+  function list() {
+    var q = norm(state.q.trim());
+    var arr = P.filter(function (p) {
+      var c = catOf(p);
+      if (state.cat !== "all" && p.cat !== state.cat) return false;
+      if (state.country !== "all" && p.c !== state.country) return false;
+      if (state.max < MAX && p.price > state.max) return false;
+      if (state.star && !c.star) return false;
+      if (state.fav && favs.indexOf(p.id) < 0) return false;
+      if (q) {
+        var hay = norm([p.name.fr, p.name.en, p.city, C[p.c].fr, C[p.c].en, c.name.fr, c.name.en, p.prod.fr, p.prod.en].join(" "));
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+    if (state.sort === "asc") arr.sort(function (a, b) { return a.price - b.price; });
+    else if (state.sort === "desc") arr.sort(function (a, b) { return b.price - a.price; });
+    else if (state.sort === "name") arr.sort(function (a, b) { return tx(a.name).localeCompare(tx(b.name), LANG); });
+    return arr;
+  }
+
+  /* ---------- Cartes produits ---------- */
+  function artBox(p, cls) {
+    var c = catOf(p);
+    return '<div class="' + cls + '" style="--a:' + c.a + ";--b:" + c.b + '">' + PAT + '<span class="aic">' + svg(PIC[p.ic]) + "</span>" +
+      '<span class="ex">' + t("example") + "</span>" + (c.star ? '<span class="flag">' + t("flagship") + "</span>" : "");
+  }
+  function card(p, i) {
+    var c = catOf(p), fav = favs.indexOf(p.id) >= 0;
+    return '<article class="pcard' + (c.star ? " star" : "") + '" style="animation-delay:' + Math.min(i * 30, 300) + 'ms">' +
+      artBox(p, "art") +
+        '<button type="button" class="fav' + (fav ? " on" : "") + '" data-fav="' + p.id + '" aria-pressed="' + fav + '" aria-label="' + esc(t("fav") + " — " + tx(p.name)) + '">' + svg(UI.heart) + "</button></div>" +
+      '<div class="pb"><small>' + esc(tx(c.name)) + "</small><h3>" + esc(tx(p.name)) + "</h3>" +
+        '<div class="loc">' + svg(UI.pin) + "<span>" + esc(p.city) + ", " + esc(tx(C[p.c])) + "</span></div>" +
+        '<div class="price">' + num(p.price) + " <span>XOF / " + esc(tx(p.unit)) + "</span></div>" +
+        '<div class="prod">' + esc(tx(p.prod)) + t("exSuffix") + "</div>" +
+        '<div class="pact"><button type="button" class="bs gold" data-add="' + p.id + '">' + svg(UI.plus) + t("add") + "</button>" +
+        '<button type="button" class="bs icon" data-info="' + p.id + '" aria-label="' + esc(t("details") + " — " + tx(p.name)) + '">' + svg(UI.info) + "</button></div>" +
+      "</div></article>";
+  }
+  function renderGrid() {
+    var arr = list();
+    $("count").textContent = arr.length === 0 ? t("count0") : arr.length === 1 ? t("count1") : t("countN").replace("{n}", arr.length);
+    $("grid").innerHTML = arr.length ? arr.map(card).join("") :
+      '<div class="empty"><p>' + t("empty") + '</p><button type="button" class="bs" data-reset>' + t("reset") + "</button></div>";
+    $("fdot").classList.toggle("on", filtersActive());
+  }
+
+  /* ---------- Panier ---------- */
+  function entries() { return Object.keys(cart).filter(function (id) { return cart[id] > 0 && byId(id); }).map(function (id) { return [byId(id), cart[id]]; }); }
+  function totals(e) { var n = 0, s = 0; e.forEach(function (x) { n += x[1]; s += x[0].price * x[1]; }); return { n: n, s: s }; }
+  function renderCart() {
+    var e = entries(), tt = totals(e);
+    $("cartc").textContent = tt.n; $("fabc").textContent = tt.n;
+    $("subt").textContent = money(tt.s);
+    $("checkout").disabled = !e.length;
+    $("dl").innerHTML = e.length ? e.map(function (x) {
+      var p = x[0], q = x[1], c = catOf(p);
+      return '<div class="crow"><span class="mini" style="--a:' + c.a + ";--b:" + c.b + '">' + svg(PIC[p.ic]) + "</span><div><b>" + esc(tx(p.name)) + "</b><small>" + money(p.price) + " / " + esc(tx(p.unit)) + "</small>" +
+        '<div class="qty"><button type="button" data-dec="' + p.id + '" aria-label="' + esc(t("less")) + '">' + svg(UI.minus) + "</button><output>" + q + "</output>" +
+        '<button type="button" data-inc="' + p.id + '" aria-label="' + esc(t("more")) + '">' + svg(UI.plus) + "</button>" +
+        '<span class="lt">' + money(p.price * q) + "</span>" +
+        '<button type="button" class="rm" data-rm="' + p.id + '" aria-label="' + esc(t("remove") + " — " + tx(p.name)) + '">' + svg(UI.trash) + "</button></div></div></div>";
+    }).join("") : '<div class="cempty">' + svg(UI.cart) + "<b>" + t("cartEmpty") + "</b><span>" + t("cartEmptySub") + "</span></div>";
+    $("fab").setAttribute("aria-label", t("cart") + " (" + tt.n + ")");
+  }
+  function setQty(id, q) {
+    if (q <= 0) delete cart[id]; else cart[id] = Math.min(q, 999);
+    save("gtcMarketCart", cart); renderCart();
+  }
+  function add(id) {
+    var p = byId(id); if (!p) return;
+    setQty(id, (cart[id] || 0) + 1);
+    log({ type: "add", id: id });
+    toast(t("added").replace("{name}", tx(p.name)));
+    var f = $("fab"); f.classList.remove("bump"); void f.offsetWidth; f.classList.add("bump");
+  }
+
+  /* ---------- Journal de démonstration ---------- */
+  function log(ev) { ev.time = new Date().toISOString(); journal.unshift(ev); journal = journal.slice(0, 8); renderJournal(); }
+  function renderJournal() {
+    $("jl").innerHTML = journal.length ? journal.map(function (e) {
+      var title = e.type === "order" ? t("jOrder") + " · " + e.ref : t("jAdd") + " · " + tx((byId(e.id) || { name: { fr: "" } }).name);
+      return '<li class="jr"><span class="ji">' + svg(e.type === "order" ? UI.hash : UI.cart) + "</span><div><b>" + esc(title) + "</b><small>" + esc(when(e.time)) + "</small>" +
+        (e.hash ? "<code>SHA-256 " + e.hash.slice(0, 16) + "…" + e.hash.slice(-8) + "</code>" : "") + "<em>" + t("jLocal") + "</em></div></li>";
+    }).join("") : '<li class="jempty">' + t("jEmpty") + "</li>";
+  }
+
+  /* ---------- Fenêtres (détails, commande, espace producteur) ---------- */
+  var lastFocus = null;
+  function openModal(html) {
+    lastFocus = document.activeElement;
+    $("mbody").innerHTML = html;
+    $("mw").classList.add("on");
+    var b = $("mw").querySelector(".mact .btn") || $("mclose"); try { b.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function closeModal() {
+    if (!$("mw").classList.contains("on")) return;
+    $("mw").classList.remove("on"); $("mbody").innerHTML = "";
+    if (lastFocus && lastFocus.focus) try { lastFocus.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function details(id) {
+    var p = byId(id); if (!p) return;
+    var c = catOf(p), place = p.city + ", " + tx(C[p.c]);
+    var steps = [["tr1", t("tr1d").replace("{place}", place), "s-ex"], ["tr2", t("tr2d"), "s-plan"], ["tr3", t("tr3d"), "s-plan"], ["tr4", t("tr4d"), "s-plan"]];
+    openModal(artBox(p, "md-art") + "</div>" +
+      '<small class="kick">' + esc(tx(c.name)) + '</small><h2 id="mt">' + esc(tx(p.name)) + "</h2><p>" + esc(tx(p.desc)) + "</p>" +
+      '<div class="kvs"><div><span>' + t("origin") + "</span><b>" + esc(place) + "</b></div>" +
+        "<div><span>" + t("producer") + "</span><b>" + esc(tx(p.prod)) + t("exSuffix") + "</b></div>" +
+        "<div><span>" + t("price") + '</span><b class="mono gold">' + money(p.price) + " / " + esc(tx(p.unit)) + "</b></div></div>" +
+      '<h3 class="md-h">' + svg(UI.link) + t("trace") + '</h3><ol class="tl">' + steps.map(function (s, i) {
+        return '<li class="' + s[2] + '"><i>' + (i + 1) + "</i><div><b>" + t(s[0]) + "</b><span>" + esc(s[1]) + '</span></div><em class="' + (s[2] === "s-ex" ? "st-ex" : "st-plan") + '">' + (s[2] === "s-ex" ? t("stEx") : t("stPlan")) + "</em></li>";
+      }).join("") + "</ol>" +
+      '<div class="mact"><button type="button" class="btn btn-gold" data-add="' + p.id + '" data-close>' + svg(UI.plus) + t("addCart") + '</button><button type="button" class="btn" data-close>' + t("close") + "</button></div>");
+  }
+  function checkout() {
+    var e = entries(); if (!e.length) { toast(t("needItem")); return; }
+    var tt = totals(e);
+    openModal('<h2 id="mt">' + t("orderTitle") + "</h2><p>" + t("orderIntro").replace("{n}", "<b>" + tt.n + "</b>").replace("{total}", '<b class="gold mono">' + money(tt.s) + "</b>") + "</p>" +
+      '<ul class="olist">' + e.map(function (x) { return "<li><span>" + x[1] + " × " + esc(tx(x[0].name)) + '</span><b class="mono">' + money(x[0].price * x[1]) + "</b></li>"; }).join("") + "</ul>" +
+      '<p class="fine">' + t("orderInfo") + "</p>" +
+      '<div class="mact"><button type="button" class="btn btn-gold" id="confirm">' + t("confirm") + '</button><button type="button" class="btn" data-close>' + t("cancel") + "</button></div>");
+    $("confirm").addEventListener("click", function () { this.disabled = true; confirmOrder(e, tt); });
+  }
+  function rand4() {
+    try { var a = new Uint8Array(2); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("").toUpperCase(); }
+    catch (e) { return Math.random().toString(16).slice(2, 6).toUpperCase(); }
+  }
+  function sha256(s) {
+    try {
+      if (!window.crypto || !crypto.subtle || !window.TextEncoder) return Promise.resolve(null);
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+      }).catch(function () { return null; });
+    } catch (e) { return Promise.resolve(null); }
+  }
+  function confirmOrder(e, tt) {
+    var now = new Date();
+    var ref = "DEMO-" + now.toISOString().slice(0, 10).replace(/-/g, "") + "-" + rand4();
+    var payload = JSON.stringify({ ref: ref, time: now.toISOString(), items: e.map(function (x) { return { id: x[0].id, qty: x[1], price: x[0].price }; }), total: tt.s, currency: "XOF", demo: true });
+    sha256(payload).then(function (hash) {
+      journal.unshift({ type: "order", ref: ref, time: now.toISOString(), hash: hash }); journal = journal.slice(0, 8);
+      cart = {}; save("gtcMarketCart", cart); renderCart(); renderJournal(); closeDrawer(true);
+      openModal('<span class="okbadge">' + svg(UI.hash) + t("doneBadge") + '</span><h2 id="mt">' + t("doneTitle") + "</h2>" +
+        '<div class="kvs"><div><span>' + t("ref") + '</span><b class="mono gold">' + ref + "</b></div>" +
+          "<div><span>" + t("time") + "</span><b>" + esc(when(now.toISOString())) + "</b></div>" +
+          "<div><span>" + t("hash") + "</span>" + (hash ? "<code>" + hash + "</code>" : "<b>" + t("hashNA") + "</b>") + "</div>" +
+          "<div><span>" + t("status") + "</span><b>" + t("statusV") + "</b></div></div>" +
+        '<p class="fine">' + t("doneNote") + "</p>" +
+        '<div class="mact"><button type="button" class="btn btn-gold" data-close>' + t("ok") + "</button></div>");
+    });
+  }
+  function sell() {
+    openModal('<h2 id="mt">' + t("sellTitle") + "</h2>" + t("sellBody") +
+      '<div class="mact"><a class="btn btn-gold" href="tokenisation.html">' + t("sellCta") + ' →</a><button type="button" class="btn" data-close>' + t("close") + "</button></div>");
+  }
+
+  /* ---------- Tiroir du panier ---------- */
+  function openDrawer() {
+    lastFocus = document.activeElement;
+    $("drawer").classList.add("on"); $("ov").classList.add("on"); $("drawer").setAttribute("aria-hidden", "false");
+    try { $("dclose").focus({ preventScroll: true }); } catch (e) {}
+  }
+  function closeDrawer(silent) {
+    if (!$("drawer").classList.contains("on")) return;
+    $("drawer").classList.remove("on"); $("ov").classList.remove("on"); $("drawer").setAttribute("aria-hidden", "true");
+    if (!silent && lastFocus && lastFocus.focus) try { lastFocus.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  /* ---------- Notification ---------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $("toast"); el.textContent = msg; el.classList.add("on");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.remove("on"); }, 2600);
+  }
+
+  /* ---------- Évènements ---------- */
+  function goCatalogue() {
+    var el = $("catalogue"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  document.addEventListener("click", function (ev) {
+    var el = ev.target.closest ? ev.target.closest("[data-add],[data-info],[data-fav],[data-cat],[data-go],[data-inc],[data-dec],[data-rm],[data-reset],[data-close]") : null;
+    if (!el) return;
+    if (el.hasAttribute("data-add")) add(el.getAttribute("data-add"));
+    if (el.hasAttribute("data-close")) { closeModal(); return; }
+    if (el.hasAttribute("data-add")) return;
+    if (el.hasAttribute("data-info")) return details(el.getAttribute("data-info"));
+    if (el.hasAttribute("data-fav")) {
+      var id = el.getAttribute("data-fav"), i = favs.indexOf(id);
+      if (i >= 0) favs.splice(i, 1); else favs.push(id);
+      save("gtcMarketFav", favs); renderGrid(); toast(i >= 0 ? t("favOff") : t("favOn")); return;
+    }
+    if (el.hasAttribute("data-cat")) { state.cat = el.getAttribute("data-cat"); renderCats(); renderGrid(); return; }
+    if (el.hasAttribute("data-go")) { state.cat = el.getAttribute("data-go"); renderCats(); renderGrid(); goCatalogue(); return; }
+    if (el.hasAttribute("data-inc")) { var a = el.getAttribute("data-inc"); setQty(a, (cart[a] || 0) + 1); return; }
+    if (el.hasAttribute("data-dec")) { var b = el.getAttribute("data-dec"); setQty(b, (cart[b] || 0) - 1); return; }
+    if (el.hasAttribute("data-rm")) { setQty(el.getAttribute("data-rm"), 0); return; }
+    if (el.hasAttribute("data-reset")) { resetFilters(); return; }
+  });
+  function resetFilters() {
+    state = { cat: "all", q: "", country: "all", max: MAX, sort: "def", star: false, fav: false };
+    $("q").value = ""; $("fp").value = MAX; $("fstar").checked = false; $("ffav").checked = false;
+    renderCats(); renderFilterControls(); renderGrid();
+  }
+  $("q").addEventListener("input", function () { state.q = this.value; renderGrid(); });
+  $("fc").addEventListener("change", function () { state.country = this.value; renderGrid(); });
+  $("fs").addEventListener("change", function () { state.sort = this.value; renderGrid(); });
+  $("fp").addEventListener("input", function () { state.max = Number(this.value) || MAX; paintPrice(); renderGrid(); });
+  $("fstar").addEventListener("change", function () { state.star = this.checked; renderGrid(); });
+  $("ffav").addEventListener("change", function () { state.fav = this.checked; renderGrid(); });
+  $("freset").addEventListener("click", resetFilters);
+  $("fbtn").addEventListener("click", function () {
+    var open = $("fpanel").classList.toggle("open");
+    this.setAttribute("aria-expanded", String(open));
+  });
+  $("cartbtn").addEventListener("click", openDrawer);
+  $("fab").addEventListener("click", openDrawer);
+  $("dclose").addEventListener("click", function () { closeDrawer(); });
+  $("ov").addEventListener("click", function () { closeDrawer(); });
+  $("checkout").addEventListener("click", checkout);
+  $("mclose").addEventListener("click", closeModal);
+  $("mw").addEventListener("click", function (e) { if (e.target === this) closeModal(); });
+  $("sell").addEventListener("click", sell);
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if ($("mw").classList.contains("on")) closeModal(); else closeDrawer();
+  });
+
+  /* ---------- Langue ---------- */
+  function setLang(l) {
+    LANG = l === "en" ? "en" : "fr";
+    root.setAttribute("data-lang", LANG); root.lang = LANG; document.title = t("title");
+    document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-l") === LANG); });
+    ["mclose", "dclose"].forEach(function (id) { $(id).setAttribute("aria-label", t("close")); });
+    closeModal();
+    renderCats(); renderFilterControls(); renderGrid(); renderCart(); renderJournal();
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var l = b.getAttribute("data-l");
+      try { localStorage.setItem("gtcLang", l); } catch (e) {}
+      setLang(l);
+    });
+  });
+
+  setLang(LANG);
+  if (state.cat !== "all") setTimeout(goCatalogue, 300);
+})();
+
+</script>
+</body>
+</html>
