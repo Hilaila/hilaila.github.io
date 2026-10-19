@@ -151,7 +151,12 @@
   .asset .nrow { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 6px; }
   .asset .star-tag { position:relative; z-index:1; font-size:9.5px; font-weight:700; letter-spacing:.04em; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-radius:999px; padding:2px 7px; }
   .asset b { font-size:14.5px; line-height:1.3; }
-  .asset > span:last-child { font-size:12px; color:var(--muted); line-height:1.4; }
+  .asset .mlink { position:relative; z-index:1; align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:5px; margin-top:auto; white-space:nowrap; min-height:36px; padding:0 8px; border-radius:999px; border:1px solid rgba(232,200,114,.55); background:rgba(232,200,114,.10); color:var(--gold-2); font:700 12.5px 'Space Grotesk', system-ui, sans-serif; text-decoration:none; }
+  .asset > span { margin-bottom:6px; }
+  .asset .mlink .ic { width:16px; height:16px; border:0; background:transparent; }
+  .asset .mlink .ic svg { width:14px; height:14px; }
+  .asset .mlink:hover, .asset .mlink:focus-visible { background:rgba(232,200,114,.2); }
+  .asset > span { font-size:12px; color:var(--muted); line-height:1.4; }
 
   /* Processus */
   .steps { list-style:none; position:relative; display:grid; gap:12px; padding-left:46px; }
@@ -414,6 +419,23 @@
   .olist b { flex-shrink:0; color:var(--gold-2); }
   .mact { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
   .mact .btn { flex:1 1 auto; }
+  .mact .btn svg { width:18px; height:18px; flex-shrink:0; }
+  /* Code QR d'emballage */
+  .qr-label { margin:14px auto 0; width:min(100%, 300px); padding:16px 16px 14px; border-radius:18px; background:#fff; color:#000; text-align:center; box-shadow:0 0 0 1px rgba(232,200,114,.5), 0 0 30px rgba(201,168,76,.18); }
+  .qr-label .qr-svg { display:block; width:100%; height:auto; image-rendering:pixelated; }
+  .qr-label b { display:block; margin-top:8px; font:700 15px 'Space Grotesk', system-ui, sans-serif; line-height:1.25; color:#000; }
+  .qr-label small { display:block; margin-top:3px; font:600 11px 'JetBrains Mono', monospace; letter-spacing:.06em; color:#333; }
+  .qr-label .qr-tag { display:inline-block; margin-top:7px; padding:2px 8px; border-radius:999px; border:1px solid #000; font:700 10px 'JetBrains Mono', monospace; letter-spacing:.14em; color:#000; }
+  .qr-url { margin-top:12px; padding:9px 12px; border:1px dashed var(--line); border-radius:12px; font:500 11.5px 'JetBrains Mono', monospace; color:var(--gold-2); overflow-wrap:anywhere; text-align:center; }
+  .qr-note { margin-top:10px; font-size:12px !important; color:var(--muted) !important; }
+  @media print {
+    @page { margin:10mm; }
+    html, body { background:#fff !important; }
+    body * { visibility:hidden !important; }
+    .mwrap.on .qr-label, .mwrap.on .qr-label * { visibility:visible !important; }
+    .mwrap.on .qr-label { position:fixed; left:0; right:0; top:0; margin:0 auto; width:62mm; padding:4mm; box-shadow:none; border:0.3mm solid #000; }
+    .mwrap, .modal { background:none !important; box-shadow:none !important; border:0 !important; animation:none !important; backdrop-filter:none !important; }
+  }
   .okbadge { display:inline-flex; align-items:center; gap:8px; margin-bottom:10px; font:700 10.5px 'JetBrains Mono', monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--violet-2); border:1px solid rgba(168,139,255,.45); background:rgba(123,92,214,.12); border-radius:999px; padding:5px 10px; }
 
   /* Bouton panier flottant + notification */
@@ -555,9 +577,186 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "Frog farming"}, "ic": "frog", "a": "#3DDC97", "b": "#0B4434", "star": true}, {"id": "myci", "name": {"fr": "Myciculture", "en": "Mushroom farming"}, "ic": "mushroom", "a": "#A88BFF", "b": "#2E1F63", "star": true}, {"id": "cereales", "name": {"fr": "Céréales", "en": "Cereals"}, "ic": "grain", "a": "#E8C872", "b": "#5E460C"}, {"id": "tubercules", "name": {"fr": "Tubercules & légumes", "en": "Roots & vegetables"}, "ic": "tuber", "a": "#D49A5A", "b": "#45290F"}, {"id": "fruits", "name": {"fr": "Fruits & noix", "en": "Fruits & nuts"}, "ic": "banana", "a": "#F2A541", "b": "#633006"}, {"id": "cacao", "name": {"fr": "Cacao & café", "en": "Cocoa & coffee"}, "ic": "cocoa", "a": "#C27448", "b": "#30170A"}, {"id": "elevage", "name": {"fr": "Élevage & pisciculture", "en": "Livestock & fish farming"}, "ic": "fish", "a": "#4FB3D9", "b": "#0E3049"}, {"id": "transfo", "name": {"fr": "Produits transformés", "en": "Processed goods"}, "ic": "jar", "a": "#F4D35E", "b": "#6E4600"}, {"id": "artisanat", "name": {"fr": "Artisanat", "en": "Crafts"}, "ic": "basket", "a": "#E07A5F", "b": "#4A1A10"}], "products": [{"id": "ra1", "cat": "rani", "ic": "frog", "name": {"fr": "Cuisses de grenouille fraîches", "en": "Fresh frog legs"}, "city": "Grand-Bassam", "c": "CI", "price": 6000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme ranicole", "en": "Frog farm"}, "desc": {"fr": "Grenouilles élevées en bassins contrôlés, préparées puis conditionnées au froid.", "en": "Frogs raised in controlled ponds, then prepared and cold-packed."}}, {"id": "ra2", "cat": "rani", "ic": "frog", "name": {"fr": "Juvéniles de grenouilles", "en": "Frog juveniles"}, "city": "Abidjan", "c": "CI", "price": 150, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Écloserie", "en": "Hatchery"}, "desc": {"fr": "Juvéniles issus d'écloserie, destinés au démarrage de nouveaux bassins d'élevage.", "en": "Hatchery-raised juveniles to stock new rearing ponds."}}, {"id": "my1", "cat": "myci", "ic": "mushroom", "name": {"fr": "Volvaire fraîche", "en": "Fresh paddy-straw mushroom"}, "city": "Yamoussoukro", "c": "CI", "price": 3000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Volvariella volvacea, champignon local africain, cultivé sur paille et récolté le jour même.", "en": "Volvariella volvacea, a local African mushroom grown on straw and harvested the same day."}}, {"id": "my2", "cat": "myci", "ic": "mushroom", "name": {"fr": "Pleurotes séchés", "en": "Dried oyster mushrooms"}, "city": "Bouaké", "c": "CI", "price": 2500, "unit": {"fr": "250 g", "en": "250 g"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Pleurotes séchés à basse température pour une longue conservation.", "en": "Oyster mushrooms dried at low temperature for long storage."}}, {"id": "my3", "cat": "myci", "ic": "spawn", "name": {"fr": "Semence de champignons", "en": "Mushroom spawn"}, "city": "Abidjan", "c": "CI", "price": 2000, "unit": {"fr": "sachet de 1 kg", "en": "1 kg bag"}, "prod": {"fr": "Laboratoire de semences", "en": "Spawn laboratory"}, "desc": {"fr": "Semence (blanc) pour démarrer une culture de volvaire ou de pleurotes.", "en": "Spawn to start growing paddy-straw or oyster mushrooms."}}, {"id": "ce1", "cat": "cereales", "ic": "grain", "name": {"fr": "Riz local blanchi", "en": "Local milled rice"}, "city": "Korhogo", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative rizicole", "en": "Rice cooperative"}, "desc": {"fr": "Riz paddy local, décortiqué et blanchi près des parcelles.", "en": "Local paddy rice, hulled and milled near the fields."}}, {"id": "ce2", "cat": "cereales", "ic": "grain", "name": {"fr": "Maïs grain", "en": "Grain maize"}, "city": "Bobo-Dioulasso", "c": "BF", "price": 300, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement céréalier", "en": "Grain producers' group"}, "desc": {"fr": "Maïs séché et trié, pour la consommation ou l'alimentation animale.", "en": "Dried and sorted maize for food or animal feed."}}, {"id": "tu1", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Manioc frais", "en": "Fresh cassava"}, "city": "Dimbokro", "c": "CI", "price": 250, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative vivrière", "en": "Food-crop cooperative"}, "desc": {"fr": "Racines de manioc récoltées à maturité, pour l'attiéké, le placali ou la cuisson.", "en": "Cassava roots harvested at maturity, for attiéké, placali or cooking."}}, {"id": "tu2", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Igname", "en": "Yam"}, "city": "Bouaké", "c": "CI", "price": 500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement de producteurs", "en": "Producers' group"}, "desc": {"fr": "Igname de la région du Gbêkê, triée par calibre.", "en": "Yam from the Gbêkê region, sorted by size."}}, {"id": "tu3", "cat": "tubercules", "ic": "tomato", "name": {"fr": "Tomates fraîches", "en": "Fresh tomatoes"}, "city": "Thiès", "c": "SN", "price": 700, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Maraîchers", "en": "Market gardeners"}, "desc": {"fr": "Tomates de plein champ, cueillies à maturité.", "en": "Field-grown tomatoes, picked ripe."}}, {"id": "fr1", "cat": "fruits", "ic": "banana", "name": {"fr": "Banane plantain", "en": "Plantain"}, "city": "Agboville", "c": "CI", "price": 400, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme vivrière", "en": "Food-crop farm"}, "desc": {"fr": "Régimes de plantain, mûrs ou verts selon l'usage.", "en": "Plantain bunches, ripe or green depending on use."}}, {"id": "fr2", "cat": "fruits", "ic": "nut", "name": {"fr": "Noix de cajou", "en": "Cashew nuts"}, "city": "Bondoukou", "c": "CI", "price": 4200, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative d'anacarde", "en": "Cashew cooperative"}, "desc": {"fr": "Amandes de cajou décortiquées et séchées.", "en": "Shelled and dried cashew kernels."}}, {"id": "fr3", "cat": "fruits", "ic": "pineapple", "name": {"fr": "Ananas pain de sucre", "en": "Sugarloaf pineapple"}, "city": "Allada", "c": "BJ", "price": 800, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Planteurs d'ananas", "en": "Pineapple growers"}, "desc": {"fr": "Variété douce et peu acide, récoltée à maturité.", "en": "A sweet, low-acid variety, harvested ripe."}}, {"id": "ca1", "cat": "cacao", "ic": "cocoa", "name": {"fr": "Fèves de cacao séchées", "en": "Dried cocoa beans"}, "city": "Soubré", "c": "CI", "price": 2800, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative cacaoyère", "en": "Cocoa cooperative"}, "desc": {"fr": "Fèves fermentées et séchées au soleil.", "en": "Fermented, sun-dried beans."}}, {"id": "ca2", "cat": "cacao", "ic": "bean", "name": {"fr": "Café robusta torréfié", "en": "Roasted robusta coffee"}, "city": "Daloa", "c": "CI", "price": 4000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative caféière", "en": "Coffee cooperative"}, "desc": {"fr": "Robusta torréfié localement, en grains ou moulu.", "en": "Locally roasted robusta, whole bean or ground."}}, {"id": "el1", "cat": "elevage", "ic": "fish", "name": {"fr": "Tilapia frais", "en": "Fresh tilapia"}, "city": "Jacqueville", "c": "CI", "price": 2500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme piscicole", "en": "Fish farm"}, "desc": {"fr": "Tilapia élevé en étangs, vendu entier et frais.", "en": "Pond-raised tilapia, sold whole and fresh."}}, {"id": "el2", "cat": "elevage", "ic": "egg", "name": {"fr": "Œufs fermiers", "en": "Farm eggs"}, "city": "Bingerville", "c": "CI", "price": 2500, "unit": {"fr": "plateau de 30", "en": "tray of 30"}, "prod": {"fr": "Ferme avicole", "en": "Poultry farm"}, "desc": {"fr": "Œufs de poules élevées en plein air.", "en": "Eggs from free-range hens."}}, {"id": "pt1", "cat": "transfo", "ic": "bowl", "name": {"fr": "Attiéké frais", "en": "Fresh attiéké"}, "city": "Dabou", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Transformatrices de manioc", "en": "Cassava processors"}, "desc": {"fr": "Semoule de manioc fermenté, préparée de façon traditionnelle.", "en": "Fermented cassava semolina, traditionally prepared."}}, {"id": "pt2", "cat": "transfo", "ic": "jar", "name": {"fr": "Beurre de karité", "en": "Shea butter"}, "city": "Koudougou", "c": "BF", "price": 3000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative de femmes", "en": "Women's cooperative"}, "desc": {"fr": "Beurre de karité non raffiné, extrait à la main.", "en": "Unrefined shea butter, hand-extracted."}}, {"id": "pt3", "cat": "transfo", "ic": "comb", "name": {"fr": "Miel pur", "en": "Pure honey"}, "city": "Korhogo", "c": "CI", "price": 5000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Apiculteurs", "en": "Beekeepers"}, "desc": {"fr": "Miel de savane, filtré à froid.", "en": "Savannah honey, cold-filtered."}}, {"id": "ar1", "cat": "artisanat", "ic": "cloth", "name": {"fr": "Toile de Korhogo", "en": "Korhogo cloth"}, "city": "Korhogo", "c": "CI", "price": 25000, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Artisans peintres", "en": "Painter artisans"}, "desc": {"fr": "Toile de coton peinte à la main selon la tradition sénoufo.", "en": "Cotton cloth hand-painted in the Senufo tradition."}}, {"id": "ar2", "cat": "artisanat", "ic": "basket", "name": {"fr": "Paniers tressés", "en": "Woven baskets"}, "city": "Ségou", "c": "ML", "price": 7500, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Vanniers", "en": "Basket weavers"}, "desc": {"fr": "Paniers tressés à la main en fibres naturelles.", "en": "Hand-woven baskets in natural fibres."}}], "countries": {"CI": {"fr": "Côte d'Ivoire", "en": "Côte d'Ivoire"}, "SN": {"fr": "Sénégal", "en": "Senegal"}, "BF": {"fr": "Burkina Faso", "en": "Burkina Faso"}, "BJ": {"fr": "Bénin", "en": "Benin"}, "ML": {"fr": "Mali", "en": "Mali"}, "TG": {"fr": "Togo", "en": "Togo"}, "NE": {"fr": "Niger", "en": "Niger"}, "GW": {"fr": "Guinée-Bissau", "en": "Guinea-Bissau"}}, "icons": {"grain": "<path d=\"M12 21V9\"/><path d=\"M12 9c-2.2-.8-3.4-2.8-3.4-5.4 2.2.3 3.4 2.3 3.4 5.4zM12 9c2.2-.8 3.4-2.8 3.4-5.4-2.2.3-3.4 2.3-3.4 5.4z\"/><path d=\"M12 14c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 14c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/><path d=\"M12 19c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 19c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/>", "tuber": "<path d=\"M5.5 19.5c2.5-.8 8.5-5.5 11.6-10.4 1.6-2.6.2-5-2.1-4C10.6 7 6.6 12.8 5.5 19.5z\"/><path d=\"M15.5 5l2.2-2.2M17.2 6.6l3-.9M9 14.5l2 .8M11.6 10.7l2 .8\"/>", "tomato": "<circle cx=\"12\" cy=\"13.5\" r=\"7.2\"/><path d=\"M12 6.3V3.2M8.6 6.8L12 8.6l3.4-1.8M12 8.6l-1.8 2M12 8.6l1.8 2\"/>", "banana": "<path d=\"M4 12.5c2.8 5.6 11.4 6.8 16.5-.8\"/><path d=\"M4 12.5c4.4 2.7 11.6 2.2 16.5-.8\"/><path d=\"M20.5 11.7l.8-3.2M4 12.5L3 11\"/>", "nut": "<path d=\"M7.2 5.2c5-2.2 11 1.6 11 7.8 0 4.2-3 7-6 6.2-2.2-.6-2.3-3-4.3-4.1S3.2 13.4 4 9.3c.4-1.8 1.6-3.3 3.2-4.1z\"/><path d=\"M9 7.5c3-.6 6 1.5 6.6 4.8\"/>", "pineapple": "<path d=\"M12 9.5c3 0 5 2.9 5 6.2S15 21 12 21s-5-2-5-5.3 2-6.2 5-6.2z\"/><path d=\"M12 9.5V3.5M12 6.5L9 3.8M12 6.5l3-2.7M9.6 13l4.8 5M14.4 13l-4.8 5\"/>", "cocoa": "<path d=\"M12 3c3.9 0 6 4 6 9s-2.1 9-6 9-6-4-6-9 2.1-9 6-9z\"/><path d=\"M12 3v18M9 5.2c-.9 4-.9 9.6 0 13.6M15 5.2c.9 4 .9 9.6 0 13.6\"/>", "bean": "<path d=\"M8.2 19.6c-3.6-2.1-4.4-7.6-1.8-12.1s7.8-6.6 11.4-4.5 4.4 7.6 1.8 12.1-7.8 6.6-11.4 4.5z\"/><path d=\"M15.6 3.6c-1.6 2.8-.4 5.6-2.4 8.4s-4.9 3.4-6.2 7.2\"/>", "frog": "<circle cx=\"8.2\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"15.8\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"8.2\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><circle cx=\"15.8\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><path d=\"M5.9 8.6C3.8 10.1 3.2 13.2 4.6 15.6c2 3.4 12.8 3.4 14.8 0 1.4-2.4.8-5.5-1.3-7\"/><path d=\"M9 13.8c1.9 1.2 4.1 1.2 6 0\"/><path d=\"M4.6 15.6l-2 3.6h3M19.4 15.6l2 3.6h-3\"/>", "mushroom": "<path d=\"M3 12.5a9 7.5 0 0 1 18 0z\"/><path d=\"M9.5 12.5v6a2.5 2.5 0 0 0 5 0v-6\"/><circle cx=\"8.6\" cy=\"9\" r=\"1\" fill=\"currentColor\"/><circle cx=\"14.6\" cy=\"7.8\" r=\"1\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"10.4\" r=\".7\" fill=\"currentColor\"/>", "spawn": "<path d=\"M7 7h10l1.5 13.5h-13z\"/><path d=\"M9 7V5.5a3 3 0 0 1 6 0V7\"/><path d=\"M9.5 15.5a2.5 2 0 0 1 5 0z\"/><path d=\"M11 15.5v2h2v-2\"/>", "fish": "<path d=\"M2.5 12c3-4.2 8.2-5.6 12.5-3.4l4.5-3.2v13.2L15 15.4c-4.3 2.2-9.5.8-12.5-3.4z\"/><circle cx=\"7.6\" cy=\"11\" r=\".9\" fill=\"currentColor\"/><path d=\"M10.5 9.5c.8 1.6.8 3.4 0 5\"/>", "egg": "<path d=\"M12 3c3.6 0 6.2 5.2 6.2 10.2a6.2 6.2 0 0 1-12.4 0C5.8 8.2 8.4 3 12 3z\"/><path d=\"M9.2 14.5a3 3 0 0 0 2.8 2.6\"/>", "bowl": "<path d=\"M3 11.5h18a9 8.5 0 0 1-18 0z\"/><path d=\"M8 21h8\"/><path d=\"M9 8.5c0-2 2-2.2 2-4.3M13.2 8.5c0-2 2-2.2 2-4.3\"/>", "jar": "<path d=\"M8 3.5h8M7 6.5h10l1 3.2v8.3a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9.7z\"/><path d=\"M6.4 12h11.2\"/><path d=\"M12 14.3l1.6.9v1.9l-1.6.9-1.6-.9v-1.9z\"/>", "comb": "<path d=\"M12 2.8l4 2.3v4.6L12 12 8 9.7V5.1z\"/><path d=\"M8 9.7L4 12v4.6l4 2.3 4-2.3V12M16 9.7l4 2.3v4.6l-4 2.3-4-2.3\"/>", "cloth": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1.5\"/><path d=\"M7.5 7l2.2 3 2.3-3 2.3 3 2.2-3M7.5 14h9M7.5 17.5h5.5\"/>", "basket": "<path d=\"M3 10h18l-2.2 10H5.2z\"/><path d=\"M8 10l3.2-6M16 10l-3.2-6\"/><path d=\"M6.8 14h10.4M7.4 17h9.2\"/>"}, "ui": {"cart": "<path d=\"M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3\"/><circle cx=\"9.5\" cy=\"19.5\" r=\"1.4\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.4\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M16 16l4.5 4.5\"/>", "filter": "<path d=\"M4 6h16M7 12h10M10 18h4\"/>", "heart": "<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z\"/>", "pin": "<path d=\"M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5\"/><circle cx=\"12\" cy=\"7.8\" r=\".9\" fill=\"currentColor\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "minus": "<path d=\"M5 12h14\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "x": "<path d=\"M6 6l12 12M18 6L6 18\"/>", "store": "<path d=\"M4 9l1.5-5h13L20 9\"/><path d=\"M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0\"/><path d=\"M5 11v9h14v-9M10 20v-5h4v5\"/>", "hash": "<path d=\"M5 9h14M5 15h14M10 4L8 20M16 4l-2 16\"/>", "truck": "<path d=\"M3 6h11v10H3zM14 10h4l3 3v3h-7\"/><circle cx=\"7\" cy=\"18\" r=\"1.8\"/><circle cx=\"17.5\" cy=\"18\" r=\"1.8\"/>", "star": "<path d=\"M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z\"/>", "grid": "<rect x=\"4\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"4\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/>", "link": "<path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>"}};
+var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "Frog farming"}, "ic": "frog", "a": "#3DDC97", "b": "#0B4434", "star": true}, {"id": "myci", "name": {"fr": "Myciculture", "en": "Mushroom farming"}, "ic": "mushroom", "a": "#A88BFF", "b": "#2E1F63", "star": true}, {"id": "cereales", "name": {"fr": "Céréales", "en": "Cereals"}, "ic": "grain", "a": "#E8C872", "b": "#5E460C"}, {"id": "tubercules", "name": {"fr": "Tubercules & légumes", "en": "Roots & vegetables"}, "ic": "tuber", "a": "#D49A5A", "b": "#45290F"}, {"id": "fruits", "name": {"fr": "Fruits & noix", "en": "Fruits & nuts"}, "ic": "banana", "a": "#F2A541", "b": "#633006"}, {"id": "cacao", "name": {"fr": "Cacao & café", "en": "Cocoa & coffee"}, "ic": "cocoa", "a": "#C27448", "b": "#30170A"}, {"id": "elevage", "name": {"fr": "Élevage & pisciculture", "en": "Livestock & fish farming"}, "ic": "fish", "a": "#4FB3D9", "b": "#0E3049"}, {"id": "transfo", "name": {"fr": "Produits transformés", "en": "Processed goods"}, "ic": "jar", "a": "#F4D35E", "b": "#6E4600"}, {"id": "artisanat", "name": {"fr": "Artisanat", "en": "Crafts"}, "ic": "basket", "a": "#E07A5F", "b": "#4A1A10"}], "products": [{"id": "ra1", "cat": "rani", "ic": "frog", "name": {"fr": "Cuisses de grenouille fraîches", "en": "Fresh frog legs"}, "city": "Grand-Bassam", "c": "CI", "price": 6000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme ranicole", "en": "Frog farm"}, "desc": {"fr": "Grenouilles élevées en bassins contrôlés, préparées puis conditionnées au froid.", "en": "Frogs raised in controlled ponds, then prepared and cold-packed."}}, {"id": "ra2", "cat": "rani", "ic": "frog", "name": {"fr": "Juvéniles de grenouilles", "en": "Frog juveniles"}, "city": "Abidjan", "c": "CI", "price": 150, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Écloserie", "en": "Hatchery"}, "desc": {"fr": "Juvéniles issus d'écloserie, destinés au démarrage de nouveaux bassins d'élevage.", "en": "Hatchery-raised juveniles to stock new rearing ponds."}}, {"id": "my1", "cat": "myci", "ic": "mushroom", "name": {"fr": "Volvaire fraîche", "en": "Fresh paddy-straw mushroom"}, "city": "Yamoussoukro", "c": "CI", "price": 3000, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Volvariella volvacea, champignon local africain, cultivé sur paille et récolté le jour même.", "en": "Volvariella volvacea, a local African mushroom grown on straw and harvested the same day."}}, {"id": "my2", "cat": "myci", "ic": "mushroom", "name": {"fr": "Pleurotes séchés", "en": "Dried oyster mushrooms"}, "city": "Bouaké", "c": "CI", "price": 2500, "unit": {"fr": "250 g", "en": "250 g"}, "prod": {"fr": "Champignonnière", "en": "Mushroom farm"}, "desc": {"fr": "Pleurotes séchés à basse température pour une longue conservation.", "en": "Oyster mushrooms dried at low temperature for long storage."}}, {"id": "my3", "cat": "myci", "ic": "spawn", "name": {"fr": "Semence de champignons", "en": "Mushroom spawn"}, "city": "Abidjan", "c": "CI", "price": 2000, "unit": {"fr": "sachet de 1 kg", "en": "1 kg bag"}, "prod": {"fr": "Laboratoire de semences", "en": "Spawn laboratory"}, "desc": {"fr": "Semence (blanc) pour démarrer une culture de volvaire ou de pleurotes.", "en": "Spawn to start growing paddy-straw or oyster mushrooms."}}, {"id": "ce1", "cat": "cereales", "ic": "grain", "name": {"fr": "Riz local blanchi", "en": "Local milled rice"}, "city": "Korhogo", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative rizicole", "en": "Rice cooperative"}, "desc": {"fr": "Riz paddy local, décortiqué et blanchi près des parcelles.", "en": "Local paddy rice, hulled and milled near the fields."}}, {"id": "ce2", "cat": "cereales", "ic": "grain", "name": {"fr": "Maïs grain", "en": "Grain maize"}, "city": "Bobo-Dioulasso", "c": "BF", "price": 300, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement céréalier", "en": "Grain producers' group"}, "desc": {"fr": "Maïs séché et trié, pour la consommation ou l'alimentation animale.", "en": "Dried and sorted maize for food or animal feed."}}, {"id": "tu1", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Manioc frais", "en": "Fresh cassava"}, "city": "Dimbokro", "c": "CI", "price": 250, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative vivrière", "en": "Food-crop cooperative"}, "desc": {"fr": "Racines de manioc récoltées à maturité, pour l'attiéké, le placali ou la cuisson.", "en": "Cassava roots harvested at maturity, for attiéké, placali or cooking."}}, {"id": "tu2", "cat": "tubercules", "ic": "tuber", "name": {"fr": "Igname", "en": "Yam"}, "city": "Bouaké", "c": "CI", "price": 500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Groupement de producteurs", "en": "Producers' group"}, "desc": {"fr": "Igname de la région du Gbêkê, triée par calibre.", "en": "Yam from the Gbêkê region, sorted by size."}}, {"id": "tu3", "cat": "tubercules", "ic": "tomato", "name": {"fr": "Tomates fraîches", "en": "Fresh tomatoes"}, "city": "Thiès", "c": "SN", "price": 700, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Maraîchers", "en": "Market gardeners"}, "desc": {"fr": "Tomates de plein champ, cueillies à maturité.", "en": "Field-grown tomatoes, picked ripe."}}, {"id": "fr1", "cat": "fruits", "ic": "banana", "name": {"fr": "Banane plantain", "en": "Plantain"}, "city": "Agboville", "c": "CI", "price": 400, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme vivrière", "en": "Food-crop farm"}, "desc": {"fr": "Régimes de plantain, mûrs ou verts selon l'usage.", "en": "Plantain bunches, ripe or green depending on use."}}, {"id": "fr2", "cat": "fruits", "ic": "nut", "name": {"fr": "Noix de cajou", "en": "Cashew nuts"}, "city": "Bondoukou", "c": "CI", "price": 4200, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative d'anacarde", "en": "Cashew cooperative"}, "desc": {"fr": "Amandes de cajou décortiquées et séchées.", "en": "Shelled and dried cashew kernels."}}, {"id": "fr3", "cat": "fruits", "ic": "pineapple", "name": {"fr": "Ananas pain de sucre", "en": "Sugarloaf pineapple"}, "city": "Allada", "c": "BJ", "price": 800, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Planteurs d'ananas", "en": "Pineapple growers"}, "desc": {"fr": "Variété douce et peu acide, récoltée à maturité.", "en": "A sweet, low-acid variety, harvested ripe."}}, {"id": "ca1", "cat": "cacao", "ic": "cocoa", "name": {"fr": "Fèves de cacao séchées", "en": "Dried cocoa beans"}, "city": "Soubré", "c": "CI", "price": 2800, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Coopérative cacaoyère", "en": "Cocoa cooperative"}, "desc": {"fr": "Fèves fermentées et séchées au soleil.", "en": "Fermented, sun-dried beans."}}, {"id": "ca2", "cat": "cacao", "ic": "bean", "name": {"fr": "Café robusta torréfié", "en": "Roasted robusta coffee"}, "city": "Daloa", "c": "CI", "price": 4000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative caféière", "en": "Coffee cooperative"}, "desc": {"fr": "Robusta torréfié localement, en grains ou moulu.", "en": "Locally roasted robusta, whole bean or ground."}}, {"id": "el1", "cat": "elevage", "ic": "fish", "name": {"fr": "Tilapia frais", "en": "Fresh tilapia"}, "city": "Jacqueville", "c": "CI", "price": 2500, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Ferme piscicole", "en": "Fish farm"}, "desc": {"fr": "Tilapia élevé en étangs, vendu entier et frais.", "en": "Pond-raised tilapia, sold whole and fresh."}}, {"id": "el2", "cat": "elevage", "ic": "egg", "name": {"fr": "Œufs fermiers", "en": "Farm eggs"}, "city": "Bingerville", "c": "CI", "price": 2500, "unit": {"fr": "plateau de 30", "en": "tray of 30"}, "prod": {"fr": "Ferme avicole", "en": "Poultry farm"}, "desc": {"fr": "Œufs de poules élevées en plein air.", "en": "Eggs from free-range hens."}}, {"id": "pt1", "cat": "transfo", "ic": "bowl", "name": {"fr": "Attiéké frais", "en": "Fresh attiéké"}, "city": "Dabou", "c": "CI", "price": 600, "unit": {"fr": "kg", "en": "kg"}, "prod": {"fr": "Transformatrices de manioc", "en": "Cassava processors"}, "desc": {"fr": "Semoule de manioc fermenté, préparée de façon traditionnelle.", "en": "Fermented cassava semolina, traditionally prepared."}}, {"id": "pt2", "cat": "transfo", "ic": "jar", "name": {"fr": "Beurre de karité", "en": "Shea butter"}, "city": "Koudougou", "c": "BF", "price": 3000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Coopérative de femmes", "en": "Women's cooperative"}, "desc": {"fr": "Beurre de karité non raffiné, extrait à la main.", "en": "Unrefined shea butter, hand-extracted."}}, {"id": "pt3", "cat": "transfo", "ic": "comb", "name": {"fr": "Miel pur", "en": "Pure honey"}, "city": "Korhogo", "c": "CI", "price": 5000, "unit": {"fr": "500 g", "en": "500 g"}, "prod": {"fr": "Apiculteurs", "en": "Beekeepers"}, "desc": {"fr": "Miel de savane, filtré à froid.", "en": "Savannah honey, cold-filtered."}}, {"id": "ar1", "cat": "artisanat", "ic": "cloth", "name": {"fr": "Toile de Korhogo", "en": "Korhogo cloth"}, "city": "Korhogo", "c": "CI", "price": 25000, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Artisans peintres", "en": "Painter artisans"}, "desc": {"fr": "Toile de coton peinte à la main selon la tradition sénoufo.", "en": "Cotton cloth hand-painted in the Senufo tradition."}}, {"id": "ar2", "cat": "artisanat", "ic": "basket", "name": {"fr": "Paniers tressés", "en": "Woven baskets"}, "city": "Ségou", "c": "ML", "price": 7500, "unit": {"fr": "pièce", "en": "piece"}, "prod": {"fr": "Vanniers", "en": "Basket weavers"}, "desc": {"fr": "Paniers tressés à la main en fibres naturelles.", "en": "Hand-woven baskets in natural fibres."}}], "countries": {"CI": {"fr": "Côte d'Ivoire", "en": "Côte d'Ivoire"}, "SN": {"fr": "Sénégal", "en": "Senegal"}, "BF": {"fr": "Burkina Faso", "en": "Burkina Faso"}, "BJ": {"fr": "Bénin", "en": "Benin"}, "ML": {"fr": "Mali", "en": "Mali"}, "TG": {"fr": "Togo", "en": "Togo"}, "NE": {"fr": "Niger", "en": "Niger"}, "GW": {"fr": "Guinée-Bissau", "en": "Guinea-Bissau"}}, "icons": {"grain": "<path d=\"M12 21V9\"/><path d=\"M12 9c-2.2-.8-3.4-2.8-3.4-5.4 2.2.3 3.4 2.3 3.4 5.4zM12 9c2.2-.8 3.4-2.8 3.4-5.4-2.2.3-3.4 2.3-3.4 5.4z\"/><path d=\"M12 14c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 14c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/><path d=\"M12 19c-2.3-.8-3.8-2.8-3.8-5.2 2.3.3 3.8 2.3 3.8 5.2zM12 19c2.3-.8 3.8-2.8 3.8-5.2-2.3.3-3.8 2.3-3.8 5.2z\"/>", "tuber": "<path d=\"M5.5 19.5c2.5-.8 8.5-5.5 11.6-10.4 1.6-2.6.2-5-2.1-4C10.6 7 6.6 12.8 5.5 19.5z\"/><path d=\"M15.5 5l2.2-2.2M17.2 6.6l3-.9M9 14.5l2 .8M11.6 10.7l2 .8\"/>", "tomato": "<circle cx=\"12\" cy=\"13.5\" r=\"7.2\"/><path d=\"M12 6.3V3.2M8.6 6.8L12 8.6l3.4-1.8M12 8.6l-1.8 2M12 8.6l1.8 2\"/>", "banana": "<path d=\"M4 12.5c2.8 5.6 11.4 6.8 16.5-.8\"/><path d=\"M4 12.5c4.4 2.7 11.6 2.2 16.5-.8\"/><path d=\"M20.5 11.7l.8-3.2M4 12.5L3 11\"/>", "nut": "<path d=\"M7.2 5.2c5-2.2 11 1.6 11 7.8 0 4.2-3 7-6 6.2-2.2-.6-2.3-3-4.3-4.1S3.2 13.4 4 9.3c.4-1.8 1.6-3.3 3.2-4.1z\"/><path d=\"M9 7.5c3-.6 6 1.5 6.6 4.8\"/>", "pineapple": "<path d=\"M12 9.5c3 0 5 2.9 5 6.2S15 21 12 21s-5-2-5-5.3 2-6.2 5-6.2z\"/><path d=\"M12 9.5V3.5M12 6.5L9 3.8M12 6.5l3-2.7M9.6 13l4.8 5M14.4 13l-4.8 5\"/>", "cocoa": "<path d=\"M12 3c3.9 0 6 4 6 9s-2.1 9-6 9-6-4-6-9 2.1-9 6-9z\"/><path d=\"M12 3v18M9 5.2c-.9 4-.9 9.6 0 13.6M15 5.2c.9 4 .9 9.6 0 13.6\"/>", "bean": "<path d=\"M8.2 19.6c-3.6-2.1-4.4-7.6-1.8-12.1s7.8-6.6 11.4-4.5 4.4 7.6 1.8 12.1-7.8 6.6-11.4 4.5z\"/><path d=\"M15.6 3.6c-1.6 2.8-.4 5.6-2.4 8.4s-4.9 3.4-6.2 7.2\"/>", "frog": "<circle cx=\"8.2\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"15.8\" cy=\"7.2\" r=\"2.4\"/><circle cx=\"8.2\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><circle cx=\"15.8\" cy=\"7.2\" r=\".7\" fill=\"currentColor\"/><path d=\"M5.9 8.6C3.8 10.1 3.2 13.2 4.6 15.6c2 3.4 12.8 3.4 14.8 0 1.4-2.4.8-5.5-1.3-7\"/><path d=\"M9 13.8c1.9 1.2 4.1 1.2 6 0\"/><path d=\"M4.6 15.6l-2 3.6h3M19.4 15.6l2 3.6h-3\"/>", "mushroom": "<path d=\"M3 12.5a9 7.5 0 0 1 18 0z\"/><path d=\"M9.5 12.5v6a2.5 2.5 0 0 0 5 0v-6\"/><circle cx=\"8.6\" cy=\"9\" r=\"1\" fill=\"currentColor\"/><circle cx=\"14.6\" cy=\"7.8\" r=\"1\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"10.4\" r=\".7\" fill=\"currentColor\"/>", "spawn": "<path d=\"M7 7h10l1.5 13.5h-13z\"/><path d=\"M9 7V5.5a3 3 0 0 1 6 0V7\"/><path d=\"M9.5 15.5a2.5 2 0 0 1 5 0z\"/><path d=\"M11 15.5v2h2v-2\"/>", "fish": "<path d=\"M2.5 12c3-4.2 8.2-5.6 12.5-3.4l4.5-3.2v13.2L15 15.4c-4.3 2.2-9.5.8-12.5-3.4z\"/><circle cx=\"7.6\" cy=\"11\" r=\".9\" fill=\"currentColor\"/><path d=\"M10.5 9.5c.8 1.6.8 3.4 0 5\"/>", "egg": "<path d=\"M12 3c3.6 0 6.2 5.2 6.2 10.2a6.2 6.2 0 0 1-12.4 0C5.8 8.2 8.4 3 12 3z\"/><path d=\"M9.2 14.5a3 3 0 0 0 2.8 2.6\"/>", "bowl": "<path d=\"M3 11.5h18a9 8.5 0 0 1-18 0z\"/><path d=\"M8 21h8\"/><path d=\"M9 8.5c0-2 2-2.2 2-4.3M13.2 8.5c0-2 2-2.2 2-4.3\"/>", "jar": "<path d=\"M8 3.5h8M7 6.5h10l1 3.2v8.3a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9.7z\"/><path d=\"M6.4 12h11.2\"/><path d=\"M12 14.3l1.6.9v1.9l-1.6.9-1.6-.9v-1.9z\"/>", "comb": "<path d=\"M12 2.8l4 2.3v4.6L12 12 8 9.7V5.1z\"/><path d=\"M8 9.7L4 12v4.6l4 2.3 4-2.3V12M16 9.7l4 2.3v4.6l-4 2.3-4-2.3\"/>", "cloth": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"1.5\"/><path d=\"M7.5 7l2.2 3 2.3-3 2.3 3 2.2-3M7.5 14h9M7.5 17.5h5.5\"/>", "basket": "<path d=\"M3 10h18l-2.2 10H5.2z\"/><path d=\"M8 10l3.2-6M16 10l-3.2-6\"/><path d=\"M6.8 14h10.4M7.4 17h9.2\"/>"}, "ui": {"cart": "<path d=\"M3 4h2.5l2.2 10.5a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.3\"/><circle cx=\"9.5\" cy=\"19.5\" r=\"1.4\"/><circle cx=\"17\" cy=\"19.5\" r=\"1.4\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6.5\"/><path d=\"M16 16l4.5 4.5\"/>", "filter": "<path d=\"M4 6h16M7 12h10M10 18h4\"/>", "heart": "<path d=\"M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z\"/>", "pin": "<path d=\"M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z\"/><circle cx=\"12\" cy=\"9.5\" r=\"2.5\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5\"/><circle cx=\"12\" cy=\"7.8\" r=\".9\" fill=\"currentColor\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "minus": "<path d=\"M5 12h14\"/>", "trash": "<path d=\"M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13\"/>", "x": "<path d=\"M6 6l12 12M18 6L6 18\"/>", "store": "<path d=\"M4 9l1.5-5h13L20 9\"/><path d=\"M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0\"/><path d=\"M5 11v9h14v-9M10 20v-5h4v5\"/>", "hash": "<path d=\"M5 9h14M5 15h14M10 4L8 20M16 4l-2 16\"/>", "truck": "<path d=\"M3 6h11v10H3zM14 10h4l3 3v3h-7\"/><circle cx=\"7\" cy=\"18\" r=\"1.8\"/><circle cx=\"17.5\" cy=\"18\" r=\"1.8\"/>", "star": "<path d=\"M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z\"/>", "grid": "<rect x=\"4\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"4\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"4\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"13\" y=\"13\" width=\"7\" height=\"7\" rx=\"1.5\"/>", "link": "<path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "qr": "<rect x=\"4\" y=\"4\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"14\" y=\"4\" width=\"6\" height=\"6\" rx=\"1\"/><rect x=\"4\" y=\"14\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5zM14 20h1.5M20 14v1.5\"/>", "print": "<path d=\"M7 9V4h10v5\"/><path d=\"M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2\"/><rect x=\"7\" y=\"14\" width=\"10\" height=\"6\" rx=\"1\"/>", "save": "<path d=\"M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14\"/>"}};
 </script>
 <script>
+/* GeoTerraChain QFS — générateur de code QR (sans dépendance).
+   Norme ISO/IEC 18004 : mode octet (UTF-8), versions 1 à 10, niveaux L, M, Q, H,
+   correction d'erreurs Reed-Solomon, choix automatique du meilleur masque.
+   Usage : GTCQR.make("https://…", "Q") → { size, version, mask, dark(x, y) } */
+var GTCQR = (function () {
+  "use strict";
+  // [octets EC par bloc, blocs groupe 1, octets données groupe 1, blocs groupe 2, octets données groupe 2]
+  var TABLE = {
+    L: [[7,1,19,0,0],[10,1,34,0,0],[15,1,55,0,0],[20,1,80,0,0],[26,1,108,0,0],[18,2,68,0,0],[20,2,78,0,0],[24,2,97,0,0],[30,2,116,0,0],[18,2,68,2,69]],
+    M: [[10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],[16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37],[26,4,43,1,44]],
+    Q: [[13,1,13,0,0],[22,1,22,0,0],[18,2,17,0,0],[26,2,24,0,0],[18,2,15,2,16],[24,4,19,0,0],[18,2,14,4,15],[22,4,18,2,19],[20,4,16,4,17],[24,6,19,2,20]],
+    H: [[17,1,9,0,0],[28,1,16,0,0],[22,2,13,0,0],[16,4,9,0,0],[22,2,11,2,12],[28,4,15,0,0],[26,4,13,1,14],[26,4,14,2,15],[24,4,12,4,13],[28,6,15,2,16]]
+  };
+  var FORMAT = { L: 1, M: 0, Q: 3, H: 2 };
+  var ALIGN = [[], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50]];
+
+  function utf8(s) {
+    if (typeof TextEncoder !== "undefined") return Array.prototype.slice.call(new TextEncoder().encode(String(s)));
+    var out = [], b = unescape(encodeURIComponent(String(s)));
+    for (var i = 0; i < b.length; i++) out.push(b.charCodeAt(i));
+    return out;
+  }
+  function bit(x, i) { return ((x >>> i) & 1) !== 0; }
+
+  // Reed-Solomon sur GF(256), polynôme 0x11D
+  function mul(x, y) {
+    var z = 0;
+    for (var i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; }
+    return z & 0xFF;
+  }
+  function divisor(deg) {
+    var r = []; for (var i = 0; i < deg - 1; i++) r.push(0); r.push(1);
+    var root = 1;
+    for (var k = 0; k < deg; k++) {
+      for (var j = 0; j < r.length; j++) { r[j] = mul(r[j], root); if (j + 1 < r.length) r[j] ^= r[j + 1]; }
+      root = mul(root, 2);
+    }
+    return r;
+  }
+  function remainder(data, div) {
+    var r = div.map(function () { return 0; });
+    data.forEach(function (b) {
+      var f = b ^ r.shift(); r.push(0);
+      div.forEach(function (c, i) { r[i] ^= mul(c, f); });
+    });
+    return r;
+  }
+
+  function codewords(bytes, ver, ecl) {
+    var t = TABLE[ecl][ver - 1], ecLen = t[0];
+    var dataLen = t[1] * t[2] + t[3] * t[4];
+    var bits = [];
+    function put(v, n) { for (var i = n - 1; i >= 0; i--) bits.push((v >>> i) & 1); }
+    put(4, 4); put(bytes.length, ver < 10 ? 8 : 16);
+    bytes.forEach(function (b) { put(b, 8); });
+    var cap = dataLen * 8;
+    put(0, Math.min(4, cap - bits.length));
+    while (bits.length % 8) bits.push(0);
+    var data = [];
+    for (var i = 0; i < bits.length; i += 8) { var v = 0; for (var j = 0; j < 8; j++) v = (v << 1) | bits[i + j]; data.push(v); }
+    for (var p = 0; data.length < dataLen; p++) data.push(p % 2 ? 0x11 : 0xEC);
+    // Blocs, correction d'erreurs, entrelacement
+    var blocks = [], ecs = [], pos = 0, div = divisor(ecLen);
+    [[t[1], t[2]], [t[3], t[4]]].forEach(function (g) {
+      for (var n = 0; n < g[0]; n++) { var blk = data.slice(pos, pos + g[1]); pos += g[1]; blocks.push(blk); ecs.push(remainder(blk, div)); }
+    });
+    var out = [], maxLen = Math.max.apply(null, blocks.map(function (b) { return b.length; }));
+    for (var k = 0; k < maxLen; k++) blocks.forEach(function (b) { if (k < b.length) out.push(b[k]); });
+    for (var e = 0; e < ecLen; e++) ecs.forEach(function (c) { out.push(c[e]); });
+    return out;
+  }
+
+  function build(ver, ecl, cw, mask) {
+    var size = ver * 4 + 17, m = [], fn = [];
+    for (var y = 0; y < size; y++) { m.push([]); fn.push([]); for (var x = 0; x < size; x++) { m[y].push(false); fn[y].push(false); } }
+    function set(x, y, d) { m[y][x] = d; fn[y][x] = true; }
+    for (var i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    [[3, 3], [size - 4, 3], [3, size - 4]].forEach(function (c) {
+      for (var dy = -4; dy <= 4; dy++) for (var dx = -4; dx <= 4; dx++) {
+        var d = Math.max(Math.abs(dx), Math.abs(dy)), xx = c[0] + dx, yy = c[1] + dy;
+        if (xx >= 0 && xx < size && yy >= 0 && yy < size) set(xx, yy, d !== 2 && d !== 4);
+      }
+    });
+    var al = ALIGN[ver - 1], na = al.length;
+    for (var a = 0; a < na; a++) for (var b = 0; b < na; b++) {
+      if ((a === 0 && b === 0) || (a === 0 && b === na - 1) || (a === na - 1 && b === 0)) continue;
+      for (var ay = -2; ay <= 2; ay++) for (var ax = -2; ax <= 2; ax++) set(al[a] + ax, al[b] + ay, Math.max(Math.abs(ax), Math.abs(ay)) !== 1);
+    }
+    function format(mk) {
+      var data = FORMAT[ecl] << 3 | mk, rem = data;
+      for (var k = 0; k < 10; k++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+      var bits = (data << 10 | rem) ^ 0x5412;
+      for (var i1 = 0; i1 <= 5; i1++) set(8, i1, bit(bits, i1));
+      set(8, 7, bit(bits, 6)); set(8, 8, bit(bits, 7)); set(7, 8, bit(bits, 8));
+      for (var i2 = 9; i2 < 15; i2++) set(14 - i2, 8, bit(bits, i2));
+      for (var i3 = 0; i3 < 8; i3++) set(size - 1 - i3, 8, bit(bits, i3));
+      for (var i4 = 8; i4 < 15; i4++) set(8, size - 15 + i4, bit(bits, i4));
+      set(8, size - 8, true);
+    }
+    format(0);
+    if (ver >= 7) {
+      var rv = ver;
+      for (var k2 = 0; k2 < 12; k2++) rv = (rv << 1) ^ ((rv >>> 11) * 0x1F25);
+      var vb = ver << 12 | rv;
+      for (var v = 0; v < 18; v++) { var c1 = size - 11 + v % 3, c2 = Math.floor(v / 3); set(c1, c2, bit(vb, v)); set(c2, c1, bit(vb, v)); }
+    }
+    // Placement des données en zigzag
+    var n = 0;
+    for (var right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (var vert = 0; vert < size; vert++) for (var j = 0; j < 2; j++) {
+        var px = right - j, up = ((right + 1) & 2) === 0, py = up ? size - 1 - vert : vert;
+        if (!fn[py][px] && n < cw.length * 8) { m[py][px] = bit(cw[n >>> 3], 7 - (n & 7)); n++; }
+      }
+    }
+    function maskOn(mk, x, y) {
+      switch (mk) {
+        case 0: return (x + y) % 2 === 0;
+        case 1: return y % 2 === 0;
+        case 2: return x % 3 === 0;
+        case 3: return (x + y) % 3 === 0;
+        case 4: return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0;
+        case 5: return x * y % 2 + x * y % 3 === 0;
+        case 6: return (x * y % 2 + x * y % 3) % 2 === 0;
+        default: return ((x + y) % 2 + x * y % 3) % 2 === 0;
+      }
+    }
+    function apply(mk) { for (var yy = 0; yy < size; yy++) for (var xx = 0; xx < size; xx++) if (!fn[yy][xx] && maskOn(mk, xx, yy)) m[yy][xx] = !m[yy][xx]; }
+    function penalty() {
+      var s = 0, dark = 0, line, run, k3;
+      for (var r = 0; r < 2; r++) for (var i5 = 0; i5 < size; i5++) {
+        line = []; for (var j5 = 0; j5 < size; j5++) line.push(r ? m[j5][i5] : m[i5][j5]);
+        run = 1;
+        for (var q = 1; q <= size; q++) {
+          if (q < size && line[q] === line[q - 1]) run++;
+          else { if (run >= 5) s += 3 + run - 5; run = 1; }
+        }
+        var pat = line.map(function (d) { return d ? 1 : 0; }).join("");
+        ["10111010000", "00001011101"].forEach(function (f) { k3 = pat.indexOf(f); while (k3 >= 0) { s += 40; k3 = pat.indexOf(f, k3 + 1); } });
+      }
+      for (var y2 = 0; y2 < size; y2++) for (var x2 = 0; x2 < size; x2++) {
+        if (m[y2][x2]) dark++;
+        if (y2 < size - 1 && x2 < size - 1 && m[y2][x2] === m[y2][x2 + 1] && m[y2][x2] === m[y2 + 1][x2] && m[y2][x2] === m[y2 + 1][x2 + 1]) s += 3;
+      }
+      var total = size * size;
+      return s + (Math.ceil(Math.abs(dark * 20 - total * 10) / total) - 1) * 10;
+    }
+    var best = mask;
+    if (best == null) {
+      var low = Infinity;
+      for (var mk = 0; mk < 8; mk++) { apply(mk); format(mk); var p = penalty(); if (p < low) { low = p; best = mk; } apply(mk); }
+    }
+    apply(best); format(best);
+    return { size: size, version: ver, mask: best, ecl: ecl, dark: function (x, y) { return x >= 0 && y >= 0 && x < size && y < size && m[y][x]; } };
+  }
+
+  function make(text, ecl, mask) {
+    ecl = TABLE[ecl] ? ecl : "Q";
+    var bytes = utf8(text);
+    for (var ver = 1; ver <= 10; ver++) {
+      var t = TABLE[ecl][ver - 1], dataBits = (t[1] * t[2] + t[3] * t[4]) * 8;
+      if (4 + (ver < 10 ? 8 : 16) + bytes.length * 8 <= dataBits) return build(ver, ecl, codewords(bytes, ver, ecl), mask);
+    }
+    throw new Error("QR_TOO_LONG");
+  }
+
+  // Dessin SVG (marge blanche de 4 modules, exigée pour la lecture)
+  function svg(q, label) {
+    var n = q.size + 8, d = "";
+    for (var y = 0; y < q.size; y++) for (var x = 0; x < q.size; x++) if (q.dark(x, y)) d += "M" + (x + 4) + " " + (y + 4) + "h1v1h-1z";
+    return '<svg class="qr-svg" viewBox="0 0 ' + n + " " + n + '" role="img" aria-label="' + String(label || "QR").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") + '" shape-rendering="crispEdges">' +
+      '<rect width="' + n + '" height="' + n + '" fill="#fff"/><path fill="#000" d="' + d + '"/></svg>';
+  }
+
+  return { make: make, svg: svg };
+})();
+
 (function () {
   "use strict";
   var D = window.GTC_MARKET || {};
@@ -595,7 +794,14 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
       jAdd: "Ajout au panier", jOrder: "Commande de démonstration", jLocal: "Horodaté sur l'appareil · non on-chain",
       sellTitle: "Espace producteur",
       sellBody: "<p>L'espace producteur ouvrira après la phase pilote : publication d'annonces par des producteurs vérifiés (KYC fait sur Pi Network), gestion des lots et commandes payées en Pi.</p><p>Vous pouvez dès aujourd'hui tokeniser un actif agro-pastoral : bassin ranicole, champignonnière, plantation, élevage…</p>",
-      sellCta: "Tokeniser un actif", cart: "Mon panier", cats: "Catégories"
+      sellCta: "Tokeniser un actif", cart: "Mon panier", cats: "Catégories",
+      qrBtn: "Code QR", qrKick: "Étiquette d'emballage", qrTag: "EXEMPLE",
+      qrText: "À imprimer ou à photographier pour l'emballage. Scanné avec un téléphone, ce code ouvre la fiche de ce produit sur la Marketplace.",
+      qrLink: "Lien contenu dans le code", qrPrint: "Imprimer", qrSave: "Enregistrer l'image", qrBack: "← Retour à la fiche",
+      qrNote: "Démonstration : ce code renvoie vers un produit d'exemple. Dans la version réelle, chaque lot aura son propre code, relié à sa traçabilité vérifiée.",
+      qrSaved: "Image du code QR enregistrée.", qrSaveKo: "Enregistrement impossible ici : faites une capture d'écran du code.",
+      qrPrintKo: "Impression indisponible dans ce navigateur : enregistrez l'image ou faites une capture d'écran.",
+      qrAlt: "Code QR du produit {name}"
     },
     en: {
       title: "Marketplace — GeoTerraChain QFS",
@@ -625,7 +831,14 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
       jAdd: "Added to basket", jOrder: "Demo order", jLocal: "Device timestamp · not on-chain",
       sellTitle: "Producer space",
       sellBody: "<p>The producer space will open after the pilot phase: listings by verified producers (KYC done on Pi Network), batch management and orders paid in Pi.</p><p>You can already tokenize an agro-pastoral asset today: frog ponds, a mushroom farm, a plantation, livestock…</p>",
-      sellCta: "Tokenize an asset", cart: "My basket", cats: "Categories"
+      sellCta: "Tokenize an asset", cart: "My basket", cats: "Categories",
+      qrBtn: "QR code", qrKick: "Packaging label", qrTag: "EXAMPLE",
+      qrText: "Print it or take a photo of it for the packaging. When scanned with a phone, this code opens this product's page on the Marketplace.",
+      qrLink: "Link inside the code", qrPrint: "Print", qrSave: "Save the image", qrBack: "← Back to the product",
+      qrNote: "Demo: this code points to a sample product. In the real version, each batch will have its own code, linked to its verified traceability.",
+      qrSaved: "QR code image saved.", qrSaveKo: "Saving is not possible here: take a screenshot of the code.",
+      qrPrintKo: "Printing is not available in this browser: save the image or take a screenshot.",
+      qrAlt: "QR code for {name}"
     }
   };
   function t(k) { return (S[LANG] && S[LANG][k] != null) ? S[LANG][k] : (S.fr[k] != null ? S.fr[k] : k); }
@@ -779,6 +992,7 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
   function openModal(html) {
     lastFocus = document.activeElement;
     $("mbody").innerHTML = html;
+    var md = $("mw").querySelector(".modal"); if (md) md.scrollTop = 0;
     $("mw").classList.add("on");
     var b = $("mw").querySelector(".mact .btn") || $("mclose"); try { b.focus({ preventScroll: true }); } catch (e) {}
   }
@@ -799,7 +1013,54 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
       '<h3 class="md-h">' + svg(UI.link) + t("trace") + '</h3><ol class="tl">' + steps.map(function (s, i) {
         return '<li class="' + s[2] + '"><i>' + (i + 1) + "</i><div><b>" + t(s[0]) + "</b><span>" + esc(s[1]) + '</span></div><em class="' + (s[2] === "s-ex" ? "st-ex" : "st-plan") + '">' + (s[2] === "s-ex" ? t("stEx") : t("stPlan")) + "</em></li>";
       }).join("") + "</ol>" +
-      '<div class="mact"><button type="button" class="btn btn-gold" data-add="' + p.id + '" data-close>' + svg(UI.plus) + t("addCart") + '</button><button type="button" class="btn" data-close>' + t("close") + "</button></div>");
+      '<div class="mact"><button type="button" class="btn btn-gold" data-add="' + p.id + '" data-close>' + svg(UI.plus) + t("addCart") + '</button><button type="button" class="btn" data-qr="' + p.id + '">' + svg(UI.qr) + t("qrBtn") + '</button><button type="button" class="btn" data-close>' + t("close") + "</button></div>");
+  }
+
+  /* ---------- Code QR d'emballage ---------- */
+  // Le code imprimé sur l'emballage pointe toujours vers l'adresse publique de l'app.
+  var PUBLIC_URL = "https://hilaila.github.io/marketplace.html";
+  function productUrl(p) { return PUBLIC_URL + "?p=" + encodeURIComponent(p.id); }
+  function qrCard(id) {
+    var p = byId(id); if (!p || !window.GTCQR) return;
+    var url = productUrl(p), code;
+    try { code = GTCQR.make(url, "Q"); } catch (e) { toast(t("qrSaveKo")); return; }
+    var place = p.city + ", " + tx(C[p.c]);
+    openModal('<small class="kick">' + t("qrKick") + '</small><h2 id="mt">' + esc(tx(p.name)) + "</h2>" +
+      '<div class="qr-label" id="qrl">' + GTCQR.svg(code, t("qrAlt").replace("{name}", tx(p.name))) +
+        "<b>" + esc(tx(p.name)) + "</b><small>" + esc(place) + "</small><small>GeoTerraChain QFS · Marketplace</small>" +
+        '<span class="qr-tag">' + t("qrTag") + "</span></div>" +
+      "<p>" + t("qrText") + "</p>" +
+      '<div class="qr-url" title="' + esc(t("qrLink")) + '">' + esc(url) + "</div>" +
+      '<p class="qr-note">' + t("qrNote") + "</p>" +
+      '<div class="mact"><button type="button" class="btn btn-gold" data-qrprint>' + svg(UI.print) + t("qrPrint") + '</button>' +
+        '<button type="button" class="btn" data-qrsave="' + p.id + '">' + svg(UI.save) + t("qrSave") + "</button>" +
+        '<button type="button" class="btn" data-info="' + p.id + '">' + t("qrBack") + "</button></div>");
+  }
+  function qrPrint() {
+    if (typeof window.print !== "function") { toast(t("qrPrintKo")); return; }
+    try { window.print(); } catch (e) { toast(t("qrPrintKo")); }
+  }
+  function qrSave(id) {
+    var p = byId(id); if (!p) return;
+    try {
+      var code = GTCQR.make(productUrl(p), "Q"), sc = 12, n = code.size + 8, w = n * sc, h = w + 132;
+      var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+      var g = cv.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, w, h); g.fillStyle = "#000";
+      for (var y = 0; y < code.size; y++) for (var x = 0; x < code.size; x++) if (code.dark(x, y)) g.fillRect((x + 4) * sc, (y + 4) * sc, sc, sc);
+      g.textAlign = "center"; g.textBaseline = "alphabetic";
+      var name = tx(p.name), fs = 30;
+      g.font = "700 " + fs + "px system-ui, sans-serif";
+      while (g.measureText(name).width > w - 40 && fs > 16) { fs -= 2; g.font = "700 " + fs + "px system-ui, sans-serif"; }
+      g.fillText(name, w / 2, w + 30);
+      g.font = "600 20px monospace"; g.fillStyle = "#333";
+      g.fillText(p.city + ", " + tx(C[p.c]), w / 2, w + 62);
+      g.fillText("GeoTerraChain QFS · Marketplace · " + t("qrTag"), w / 2, w + 92);
+      var a = document.createElement("a");
+      a.href = cv.toDataURL("image/png"); a.download = "qr-geoterrachain-" + p.id + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      toast(t("qrSaved"));
+    } catch (e) { toast(t("qrSaveKo")); }
   }
   function checkout() {
     var e = entries(); if (!e.length) { toast(t("needItem")); return; }
@@ -867,8 +1128,11 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
     var el = $("catalogue"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   document.addEventListener("click", function (ev) {
-    var el = ev.target.closest ? ev.target.closest("[data-add],[data-info],[data-fav],[data-cat],[data-go],[data-inc],[data-dec],[data-rm],[data-reset],[data-close]") : null;
+    var el = ev.target.closest ? ev.target.closest("[data-add],[data-info],[data-fav],[data-cat],[data-go],[data-inc],[data-dec],[data-rm],[data-reset],[data-close],[data-qr],[data-qrprint],[data-qrsave]") : null;
     if (!el) return;
+    if (el.hasAttribute("data-qr")) return qrCard(el.getAttribute("data-qr"));
+    if (el.hasAttribute("data-qrprint")) return qrPrint();
+    if (el.hasAttribute("data-qrsave")) return qrSave(el.getAttribute("data-qrsave"));
     if (el.hasAttribute("data-add")) add(el.getAttribute("data-add"));
     if (el.hasAttribute("data-close")) { closeModal(); return; }
     if (el.hasAttribute("data-add")) return;
@@ -933,6 +1197,12 @@ var GTC_MARKET = {"cats": [{"id": "rani", "name": {"fr": "Raniculture", "en": "F
 
   setLang(LANG);
   if (state.cat !== "all") setTimeout(goCatalogue, 300);
+
+  /* ---------- Lien direct vers un produit (?p=…), utilisé par le code QR ---------- */
+  try {
+    var qp = new URLSearchParams(location.search).get("p");
+    if (qp && byId(qp)) setTimeout(function () { details(qp); }, 350);
+  } catch (e) {}
 })();
 
 </script>
