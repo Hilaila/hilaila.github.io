@@ -171,7 +171,6 @@ page = f'''<!DOCTYPE html>
     <div class="lang" role="group" aria-label="Langue / Language"><span class="globe" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">{I["globe"]}</svg></span><button type="button" data-l="fr">FR</button><button type="button" data-l="en">EN</button></div>
     <span class="msep" aria-hidden="true"></span>
     <a href="index.html">{T("← Accueil", "← Home")}</a>
-    <a href="guide-aide-geoterrachain-qfs.html">{T("Guide &amp; Aide", "Guide &amp; Help")}</a>
   </div>
 </header>
 
