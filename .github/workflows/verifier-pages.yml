@@ -1,5 +1,5 @@
 # Vérification automatique des pages à chaque publication (écran de téléphone, FR/EN)
-# et contrôle d'accessibilité (normes WCAG 2.2, niveaux A et AA, avec axe-core).
+# et accessibilité : normes WCAG 2.2 niveaux A et AA (axe-core + contraste mesuré), clavier.
 name: Vérification des pages
 on:
   push:
@@ -26,3 +26,6 @@ jobs:
       - name: Contrôler l'accessibilité (WCAG 2.2 A/AA)
         if: always()
         run: node tests/accessibilite.js .
+      - name: Tester le clavier et les lecteurs d'écran
+        if: always()
+        run: node tests/clavier.js .

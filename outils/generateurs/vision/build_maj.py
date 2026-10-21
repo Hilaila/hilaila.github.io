@@ -39,6 +39,10 @@ ENTRIES = [
             "Lighter pages (optimised logo) and the phone's “reduce motion” setting respected on every page."),
     ("gouv", "Registre des incidents et suivi des erreurs du serveur pour l'administrateur ; publication de cette page « Mises à jour ».",
              "Incident register and server error tracking for the administrator; this “Updates” page is published."),
+    ("gouv", "Sauvegarde chiffrée de la base chaque semaine, vérifiée par une restauration d'essai automatique.",
+             "Weekly encrypted database backup, checked by an automatic test restore."),
+    ("app", "Accessibilité : textes plus contrastés, zoom permis sur toutes les pages, onglets, questions et ajout de documents utilisables au clavier, élément actif bien visible ; contrôle automatique selon les normes WCAG 2.2 (niveaux A et AA).",
+            "Accessibility: higher-contrast text, zoom allowed on every page, tabs, questions and document upload usable from the keyboard, clearly visible focus; automatic check against WCAG 2.2 (levels A and AA)."),
   ]),
   ("2026-10-19", "19 octobre 2026", "19 October 2026", [
     ("market", "Marketplace : bouton « Code QR » pour imprimer ou photographier l'étiquette d'emballage d'un produit.",
@@ -157,6 +161,7 @@ page = f'''<!DOCTYPE html>
 </script>
 <style>{BASE_CSS}{CSS}</style>
 <script src="reseau.js"></script>
+<script src="clavier.js" defer></script>
 </head>
 <body>
 <header class="top">

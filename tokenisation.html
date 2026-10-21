@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      content="width=device-width, initial-scale=1.0">
 <script src="i18n/tokenisation-en.js"></script>
 <script src="i18n/gtc-i18n.js"></script>
 
@@ -217,7 +217,7 @@ body {
     border: 1px solid rgba(255,255,255,.12);
     border-radius: 50%;
     background: #101010;
-    color: #777;
+    color: #8F8F8F;
     font-size: 12px;
     font-weight: 800;
     transition: .25s ease;
@@ -225,7 +225,7 @@ body {
 
 .step-label {
     margin-top: 7px;
-    color: #777;
+    color: #8F8F8F;
     font-size: 9px;
     text-transform: uppercase;
     white-space: nowrap;
@@ -507,7 +507,7 @@ input::placeholder, textarea::placeholder {
 
 .coordinate-box small {
     display: block;
-    color: #777;
+    color: #8F8F8F;
     font-size: 9px;
     text-transform: uppercase;
     margin-bottom: 3px;
@@ -569,7 +569,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .metric-label {
-    color: #777;
+    color: #8F8F8F;
     font-size: 10px;
     text-transform: uppercase;
     margin-bottom: 7px;
@@ -623,7 +623,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .summary-row span:first-child {
-    color: #777;
+    color: #8F8F8F;
 }
 
 .summary-row span:last-child {
@@ -651,7 +651,7 @@ input::placeholder, textarea::placeholder {
 .footer {
     padding: 28px 10px 0;
     text-align: center;
-    color: #626262;
+    color: #8A8A8A;
     font-size: 10px;
     letter-spacing: .4px;
 }
@@ -807,6 +807,7 @@ input::placeholder, textarea::placeholder {
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
 </style>
 <script src="reseau.js"></script>
+<script src="clavier.js" defer></script>
 </head>
 
 <body>
@@ -2052,7 +2053,7 @@ function displayFiles() {
 
         item.innerHTML = `
             <span>📄 ${escapeHtml(file.name)}</span>
-            <span style="color:#777;">${size}</span>
+            <span style="color:#8F8F8F;">${size}</span>
             `;
 
         container.appendChild(item);
@@ -2483,7 +2484,7 @@ function docsSection() {
         const list = d.files.map(f => `
             <div style="display:flex; justify-content:space-between; gap:8px; margin-top:4px; color:#999;">
                 <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📄 ${escapeHtml(f.name)}</span>
-                <span class="hash" style="color:#777;">${escapeHtml(String(f.sha256 || "").slice(0, 12))}…</span>
+                <span class="hash" style="color:#8F8F8F;">${escapeHtml(String(f.sha256 || "").slice(0, 12))}…</span>
             </div>`).join("");
         return box(`<strong style="color:var(--green);">✓ ${d.files.length} document(s) envoyé(s) et scellé(s)</strong>
             <div style="margin-top:2px;">Empreintes SHA-256 enregistrées · stockage privé</div>${list}`);
@@ -2544,7 +2545,7 @@ function renderResultBox() {
                         TX Stellar : ${escapeHtml(state.mintTxHash || "—")}
                         ${state.mintTxHash ? `<div style="margin-top:6px;"><a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(state.mintTxHash)}" target="_blank" rel="noopener" style="color:var(--gold-light, #f3ca6c); font-size:11px; font-weight:700; text-decoration:underline;">Voir sur l'explorateur ↗</a></div>` : ""}
                     </div>
-                    <div style="margin-top:6px; color:#777; font-size:10px;">
+                    <div style="margin-top:6px; color:#8F8F8F; font-size:10px;">
                         Jeton de test sans valeur, non échangeable — ce n'est pas la tokenisation de votre actif.
                     </div>
                 </div>
@@ -2577,7 +2578,7 @@ function renderResultBox() {
                 TXID Pi : ${escapeHtml(state.paymentTxid || "—")}
                 ${state.paymentTxid ? `<button type="button" class="btn" onclick="copyTxid()" style="margin-left:6px; padding:4px 10px; min-height:30px; font-size:11px;">Copier</button>` : ""}
             </div>
-            <div style="margin-top:8px; color:#777; font-size:10px;">
+            <div style="margin-top:8px; color:#8F8F8F; font-size:10px;">
                 État : PAIEMENT COMPLÉTÉ · DOSSIER EN ATTENTE DE VÉRIFICATION
             </div>
             ${docsSection()}
@@ -2597,7 +2598,7 @@ function renderResultBox() {
         <div class="hash" style="margin-top:8px; color:#999; font-size:11px;">
             Référence : ${escapeHtml(state.submissionId)}
         </div>
-        <div style="margin-top:8px; color:#777; font-size:10px;">
+        <div style="margin-top:8px; color:#8F8F8F; font-size:10px;">
             État : EN ATTENTE DE VÉRIFICATION
         </div>
         ${docsSection()}

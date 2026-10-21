@@ -441,6 +441,7 @@ page = f'''<!DOCTYPE html>
 </script>
 <style>{BASE_CSS}{MARKET_CSS}</style>
 <script src="reseau.js"></script>
+<script src="clavier.js" defer></script>
 </head>
 <body>
 {HEXP}

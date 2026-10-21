@@ -149,7 +149,12 @@
   .asset .nrow { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 6px; }
   .asset .star-tag { position:relative; z-index:1; font-size:9.5px; font-weight:700; letter-spacing:.04em; color:#000008; background:linear-gradient(120deg, #F4E7C1, var(--gold-2)); border-radius:999px; padding:2px 7px; }
   .asset b { font-size:14.5px; line-height:1.3; }
-  .asset > span:last-child { font-size:12px; color:var(--muted); line-height:1.4; }
+  .asset .mlink { position:relative; z-index:1; align-self:stretch; display:inline-flex; align-items:center; justify-content:center; gap:5px; margin-top:auto; white-space:nowrap; min-height:36px; padding:0 8px; border-radius:999px; border:1px solid rgba(232,200,114,.55); background:rgba(232,200,114,.10); color:var(--gold-2); font:700 12.5px 'Space Grotesk', system-ui, sans-serif; text-decoration:none; }
+  .asset > span { margin-bottom:6px; }
+  .asset .mlink .ic { width:16px; height:16px; border:0; background:transparent; }
+  .asset .mlink .ic svg { width:14px; height:14px; }
+  .asset .mlink:hover, .asset .mlink:focus-visible { background:rgba(232,200,114,.2); }
+  .asset > span { font-size:12px; color:var(--muted); line-height:1.4; }
 
   /* Processus */
   .steps { list-style:none; position:relative; display:grid; gap:12px; padding-left:46px; }
@@ -264,6 +269,7 @@
   .toast.on { opacity:1; transform:none; }
 </style>
 <script src="reseau.js"></script>
+<script src="clavier.js" defer></script>
 </head>
 <body>
 <header class="top">

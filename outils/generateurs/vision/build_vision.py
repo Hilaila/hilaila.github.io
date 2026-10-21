@@ -411,6 +411,7 @@ page = f'''<!DOCTYPE html>
   }}
 </style>
 <script src="reseau.js"></script>
+<script src="clavier.js" defer></script>
 </head>
 <body>
 <header class="top">

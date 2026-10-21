@@ -47,7 +47,11 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
   Les autres pages contiennent leurs deux langues. Langue mémorisée dans `localStorage` (`gtcLang`).
 - `logo-160.webp`, `logo-640.webp` : logo affiché dans les pages ; `logo-final-complet.png` reste
   l'original (aperçus de partage, Developer Portal).
+- `clavier.js` (toutes les pages) : contour doré sur l'élément actif au clavier, onglets / FAQ / ajout de
+  documents utilisables au clavier avec leur état annoncé, zones défilantes atteignables, champs en
+  16 px sur téléphone (le zoom reste permis sans agrandissement automatique).
 - Réglage « réduire les animations » du téléphone respecté sur toutes les pages.
+- Accessibilité : contrastes conformes WCAG 2.2 AA, zoom jamais bloqué (`user-scalable=no` interdit).
 
 ## Pages générées
 
@@ -66,13 +70,21 @@ python3 outils/generateurs/i18n/gen.py
 ## Tests
 
 ```
-npm install --no-save playwright && npx playwright install chromium
+npm install --no-save playwright axe-core && npx playwright install chromium
 node tests/audit-pages.js .
+node tests/accessibilite.js .
+node tests/clavier.js .
 ```
 
-Chaque page est chargée sur un écran de téléphone (360 px), en français et en anglais. Le test échoue
-en cas d'erreur JavaScript, de débordement, d'image absente ou de lien interne mort. Il est lancé
-automatiquement par GitHub Actions à chaque publication (`.github/workflows/verifier-pages.yml`).
+- `audit-pages.js` : chaque page sur un écran de téléphone (360 px), en français et en anglais. Échoue
+  en cas d'erreur JavaScript, de débordement, d'image absente ou de lien interne mort.
+- `accessibilite.js` : normes WCAG 2.2, niveaux A et AA (axe-core), plus le contraste de chaque texte
+  mesuré sur le rendu réel (fonds en dégradé compris) ; téléphone et ordinateur, FR et EN.
+- `clavier.js` : onglets, FAQ et ajout de documents utilisables au clavier, états annoncés aux lecteurs
+  d'écran, contour de focus visible, zoom autorisé, langue déclarée.
+
+Les trois sont lancés automatiquement par GitHub Actions à chaque publication
+(`.github/workflows/verifier-pages.yml`).
 
 ## Publication
 
