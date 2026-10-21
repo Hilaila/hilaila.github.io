@@ -1,0 +1,5 @@
+{
+  "routes": [
+    { "src": "/validation-key.txt", "dest": "/validation-key-testnet.txt" }
+  ]
+}

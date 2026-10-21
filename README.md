@@ -8,6 +8,12 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
 - Adresse de test (application Pi Testnet) : <https://hilailagithubio-testnet.vercel.app>
 - Serveur : dépôt privé `Hilaila/geoterrachain-qfs-vercel` (Vercel)
 
+**Clés de vérification du domaine (Pi Developer Portal).** Ces clés sont publiques par nature : Pi les lit à l'adresse
+`/validation-key.txt` de chaque domaine.
+- `validation-key.txt` : application dont l'adresse est <https://hilaila.github.io> (servie par GitHub Pages).
+- `validation-key-testnet.txt` : application Pi Testnet, adresse <https://hilailagithubio-testnet.vercel.app>.
+  Sur Vercel, `vercel.json` sert ce fichier à la place de `validation-key.txt` ; GitHub Pages ignore `vercel.json`.
+
 > L'application ne demande jamais la phrase secrète de 24 mots d'un Pioneer et n'exige pas de KYC :
 > elle accepte les Pioneers vérifiés par Pi Network. Aucune clé ni aucun secret ne doit figurer dans
 > ce dépôt public.
