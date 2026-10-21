@@ -1,4 +1,5 @@
-# Vérification automatique des pages à chaque publication (écran de téléphone, FR/EN).
+# Vérification automatique des pages à chaque publication (écran de téléphone, FR/EN)
+# et contrôle d'accessibilité (normes WCAG 2.2, niveaux A et AA, avec axe-core).
 name: Vérification des pages
 on:
   push:
@@ -16,9 +17,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Installer Playwright et Chromium
+      - name: Installer Playwright, Chromium et axe-core
         run: |
-          npm install --no-save --no-package-lock playwright@1.52.0
+          npm install --no-save --no-package-lock playwright@1.52.0 axe-core@4.10.3
           npx playwright install --with-deps chromium
       - name: Vérifier toutes les pages
         run: node tests/audit-pages.js .
+      - name: Contrôler l'accessibilité (WCAG 2.2 A/AA)
+        if: always()
+        run: node tests/accessibilite.js .
