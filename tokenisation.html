@@ -803,6 +803,10 @@ input::placeholder, textarea::placeholder {
 }
 
 </style>
+<style id="gtc-moins-animations">/* Réglage « réduire les animations » du téléphone respecté */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+</style>
+<script src="reseau.js"></script>
 </head>
 
 <body>
@@ -815,7 +819,7 @@ input::placeholder, textarea::placeholder {
         <a href="guide-aide-geoterrachain-qfs.html" class="back-home">Guide</a>
         <a href="pioneer.html" class="back-home">Mon espace</a>
         <div class="brand">
-            <img src="logo-final-complet.png" alt="GeoTerraChain QFS" style="height:34px; width:auto;">
+            <img src="logo-160.webp" alt="GeoTerraChain QFS" style="height:34px; width:auto;">
             <span data-gtc-lang-slot></span>
         </div>
         <div class="status">
@@ -2308,6 +2312,9 @@ async function submitTokenization() {
 
         setAlert($("submissionAlert"), "✓ Demande enregistrée avec succès.", "success");
 
+        // Demande enregistrée : le brouillon gardé sur le téléphone n'est plus utile.
+        if (window.gtcDraftClear) window.gtcDraftClear();
+
         renderResultBox();
 
         showToast("Demande de tokenisation enregistrée.", "success");
@@ -2493,6 +2500,25 @@ function docsSection() {
 }
 
 
+// Copie de l'identifiant de transaction Pi (pour le vérifier dans l'explorateur de blocs Pi).
+function copyTxid() {
+    const id = state.paymentTxid || "";
+    if (!id) return;
+    const ok = () => showToast("Copié.", "success");
+    const ko = () => showToast("Copie impossible : sélectionnez l'identifiant à la main.", "error");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(id).then(ok, ko);
+        return;
+    }
+    try {
+        const ta = document.createElement("textarea");
+        ta.value = id; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        const done = document.execCommand("copy"); ta.remove();
+        done ? ok() : ko();
+    } catch (e) { ko(); }
+}
+
 function renderResultBox() {
 
     const box = $("resultBox");
@@ -2516,6 +2542,7 @@ function renderResultBox() {
                     <strong style="color:var(--green); font-size:12px;">✓ Jeton de test GTCπ émis (Testnet)</strong>
                     <div class="hash" style="margin-top:4px; color:#999; font-size:10px;">
                         TX Stellar : ${escapeHtml(state.mintTxHash || "—")}
+                        ${state.mintTxHash ? `<div style="margin-top:6px;"><a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(state.mintTxHash)}" target="_blank" rel="noopener" style="color:var(--gold-light, #f3ca6c); font-size:11px; font-weight:700; text-decoration:underline;">Voir sur l'explorateur ↗</a></div>` : ""}
                     </div>
                     <div style="margin-top:6px; color:#777; font-size:10px;">
                         Jeton de test sans valeur, non échangeable — ce n'est pas la tokenisation de votre actif.
@@ -2548,6 +2575,7 @@ function renderResultBox() {
             </div>
             <div class="hash" style="margin-top:4px; color:#999; font-size:11px;">
                 TXID Pi : ${escapeHtml(state.paymentTxid || "—")}
+                ${state.paymentTxid ? `<button type="button" class="btn" onclick="copyTxid()" style="margin-left:6px; padding:4px 10px; min-height:30px; font-size:11px;">Copier</button>` : ""}
             </div>
             <div style="margin-top:8px; color:#777; font-size:10px;">
                 État : PAIEMENT COMPLÉTÉ · DOSSIER EN ATTENTE DE VÉRIFICATION
@@ -2809,6 +2837,110 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+</script>
+
+<script>
+/* ============================================================
+   BROUILLON DU FORMULAIRE (sur ce téléphone uniquement)
+   Les champs de l'étape 3 sont gardés dans le navigateur du Pioneer
+   si la page se ferme ou si la connexion coupe. Rien n'est envoyé.
+   Effacé après une demande enregistrée, ou au bout de 30 jours.
+============================================================ */
+(function () {
+    var KEY = "gtcTokDraft", MAX_AGE = 30 * 24 * 3600 * 1000;
+    var IDS = ["assetType", "assetReference", "country", "region", "city", "locality", "area", "ownershipStatus",
+        "latitude", "longitude", "estimatedValue", "valueUnit", "gtcSupply", "documentUrl", "description"];
+    var timer = null, restoring = false;
+
+    function el(id) { return document.getElementById(id); }
+    // Valeur de départ d'un champ (ex. « Pi » pour l'unité) : jamais enregistrée comme saisie.
+    function dflt(f) {
+        if (f.tagName === "SELECT") {
+            var o = Array.prototype.filter.call(f.options, function (x) { return x.defaultSelected; })[0] || f.options[0];
+            return o ? o.value : "";
+        }
+        return f.defaultValue || "";
+    }
+    function read() {
+        try {
+            var d = JSON.parse(localStorage.getItem(KEY) || "null");
+            if (!d || !d.v || typeof d.v !== "object" || Date.now() - Number(d.t || 0) > MAX_AGE) return null;
+            return d;
+        } catch (e) { return null; }
+    }
+    function clearStore() { try { localStorage.removeItem(KEY); } catch (e) {} }
+    function save() {
+        if (restoring) return;
+        try { if (typeof state !== "undefined" && state.submissionId) return; } catch (e) {}
+        var v = {}, any = false;
+        IDS.forEach(function (id) {
+            var f = el(id);
+            if (f && String(f.value || "").trim() !== "" && f.value !== dflt(f)) { v[id] = String(f.value).slice(0, 4000); any = true; }
+        });
+        try { if (any) localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), v: v })); else clearStore(); } catch (e) {}
+    }
+    function later() { clearTimeout(timer); timer = setTimeout(save, 400); }
+
+    function notice() {
+        var body = document.querySelector('.step-panel[data-step="3"] .card-body');
+        if (!body || document.getElementById("draftNotice")) return;
+        var box = document.createElement("div");
+        box.id = "draftNotice";
+        box.className = "alert success";
+        box.setAttribute("role", "status");
+        box.style.display = "flex"; box.style.flexWrap = "wrap"; box.style.alignItems = "center"; box.style.gap = "8px 12px";
+        box.innerHTML = '<div style="flex:1 1 220px"><strong>Brouillon restauré</strong><br>' +
+            '<span>Vos saisies précédentes ont été remises dans le formulaire. Elles restent uniquement sur ce téléphone.</span> ' +
+            '<span>Les documents joints sont à ajouter de nouveau.</span></div>' +
+            '<button type="button" class="btn" id="draftClearBtn" style="flex:0 0 auto">Effacer le brouillon</button>';
+        body.insertBefore(box, body.firstChild);
+        document.getElementById("draftClearBtn").addEventListener("click", function () {
+            restoring = true;
+            IDS.forEach(function (id) {
+                var f = el(id); if (!f) return;
+                f.value = dflt(f);
+                f.dispatchEvent(new Event("input", { bubbles: true }));
+                f.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+            restoring = false;
+            clearStore();
+            box.remove();
+            if (typeof showToast === "function") showToast("Brouillon effacé.", "success");
+        });
+    }
+
+    function restore() {
+        var d = read();
+        if (!d) return;
+        var used = false;
+        restoring = true;
+        IDS.forEach(function (id) {
+            var f = el(id), val = d.v[id];
+            if (!f || val == null || f.value !== dflt(f)) return;
+            if (f.tagName === "SELECT" && !Array.prototype.some.call(f.options, function (o) { return o.value === val; })) return;
+            f.value = val;
+            f.dispatchEvent(new Event("input", { bubbles: true }));
+            f.dispatchEvent(new Event("change", { bubbles: true }));
+            used = true;
+        });
+        restoring = false;
+        if (used) notice();
+    }
+
+    window.gtcDraftClear = function () {
+        clearStore();
+        var n = document.getElementById("draftNotice"); if (n) n.remove();
+    };
+
+    IDS.forEach(function (id) {
+        var f = el(id); if (!f) return;
+        f.addEventListener("input", later);
+        f.addEventListener("change", later);
+    });
+    window.addEventListener("pagehide", save);
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", restore);
+    else restore();
+})();
 </script>
 
 </body>

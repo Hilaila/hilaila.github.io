@@ -101,13 +101,17 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(5,5,5,.9); back
 footer { border-top: 1px solid var(--border-soft); padding: 30px 0; margin-top: 40px; text-align: center; }
 footer .copy { font-size: 10.5px; color: #666; }
 </style>
+<style id="gtc-moins-animations">/* Réglage « réduire les animations » du téléphone respecté */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+</style>
+<script src="reseau.js"></script>
 </head>
 
 <body>
 
 <header>
     <div class="nav">
-        <a href="index.html" class="logo-row"><img src="logo-final-complet.png" alt="GeoTerraChain QFS"></a>
+        <a href="index.html" class="logo-row"><img src="logo-160.webp" alt="GeoTerraChain QFS"></a>
         <span data-gtc-lang-slot></span>
         <nav class="nav-links">
             <a href="index.html">Accueil</a>

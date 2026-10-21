@@ -155,6 +155,10 @@ select option { background: #111; color: white; }
     background: rgba(217,164,65,.06);
 }
 </style>
+<style id="gtc-moins-animations">/* Réglage « réduire les animations » du téléphone respecté */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+</style>
+<script src="reseau.js"></script>
 </head>
 
 <body>
@@ -544,7 +548,7 @@ async function investInProject(projetId) {
                         const investData = await investR.json();
                         if (!investR.ok || !investData.ok) throw new Error(investData.error || "Échec de l'attribution des unités.");
 
-                        setAlert(`investAlert-${projetId}`, `✓ Investissement confirmé : ${unites} unités attribuées.`, "success");
+                        setAlert(`investAlert-${projetId}`, `✓ Investissement confirmé : ${unites} unités attribuées. TXID Pi : ${txid}`, "success");
                         showToast("Investissement confirmé.", "success");
                         loadProjects();
 
