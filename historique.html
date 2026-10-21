@@ -92,6 +92,28 @@
       in_rule: "plafond {m} par {w}",
       in_w600: "10 min", in_w3600: "heure", in_w86400: "jour",
       in_by: "@{u}",
+      rg_h: "Registre des incidents",
+      rg_s: "Pannes, anomalies ou signalements déclarés par l'administrateur. Rien n'est effacé : chaque étape reste dans le journal.",
+      rg_new: "＋ Déclarer un incident",
+      rg_title: "Titre",
+      rg_title_ph: "Ex. : paiements Pi indisponibles",
+      rg_sev: "Gravité",
+      rg_sev_faible: "Faible", rg_sev_moyenne: "Moyenne", rg_sev_elevee: "Élevée",
+      rg_desc: "Détails (facultatif)",
+      rg_desc_ph: "Ce qui se passe, depuis quand, qui est touché…",
+      rg_save: "Enregistrer",
+      rg_cancel: "Annuler",
+      rg_open: "Ouvert", rg_closed: "Résolu",
+      rg_opened: "déclaré le {d} par @{u}",
+      rg_closed_on: "résolu le {d} par @{u}",
+      rg_close: "Marquer résolu",
+      rg_res_ph: "Comment l'incident a été résolu",
+      rg_confirm: "Confirmer la résolution",
+      rg_none: "Aucun incident déclaré.",
+      rg_auto: "Détectés automatiquement (30 jours)",
+      rg_short: "Donnez un titre d'au moins 3 caractères.",
+      rg_done_open: "Incident enregistré dans le registre.",
+      rg_done_close: "Incident marqué résolu.",
       sc_reseau: "toutes demandes depuis un appareil", sc_identite: "vérifications d'identité", sc_demande: "demandes de tokenisation",
       sc_documents: "envois de documents", sc_emission: "émissions GTCπ", sc_projet: "projets collectifs",
       sc_investissement: "investissements", sc_paiement: "paiements",
@@ -214,6 +236,28 @@
       in_rule: "limit {m} per {w}",
       in_w600: "10 min", in_w3600: "hour", in_w86400: "day",
       in_by: "@{u}",
+      rg_h: "Incident register",
+      rg_s: "Outages, anomalies or reports declared by the administrator. Nothing is erased: every step stays in the log.",
+      rg_new: "＋ Declare an incident",
+      rg_title: "Title",
+      rg_title_ph: "E.g. Pi payments unavailable",
+      rg_sev: "Severity",
+      rg_sev_faible: "Low", rg_sev_moyenne: "Medium", rg_sev_elevee: "High",
+      rg_desc: "Details (optional)",
+      rg_desc_ph: "What is happening, since when, who is affected…",
+      rg_save: "Save",
+      rg_cancel: "Cancel",
+      rg_open: "Open", rg_closed: "Resolved",
+      rg_opened: "declared on {d} by @{u}",
+      rg_closed_on: "resolved on {d} by @{u}",
+      rg_close: "Mark resolved",
+      rg_res_ph: "How the incident was resolved",
+      rg_confirm: "Confirm resolution",
+      rg_none: "No incidents declared.",
+      rg_auto: "Detected automatically (30 days)",
+      rg_short: "Enter a title of at least 3 characters.",
+      rg_done_open: "Incident saved in the register.",
+      rg_done_close: "Incident marked resolved.",
       sc_reseau: "all requests from one device", sc_identite: "identity checks", sc_demande: "tokenization requests",
       sc_documents: "document uploads", sc_emission: "GTCπ issuances", sc_projet: "collective projects",
       sc_investissement: "investments", sc_paiement: "payments",
@@ -417,6 +461,23 @@
   .empty { text-align:center; color:var(--muted); font-size:13px; padding:14px; }
   .projs { display:grid; gap:10px; }
   .incs { display:grid; gap:8px; }
+  .rg-new { margin:4px 0 12px; min-height:44px; padding:0 16px; border-radius:999px; border:1px solid rgba(232,200,114,.55); background:rgba(232,200,114,.10); color:var(--gold-2, #E8C872); font:700 14px inherit; cursor:pointer; }
+  .rg-form { display:grid; gap:10px; margin:4px 0 14px; padding:14px; border:1px solid rgba(232,200,114,.35); border-radius:16px; background:rgba(0,0,8,.45); }
+  .rg-form label { display:grid; gap:5px; font-size:12.5px; color:var(--muted); }
+  .rg-form input, .rg-form select, .rg-form textarea, .inc textarea { width:100%; min-height:42px; padding:9px 11px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,8,.6); color:inherit; font:inherit; font-size:14px; }
+  .rg-acts, .rg-close { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .rg-acts button, .rg-close button { min-height:40px; padding:0 14px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:transparent; color:inherit; font:700 13px inherit; cursor:pointer; }
+  .rg-acts button.ok { border:0; color:#000008; background:linear-gradient(120deg, #F4E7C1, #E8C872 45%, #C9A84C); }
+  .inc.reg { border-color:rgba(168,139,255,.4); background:rgba(123,92,214,.08); }
+  .inc.reg.done { opacity:.85; border-color:rgba(61,220,151,.35); background:rgba(10,40,26,.25); }
+  .inc .rg-top { display:flex; gap:6px; margin-bottom:6px; }
+  .inc .badge { font:700 10.5px 'JetBrains Mono', monospace; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.25); }
+  .inc.open .badge:first-child { color:#FFB4B4; border-color:rgba(255,146,146,.5); }
+  .inc.done .badge:first-child { color:#9FF0C8; border-color:rgba(61,220,151,.5); }
+  .inc.sev-elevee .badge.sev { color:#FFB4B4; } .inc.sev-moyenne .badge.sev { color:#F4E7C1; }
+  .inc p { margin-top:6px; font-size:13px; color:#D5CDBB; overflow-wrap:anywhere; }
+  .inc p.res { color:#9FF0C8; }
+  .rg-sub { margin-top:18px; }
   .inc { min-width:0; padding:12px 14px; border-radius:14px; border:1px solid rgba(255,146,146,.35); background:rgba(60,10,10,.25); }
   .inc.lim { border-color:rgba(232,200,114,.35); background:rgba(232,200,114,.06); }
   .inc b { display:block; font-size:14px; overflow-wrap:anywhere; }
@@ -534,7 +595,16 @@
     </section>
 
     <section class="glass" id="incCard">
-      <div class="head"><div><h2 data-i18n="in_h"></h2><div class="hs" data-i18n="in_s"></div></div><span class="hs mono" id="inCount"></span></div>
+      <div class="head"><div><h2 data-i18n="rg_h"></h2><div class="hs" data-i18n="rg_s"></div></div><span class="hs mono" id="rgCount"></span></div>
+      <button type="button" class="rg-new" id="rgNew" data-i18n="rg_new"></button>
+      <form class="rg-form hide" id="rgForm" autocomplete="off">
+        <label><span data-i18n="rg_title"></span><input id="rgTitle" maxlength="120" required></label>
+        <label><span data-i18n="rg_sev"></span><select id="rgSev"><option value="faible"></option><option value="moyenne" selected></option><option value="elevee"></option></select></label>
+        <label><span data-i18n="rg_desc"></span><textarea id="rgDesc" maxlength="1000" rows="3"></textarea></label>
+        <div class="rg-acts"><button type="submit" class="ok" data-i18n="rg_save"></button><button type="button" id="rgCancel" data-i18n="rg_cancel"></button></div>
+      </form>
+      <div class="incs" id="rgList"></div>
+      <div class="head rg-sub"><div><h2 data-i18n="in_h"></h2><div class="hs" data-i18n="in_s"></div></div><span class="hs mono" id="inCount"></span></div>
       <div class="incs" id="incList"></div>
     </section>
 
@@ -595,7 +665,7 @@
 const CONFIG = { API_BASE_URL: "https://geoterrachain-qfs-vercel.vercel.app", TIMEOUT_MS: 25000, GOAL_MIN: 5, GOAL_IDEAL: 8 };
 const ICON = { connexion: "π", identite: "π", demande: "◈", paiement: "✓", jeton: "⬡", documents: "📄" };
 const $ = id => document.getElementById(id);
-const state = { events: [], admins: [], diag: null, projects: [], incidents: [], filter: "", q: "", token: null, loadedAt: null };
+const state = { events: [], admins: [], diag: null, projects: [], incidents: [], registre: [], filter: "", q: "", token: null, loadedAt: null };
 
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const loc = () => (LANG === "en" ? "en-GB" : "fr-FR");
@@ -659,6 +729,7 @@ async function login() {
     try { Pi.init({ version: "2.0" }); } catch (e) {}
     const auth = await Pi.authenticate(["username"], () => {});
     state.token = auth.accessToken;
+    state.me = (auth.user && auth.user.username) || null;
     await load();
   } catch (e) {
     msg.textContent = e.message || t("e_denied");
@@ -674,12 +745,13 @@ async function load() {
     if (err.indexOf("AUDIT_READ_FAILED") === 0) throw new Error(t("e_table"));
     throw new Error(err || t("e_bad", { c: status }));
   }
-  setData(data.events || [], data.admins || [], data.diag || null, data.pendingProjects || [], data.incidents || []);
+  setData(data.events || [], data.admins || [], data.diag || null, data.pendingProjects || [], data.incidents || [], data.registre || []);
 }
 
-function setData(events, admins, diag, projects, incidents) {
+function setData(events, admins, diag, projects, incidents, registre) {
   state.diag = diag || null;
   state.incidents = Array.isArray(incidents) ? incidents : [];
+  state.registre = Array.isArray(registre) ? registre : [];
   state.projects = Array.isArray(projects) ? projects : [];
   state.events = events.map(e => ({ ...e, at: new Date(e.created_at) })).sort((a, b) => b.at - a.at);
   state.admins = admins.map(a => String(a).toLowerCase());
@@ -761,8 +833,66 @@ function render() {
   renderIncidents();
 }
 
+/* Registre des incidents : déclarés et résolus par l'administrateur */
+function renderRegister() {
+  const list = state.registre || [];
+  const open = list.filter(i => i.etat === "ouvert").length;
+  $("rgCount").textContent = list.length ? (open ? `${open} / ${list.length}` : String(list.length)) : "";
+  $("rgSev").querySelectorAll("option").forEach(o => { o.textContent = t("rg_sev_" + o.value); });
+  $("rgTitle").placeholder = t("rg_title_ph"); $("rgDesc").placeholder = t("rg_desc_ph");
+  $("rgList").innerHTML = list.length ? list.map(i => {
+    const opened = t("rg_opened", { d: i.ouvert_le ? fmtShort(new Date(i.ouvert_le)) : "—", u: i.ouvert_par || "—" });
+    const closed = i.etat === "resolu" ? t("rg_closed_on", { d: i.resolu_le ? fmtShort(new Date(i.resolu_le)) : "—", u: i.resolu_par || "—" }) : "";
+    return `<div class="inc reg ${i.etat === "resolu" ? "done" : "open"} sev-${esc(i.gravite)}" data-id="${esc(i.id)}">
+      <div class="rg-top"><span class="badge">${t(i.etat === "resolu" ? "rg_closed" : "rg_open")}</span><span class="badge sev">${esc(t("rg_sev_" + i.gravite))}</span></div>
+      <b>${esc(i.titre)}</b><small>${esc(opened)}${closed ? " · " + esc(closed) : ""}</small>
+      ${i.description ? `<p>${esc(i.description)}</p>` : ""}
+      ${i.resolution ? `<p class="res">✓ ${esc(i.resolution)}</p>` : ""}
+      ${i.etat === "ouvert" ? `<div class="rg-close"><button type="button" data-close-inc="${esc(i.id)}">${t("rg_close")}</button></div>` : ""}</div>`;
+  }).join("") : `<div class="empty">${t("rg_none")}</div>`;
+}
+
+async function registerAction(body) {
+  if (!state.token) return { ok: true, demo: true };   // aperçu ?demo=1 : rien n'est envoyé
+  const { ok, data } = await postJSON("/api/pi-auth", { accessToken: state.token, ...body });
+  if (!ok || !data.ok) throw new Error((data && data.error) || "");
+  return data;
+}
+
+async function declareIncident(e) {
+  e.preventDefault();
+  const titre = $("rgTitle").value.trim(), gravite = $("rgSev").value, description = $("rgDesc").value.trim();
+  if (titre.length < 3) { toast(t("rg_short")); return; }
+  const btn = $("rgForm").querySelector("button[type=submit]"); btn.disabled = true;
+  try {
+    const r = await registerAction({ action: "incident-open", titre, gravite, description });
+    const inc = r.incident || { id: "demo-" + Date.now(), titre, gravite, description };
+    state.registre.unshift({ ...inc, etat: "ouvert", ouvert_le: new Date().toISOString(), ouvert_par: state.me || "Hilaila" });
+    $("rgForm").reset(); $("rgForm").classList.add("hide"); $("rgNew").classList.remove("hide");
+    renderRegister(); toast(t("rg_done_open"));
+  } catch (err) { toast(t("pr_fail", { e: err.message || "?" })); }
+  finally { btn.disabled = false; }
+}
+
+async function resolveIncident(btn) {
+  const id = btn.getAttribute("data-close-inc"), box = btn.closest(".inc");
+  let ta = box.querySelector("textarea");
+  if (!ta) {
+    ta = document.createElement("textarea"); ta.maxLength = 1000; ta.rows = 2; ta.placeholder = t("rg_res_ph");
+    btn.parentNode.insertBefore(ta, btn); btn.textContent = t("rg_confirm"); ta.focus(); return;
+  }
+  btn.disabled = true;
+  try {
+    await registerAction({ action: "incident-close", incidentId: id, resolution: ta.value.trim() });
+    const it = state.registre.find(x => x.id === id);
+    if (it) Object.assign(it, { etat: "resolu", resolution: ta.value.trim(), resolu_le: new Date().toISOString(), resolu_par: state.me || "Hilaila" });
+    renderRegister(); toast(t("rg_done_close"));
+  } catch (err) { btn.disabled = false; toast(t("pr_fail", { e: err.message || "?" })); }
+}
+
 /* Incidents du serveur (30 jours) : erreurs 5xx et limites de demandes atteintes */
 function renderIncidents() {
+  renderRegister();
   const list = state.incidents || [];
   $("inCount").textContent = list.length ? String(list.length) : "";
   $("incList").innerHTML = list.length ? list.map(i => {
@@ -938,6 +1068,10 @@ $("filters").addEventListener("click", e => {
   [...$("filters").children].forEach(x => x.classList.toggle("on", x === b));
   render();
 });
+$("rgNew").addEventListener("click", () => { $("rgForm").classList.remove("hide"); $("rgNew").classList.add("hide"); $("rgTitle").focus(); });
+$("rgCancel").addEventListener("click", () => { $("rgForm").reset(); $("rgForm").classList.add("hide"); $("rgNew").classList.remove("hide"); });
+$("rgForm").addEventListener("submit", declareIncident);
+$("rgList").addEventListener("click", e => { const b = e.target.closest("button[data-close-inc]"); if (b) resolveIncident(b); });
 $("projList").addEventListener("click", e => {
   const b = e.target.closest("button[data-review]"); if (b) reviewProject(b);
 });
@@ -971,6 +1105,9 @@ if (new URLSearchParams(location.search).get("demo") === "1") {
   ], [
     { created_at: "2026-10-16T10:12:00Z", type: "limite", scope: "projet", max: 5, window: 86400, username: "Exemple_D" },
     { created_at: "2026-10-15T07:45:00Z", type: "erreur", status: 502, route: "/api/payment-approve", code: "PI_PAYMENT_CHECK_FAILED" }
+  ], [
+    { id: "demo-1", titre: "Exemple : paiements Pi lents", gravite: "moyenne", description: "Incident fictif pour l'aperçu.", etat: "ouvert", ouvert_le: "2026-10-16T09:00:00Z", ouvert_par: "Hilaila" },
+    { id: "demo-2", titre: "Exemple : adresse de test indisponible", gravite: "faible", description: "Incident fictif pour l'aperçu.", etat: "resolu", ouvert_le: "2026-10-14T18:44:00Z", ouvert_par: "Hilaila", resolution: "Réglage corrigé, nouvelle mise en ligne réussie.", resolu_le: "2026-10-18T23:44:00Z", resolu_par: "Hilaila" }
   ]);
 }
 </script>
