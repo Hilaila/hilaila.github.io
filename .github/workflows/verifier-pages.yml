@@ -9,7 +9,7 @@ permissions:
   contents: read
 jobs:
   pages:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
           node-version: 20
       - name: Installer Playwright et Chromium
         run: |
-          npm install --no-save --no-package-lock playwright@1.48.2
+          npm install --no-save --no-package-lock playwright@1.52.0
           npx playwright install --with-deps chromium
       - name: Vérifier toutes les pages
         run: node tests/audit-pages.js .

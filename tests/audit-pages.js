@@ -75,5 +75,11 @@ const NETWORK_NOISE = /Failed to fetch|NetworkError|net::|ERR_|Failed to load re
   const uniq = [...new Set(problems)];
   console.log(`\n${pages.length} pages × 2 langues vérifiées · ${uniq.length} problème(s)`);
   uniq.forEach(p => console.log("  ✗ " + p));
+  // Sur GitHub Actions : chaque problème devient une annotation lisible depuis la page du test.
+  if (process.env.GITHUB_ACTIONS) uniq.slice(0, 40).forEach(p => console.log("::error title=Vérification des pages::" + p.replace(/\r?\n/g, " ")));
   process.exit(uniq.length ? 1 : 0);
-})().catch(e => { console.error("ERREUR", e); process.exit(1); });
+})().catch(e => {
+  console.error("ERREUR", e);
+  if (process.env.GITHUB_ACTIONS) console.log("::error title=Vérification des pages::" + String(e && e.message || e).replace(/\r?\n/g, " ").slice(0, 400));
+  process.exit(1);
+});
