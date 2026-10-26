@@ -91,6 +91,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 </style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="connexion-pi.js"></script>
 </head>
 
 <body>
@@ -184,10 +185,19 @@ function formatDate(iso) {
     return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+/* Message d'erreur de connexion : affiché dans la sphère de connexion si elle est ouverte,
+   sinon dans une fenêtre d'alerte comme avant. */
+let derniereErreur = "";
+function informer(m) {
+    derniereErreur = m;
+    if (!(window.GTCConnexion && GTCConnexion.actif())) alert(m);
+}
+
 async function loginAndLoad() {
+    derniereErreur = "";
     const btn = $("piLoginBtn");
     if (typeof window.Pi === "undefined") {
-        alert("Pi SDK indisponible — ouvrez cette page dans Pi Browser.");
+        informer("Pi SDK indisponible — ouvrez cette page dans Pi Browser.");
         return;
     }
     btn.disabled = true;
@@ -199,7 +209,7 @@ async function loginAndLoad() {
         await loadDashboard();
     } catch (error) {
         console.error(error);
-        alert(error.message || "Connexion Pi impossible.");
+        informer(error.message || "Connexion Pi impossible.");
         btn.disabled = false;
         btn.textContent = "π Se connecter avec Pi";
     }
@@ -327,7 +337,13 @@ function switchTab(tab) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    $("piLoginBtn").addEventListener("click", loginAndLoad);
+    /* Sphère de connexion Pi (connexion-pi.js) ; même fonction loginAndLoad qu'avant. */
+    if (window.GTCConnexion) GTCConnexion.lier($("piLoginBtn"), {
+        lancer: () => loginAndLoad(),
+        reussi: () => !!accessToken,
+        erreur: () => derniereErreur
+    });
+    else $("piLoginBtn").addEventListener("click", loginAndLoad);
 });
 </script>
 

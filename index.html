@@ -473,6 +473,7 @@
 </style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="connexion-pi.js"></script>
 </head>
 <body class="locked">
 
@@ -793,7 +794,14 @@
       clearTimeout(garde);
     }
   }
-  piBtn.addEventListener("click", () => { if (!piUser) connectPi(false); });
+  /* Sphère de connexion Pi (connexion-pi.js) ; même fonction connectPi qu'avant. */
+  if (window.GTCConnexion) GTCConnexion.lier(piBtn, {
+    ouvrirSi: () => !piUser && !piBusy,
+    lancer: () => connectPi(false),
+    reussi: () => !!piUser,
+    nom: () => piUser
+  });
+  else piBtn.addEventListener("click", () => { if (!piUser) connectPi(false); });
   window.addEventListener("load", () => {
     let u = null;
     try { u = sessionStorage.getItem("gtcUser"); } catch (e) {}

@@ -28,6 +28,10 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-10-26", "26 octobre 2026", "26 October 2026", [
+    ("app", "Connexion Pioneer : une sphère animée or et violet sert désormais de bouton de connexion Pi et affiche chaque étape (connexion, vérification, bienvenue), avec « Réessayer » en cas d'échec.",
+            "Pioneer sign-in: an animated gold and violet sphere now serves as the Pi sign-in button and shows each step (connecting, verifying, welcome), with “Try again” if it fails."),
+  ]),
   ("2026-10-21", "21 octobre 2026", "21 October 2026", [
     ("secu", "Le serveur limite le nombre de demandes trop rapprochées, pour éviter les abus.",
              "The server limits requests sent too close together, to prevent abuse."),

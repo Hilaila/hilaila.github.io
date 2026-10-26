@@ -47,6 +47,10 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
   Les autres pages contiennent leurs deux langues. Langue mémorisée dans `localStorage` (`gtcLang`).
 - `logo-160.webp`, `logo-640.webp` : logo affiché dans les pages ; `logo-final-complet.png` reste
   l'original (aperçus de partage, Developer Portal).
+- `connexion-pi.js` (Accueil, Tokeniser, Investissement, Mon espace, Journal) : écran de connexion Pioneer
+  avec une sphère de points or et violet qui sert de bouton ; elle suit les vraies étapes (connexion à Pi,
+  vérification, « Bienvenue, @nom » ou « Réessayer »). La connexion reste la fonction de chaque page ;
+  si le script manque, l'ancien bouton fonctionne comme avant.
 - `clavier.js` (toutes les pages) : contour doré sur l'élément actif au clavier, onglets / FAQ / ajout de
   documents utilisables au clavier avec leur état annoncé, zones défilantes atteignables, champs en
   16 px sur téléphone (le zoom reste permis sans agrandissement automatique).
@@ -74,6 +78,7 @@ npm install --no-save playwright axe-core && npx playwright install chromium
 node tests/audit-pages.js .
 node tests/accessibilite.js .
 node tests/clavier.js .
+node tests/connexion.js .
 ```
 
 - `audit-pages.js` : chaque page sur un écran de téléphone (360 px), en français et en anglais. Échoue
@@ -83,7 +88,10 @@ node tests/clavier.js .
 - `clavier.js` : onglets, FAQ et ajout de documents utilisables au clavier, états annoncés aux lecteurs
   d'écran, contour de focus visible, zoom autorisé, langue déclarée.
 
-Les trois sont lancés automatiquement par GitHub Actions à chaque publication
+- `connexion.js` : sphère de connexion Pi sur les 5 pages, avec Pi simulé (connexion acceptée, refusée,
+  absente) : étapes, « Bienvenue », fermeture, « Réessayer », touche Échap.
+
+Les quatre sont lancés automatiquement par GitHub Actions à chaque publication
 (`.github/workflows/verifier-pages.yml`).
 
 ## Publication

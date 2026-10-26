@@ -160,6 +160,7 @@ select option { background: #111; color: white; }
 </style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="connexion-pi.js"></script>
 </head>
 
 <body>
@@ -820,7 +821,13 @@ async function verifyDocument(documentId, decision) {
 
 }
 
-$("piLoginBtn").addEventListener("click", authenticatePi);
+/* Sphère de connexion Pi (connexion-pi.js) ; même fonction authenticatePi qu'avant. */
+if (window.GTCConnexion) GTCConnexion.lier($("piLoginBtn"), {
+    lancer: () => authenticatePi(),
+    reussi: () => !!state.accessToken,
+    nom: () => state.piUser && state.piUser.username
+});
+else $("piLoginBtn").addEventListener("click", authenticatePi);
 $("createProjectBtn").addEventListener("click", createProject);
 $("addDocumentBtn").addEventListener("click", addDocument);
 

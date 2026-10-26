@@ -529,6 +529,7 @@
 </style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="connexion-pi.js"></script>
 </head>
 <body>
 
@@ -1043,7 +1044,14 @@ document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click
   try { localStorage.setItem("gtcLang", LANG); } catch (e) {}
   applyLang();
 }));
-$("loginBtn").addEventListener("click", login);
+/* Sphère de connexion Pi (connexion-pi.js) ; même fonction login qu'avant. */
+if (window.GTCConnexion) GTCConnexion.lier($("loginBtn"), {
+  lancer: () => login(),
+  reussi: () => !!state.loadedAt,
+  nom: () => state.me,
+  erreur: () => $("msg").textContent
+});
+else $("loginBtn").addEventListener("click", login);
 $("refreshBtn").addEventListener("click", () => load().catch(e => toast(e.message)));
 $("csvBtn").addEventListener("click", openExport);
 $("xClose").addEventListener("click", closeExport);

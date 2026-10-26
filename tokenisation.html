@@ -808,6 +808,7 @@ input::placeholder, textarea::placeholder {
 </style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="connexion-pi.js"></script>
 </head>
 
 <body>
@@ -2810,7 +2811,16 @@ async function triggerMint() {
 }
 
 
-$("piLoginBtn").addEventListener("click", () => authenticatePi(false));
+/* Sphère de connexion Pi (connexion-pi.js) ; même fonction authenticatePi qu'avant.
+   Déjà connecté : le bouton mène directement à la vérification, comme avant. */
+if (window.GTCConnexion) GTCConnexion.lier($("piLoginBtn"), {
+    ouvrirSi: () => !(state.piAuthenticated && state.accessToken) && !state.authBusy,
+    sinon: () => authenticatePi(false),
+    lancer: () => authenticatePi(false),
+    reussi: () => !!state.piAuthenticated,
+    nom: () => state.piUser && state.piUser.username
+});
+else $("piLoginBtn").addEventListener("click", () => authenticatePi(false));
 $("verifyKycBtn").addEventListener("click", () => verifyBackendIdentity());
 $("gtcSupply").addEventListener("input", calculateBurn);
 $("latitude").addEventListener("input", updateLocationDisplay);

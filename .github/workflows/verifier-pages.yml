@@ -29,3 +29,6 @@ jobs:
       - name: Tester le clavier et les lecteurs d'écran
         if: always()
         run: node tests/clavier.js .
+      - name: Tester la sphère de connexion Pi
+        if: always()
+        run: node tests/connexion.js .
