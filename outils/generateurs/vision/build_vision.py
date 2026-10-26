@@ -179,7 +179,7 @@ page = f'''<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000008">
 <title>Vision — GeoTerraChain QFS</title>
-<meta name="description" content="GeoTerraChain QFS — vision et résumé exécutif : infrastructure panafricaine de tokenisation foncière, agrobusiness et immobilier, en phase pilote.">
+<meta name="description" content="GeoTerraChain QFS — vision et résumé exécutif : infrastructure panafricaine de tokenisation foncière, agroéconomie et immobilier, en phase pilote.">
 <meta property="og:title" content="GeoTerraChain QFS — Vision">
 <meta property="og:description" content="Notre Terre · Notre Richesse. Infrastructure panafricaine de tokenisation des actifs réels — projet indépendant, phase pilote.">
 <meta property="og:image" content="https://hilaila.github.io/videos/apercu-lien.jpg">
@@ -430,8 +430,8 @@ page = f'''<!DOCTYPE html>
   <nav class="nav" aria-label="Sections">{"".join(f'<a href="#{i}" data-s="{i}">{T(fr, en)}</a>' for i, fr, en in nav)}</nav>
 </header>
 <div class="ticker" aria-hidden="true"><div>{T(
-  "VISION 2026 · NOTRE TERRE · NOTRE RICHESSE · <b>PHASE PILOTE</b> · UEMOA · AGROBUSINESS · IMMOBILIER · GTCπ · PI NETWORK ·&nbsp; VISION 2026 · NOTRE TERRE · NOTRE RICHESSE · <b>PHASE PILOTE</b> · UEMOA · AGROBUSINESS · IMMOBILIER · GTCπ · PI NETWORK ·&nbsp;",
-  "VISION 2026 · OUR LAND · OUR WEALTH · <b>PILOT PHASE</b> · WAEMU · AGRIBUSINESS · REAL ESTATE · GTCπ · PI NETWORK ·&nbsp; VISION 2026 · OUR LAND · OUR WEALTH · <b>PILOT PHASE</b> · WAEMU · AGRIBUSINESS · REAL ESTATE · GTCπ · PI NETWORK ·&nbsp;")}</div></div>
+  "VISION 2026 · NOTRE TERRE · NOTRE RICHESSE · <b>PHASE PILOTE</b> · UEMOA · AGROÉCONOMIE · IMMOBILIER · GTCπ · PI NETWORK ·&nbsp; VISION 2026 · NOTRE TERRE · NOTRE RICHESSE · <b>PHASE PILOTE</b> · UEMOA · AGROÉCONOMIE · IMMOBILIER · GTCπ · PI NETWORK ·&nbsp;",
+  "VISION 2026 · OUR LAND · OUR WEALTH · <b>PILOT PHASE</b> · WAEMU · AGRO-ECONOMY · REAL ESTATE · GTCπ · PI NETWORK ·&nbsp; VISION 2026 · OUR LAND · OUR WEALTH · <b>PILOT PHASE</b> · WAEMU · AGRO-ECONOMY · REAL ESTATE · GTCπ · PI NETWORK ·&nbsp;")}</div></div>
 
 <main>
   <section class="hero" id="presentation">
@@ -451,8 +451,8 @@ page = f'''<!DOCTYPE html>
     <h1>GeoTerraChain <em>QFS</em></h1>
     <p class="tagline">{T("Notre Terre · Notre Richesse", "Our Land · Our Wealth")}</p>
     <p class="lead">{T(
-      "Infrastructure panafricaine d'intelligence territoriale, d'agrobusiness intégré, de gestion foncière numérique et de promotion immobilière, sécurisée par la blockchain.",
-      "A pan-African infrastructure for territorial intelligence, integrated agribusiness, digital land management and real estate development, secured by blockchain.")}</p>
+      "Infrastructure panafricaine d'intelligence territoriale, d'agroéconomie intégrée, de gestion foncière numérique et de promotion immobilière, sécurisée par la blockchain.",
+      "A pan-African infrastructure for territorial intelligence, integrated agro-economy, digital land management and real estate development, secured by blockchain.")}</p>
     <div class="chips">{"".join(f'<span class="chip">{ic(i)}{T(fr, en)}</span>' for i, fr, en in chips)}</div>
   </section>
 
@@ -461,8 +461,8 @@ page = f'''<!DOCTYPE html>
   <section class="block">
     {sec_head("01", "target", "Présentation générale", "Overview")}
     <div class="glass"><p class="lead2">{T(
-      "GeoTerraChain QFS est une <b>infrastructure numérique panafricaine</b> conçue pour moderniser la gestion foncière, l'agrobusiness, l'immobilier et le développement territorial grâce à la blockchain, au Web3, à l'intelligence territoriale, au SIG, au GPS et à l'identité numérique.",
-      "GeoTerraChain QFS is a <b>pan-African digital infrastructure</b> designed to modernise land management, agribusiness, real estate and territorial development through blockchain, Web3, territorial intelligence, GIS, GPS and digital identity.")}</p></div>
+      "GeoTerraChain QFS est une <b>infrastructure numérique panafricaine</b> conçue pour moderniser la gestion foncière, l'agroéconomie, l'immobilier et le développement territorial grâce à la blockchain, au Web3, à l'intelligence territoriale, au SIG, au GPS et à l'identité numérique.",
+      "GeoTerraChain QFS is a <b>pan-African digital infrastructure</b> designed to modernise land management, agro-economy, real estate and territorial development through blockchain, Web3, territorial intelligence, GIS, GPS and digital identity.")}</p></div>
     <div class="cols c3" style="margin-top:12px">
       <div class="glass kv"><small>{T("Fondateur", "Founder")}</small><b>@Hilaila</b><span>{T("Pioneer KYC vérifié · Côte d'Ivoire", "KYC-verified Pioneer · Côte d'Ivoire")}</span></div>
       <div class="glass kv"><small>{T("Réseau", "Network")}</small><b>Pi Network</b><span>{T("Pi SDK 2.0 · Stellar · phase pilote (Testnet)", "Pi SDK 2.0 · Stellar · pilot phase (Testnet)")}</span></div>
@@ -495,7 +495,7 @@ page = f'''<!DOCTYPE html>
   <section class="block" id="actifs">
     {sec_head("03", "layers", "Actifs éligibles à la tokenisation", "Assets eligible for tokenization", "14 classes d'actifs réels, en deux secteurs, dont deux filières phares : la raniculture et la myciculture.", "14 real-world asset classes, in two sectors, including two flagship sectors: frog farming and mushroom farming.")}
     <div class="glass">
-      <div class="sector">{ic("leaf")}<h3>{T("Agrobusiness", "Agribusiness")}</h3></div>
+      <div class="sector">{ic("leaf")}<h3>{T("Agroéconomie", "Agro-economy")}</h3></div>
       <div class="assets">{tiles(agro)}</div>
     </div>
     <div class="glass">
@@ -555,8 +555,8 @@ page = f'''<!DOCTYPE html>
     {sec_head("09", "rocket", "Vision à long terme", "Long-term vision", "GeoTerraChain QFS ambitionne de devenir :", "GeoTerraChain QFS aims to become:")}
     <ol class="goals">{"".join(f"<li><span>{T(a, b)}</span></li>" for a, b in longterm)}</ol>
     <div class="glass" style="margin-top:12px"><p class="concl">{T(
-      "GeoTerraChain QFS associe blockchain, Web3, gestion foncière numérique, promotion immobilière, agrobusiness intégré, intelligence territoriale, SIG, GPS et identité numérique pour transformer les actifs africains en actifs numériques sécurisés, traçables, valorisables et accessibles.",
-      "GeoTerraChain QFS combines blockchain, Web3, digital land management, real estate development, integrated agribusiness, territorial intelligence, GIS, GPS and digital identity to turn African assets into secure, traceable, valuable and accessible digital assets.")}</p></div>
+      "GeoTerraChain QFS associe blockchain, Web3, gestion foncière numérique, promotion immobilière, agroéconomie intégrée, intelligence territoriale, SIG, GPS et identité numérique pour transformer les actifs africains en actifs numériques sécurisés, traçables, valorisables et accessibles.",
+      "GeoTerraChain QFS combines blockchain, Web3, digital land management, real estate development, integrated agro-economy, territorial intelligence, GIS, GPS and digital identity to turn African assets into secure, traceable, valuable and accessible digital assets.")}</p></div>
     <div class="glass quote"><p>{T("« Sécuriser, valoriser et transformer les actifs africains grâce à la blockchain, au Web3 et à l'intelligence territoriale. »", "“Securing, adding value to and transforming African assets through blockchain, Web3 and territorial intelligence.”")}</p><small>{T("NOTRE TERRE · NOTRE RICHESSE", "OUR LAND · OUR WEALTH")}</small></div>
     <div class="cta">
       <a class="btn btn-gold" href="index.html">{ic("home")}{T("Accéder à l'app", "Open the app")}</a>
