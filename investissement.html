@@ -293,7 +293,8 @@ const state = {
     accessToken: null,
     piUser: null,
     projects: [],
-    userRole: null
+    userRole: null,
+    incompletePayment: null
 };
 
 function $(id) { return document.getElementById(id); }
@@ -377,9 +378,10 @@ async function authenticatePi() {
     btn.innerHTML = '<span class="loader"></span>Connexion…';
     try {
         Pi.init({ version: "2.0", sandbox: CONFIG.PI_SANDBOX });
-        const auth = await Pi.authenticate(CONFIG.PI_SCOPES, () => {});
+        const auth = await Pi.authenticate(CONFIG.PI_SCOPES, onIncompletePaymentFound);
         state.accessToken = auth.accessToken;
         state.piUser = auth.user;
+        traiterPaiementEnAttente();
         $("piStatusBadge").textContent = "✓ @" + (auth.user.username || "Pioneer");
         $("createProjectBtn").disabled = false;
         $("createProjectBtn").textContent = "Créer le projet";
@@ -394,6 +396,70 @@ async function authenticatePi() {
         btn.disabled = false;
         btn.textContent = "π Se connecter avec Pi";
     }
+}
+
+/* ============================================================
+   PAIEMENT PI RESTÉ EN ATTENTE
+   ============================================================
+   Si un paiement précédent a été interrompu (application fermée,
+   réseau coupé), Pi Network le signale à la connexion et bloque tout
+   nouveau paiement tant qu'il n'est pas traité :
+   - jamais signé dans le portefeuille → il est annulé (aucun Pi n'a bougé) ;
+   - signé mais pas finalisé → il est finalisé par le serveur et, pour un
+     investissement, les unités payées sont attribuées.            */
+
+function onIncompletePaymentFound(payment) {
+    state.incompletePayment = payment || null;
+}
+
+async function postApi(chemin, corps) {
+    const r = await fetch(`${CONFIG.API_BASE_URL}${chemin}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(corps)
+    });
+    let data = {};
+    try { data = await r.json(); } catch (e) {}
+    return { ok: r.ok && data.ok, data };
+}
+
+async function traiterPaiementEnAttente() {
+    const p = state.incompletePayment;
+    if (!p || !state.accessToken) return;
+    state.incompletePayment = null;
+    const paymentId = p.identifier;
+    const txid = p.transaction && p.transaction.txid;
+    if (!paymentId) return;
+    try {
+        if (!txid) {
+            await postApi("/api/payment-cancel", { accessToken: state.accessToken, paymentId });
+            showToast("Un paiement Pi inachevé a été annulé (aucun Pi débité). Vous pouvez investir à nouveau.", "success");
+            return;
+        }
+        const fin = await postApi("/api/payment-complete", { accessToken: state.accessToken, paymentId, txid });
+        if (!fin.ok) { console.warn("Paiement en attente non finalisé :", fin.data); return; }
+        const md = p.metadata || {};
+        const unites = Number(md.unites);
+        if (md.projetId && Number.isInteger(unites) && unites > 0) {
+            const inv = await postApi("/api/investment/invest", {
+                accessToken: state.accessToken, projetId: md.projetId, unites, piPaymentId: paymentId, piTxId: txid
+            });
+            showToast(inv.ok
+                ? `Un investissement en attente a été finalisé : ${unites} unité(s) attribuée(s).`
+                : "Un paiement Pi précédent a été finalisé.", "success");
+            if (inv.ok) loadProjects();
+        } else {
+            showToast("Un paiement Pi précédent a été finalisé.", "success");
+        }
+    } catch (error) {
+        console.warn("Paiement en attente non traité :", error);
+    }
+}
+
+/* Paiement annulé ou en erreur avant signature : le serveur le note « annulé ». */
+function noterAnnulation(paymentId) {
+    if (!paymentId || !state.accessToken) return;
+    postApi("/api/payment-cancel", { accessToken: state.accessToken, paymentId }).catch(() => {});
 }
 
 /* ============================================================
@@ -559,12 +625,14 @@ async function investInProject(projetId) {
                     }
                 },
 
-                onCancel: () => {
+                onCancel: (paymentId) => {
                     setAlert(`investAlert-${projetId}`, "Paiement annulé.", "error");
+                    noterAnnulation(paymentId);
                 },
 
-                onError: (error) => {
+                onError: (error, payment) => {
                     setAlert(`investAlert-${projetId}`, error?.message || "Erreur de paiement.", "error");
+                    if (payment && payment.identifier && !(payment.transaction && payment.transaction.txid)) noterAnnulation(payment.identifier);
                 }
             }
         );

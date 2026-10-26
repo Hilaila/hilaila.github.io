@@ -143,6 +143,7 @@
       x_sum_list: "Pioneers :",
       empty_f: "Aucun évènement pour ce filtre.",
       updated: "Mis à jour à {h}",
+      pay_rec: " · Paiements relus chez Pi : {a} annulé(s), {f} finalisé(s), {w} en attente de finalisation",
       diag_h: "Diagnostic serveur",
       diag_s: "Visible seulement par l'administrateur, pour comprendre un journal vide.",
       diag_audit: "Journal (gtc_audit_events)",
@@ -287,6 +288,7 @@
       x_sum_list: "Pioneers:",
       empty_f: "No event for this filter.",
       updated: "Updated at {h}",
+      pay_rec: " · Payments checked with Pi: {a} cancelled, {f} completed, {w} awaiting completion",
       diag_h: "Server diagnostics",
       diag_s: "Visible to the administrator only, to understand an empty log.",
       diag_audit: "Log (gtc_audit_events)",
@@ -747,6 +749,7 @@ async function load() {
     if (err.indexOf("AUDIT_READ_FAILED") === 0) throw new Error(t("e_table"));
     throw new Error(err || t("e_bad", { c: status }));
   }
+  state.paiements = data.paiements || null; // rapprochement des paiements fait par le serveur
   setData(data.events || [], data.admins || [], data.diag || null, data.pendingProjects || [], data.incidents || [], data.registre || []);
 }
 
@@ -829,7 +832,9 @@ function render() {
       <div class="l2">${parts.join(" · ")}${e.manual ? `<em>${t("manual")}</em>` : ""}</div>${hash}</div>`;
   });
   $("timeline").innerHTML = html ? html + "</div>" : `<div class="empty">${t("empty_f")}</div>`;
-  $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) : "";
+  const pr = state.paiements;
+  const prTxt = pr && (pr.annules || pr.finalises || pr.aFinaliser) ? t("pay_rec", { a: pr.annules || 0, f: pr.finalises || 0, w: pr.aFinaliser || 0 }) : "";
+  $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) + prTxt : "";
   renderDiag();
   renderProjects();
   renderIncidents();

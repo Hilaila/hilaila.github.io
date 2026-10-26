@@ -2,7 +2,8 @@
 // Pi est simulé : connexion acceptée, refusée, ou absente (navigateur ordinaire).
 // Vérifie : ouverture au toucher du bouton, étapes affichées, « Bienvenue, @nom »,
 // fermeture automatique, état de la page après connexion, « Réessayer » en cas d'échec,
-// touche Échap et retour du focus sur le bouton.
+// touche Échap et retour du focus sur le bouton ; paiement resté en attente chez Pi traité
+// à la connexion (annulé s'il n'a jamais été signé, finalisé sinon).
 // Usage : node tests/connexion.js [dossier]   (requis : npm install --no-save playwright)
 const { chromium } = require("playwright");
 const fs = require("fs"), path = require("path"), http = require("http");
@@ -113,6 +114,46 @@ async function attendre(page, cible, max = 8000) {
   await page.click("#gtc-cx-sphere");
   check(await attendre(page, ["fail"], 4000) === "fail" && (await page.evaluate(() => document.getElementById("gtc-cx-p").textContent)).includes("Pi Browser"), "Sans Pi : « ouvrez GeoTerraChain QFS dans le Pi Browser »");
   await ctx.close();
+  // 5. Paiement resté en attente chez Pi, signalé à la connexion (Investissement, Tokeniser).
+  async function enAttente(pg, btn, payment, journalData) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, userAgent: "Mozilla/5.0 (Linux; Android 14) PiBrowser/2.0 Mobile" });
+    await ctx.addInitScript(() => { try { localStorage.setItem("gtcLang", "fr"); } catch (e) {} });
+    const page = await ctx.newPage(); const appels = []; const errs = [];
+    page.on("pageerror", e => errs.push(e.message)); page.on("dialog", d => d.dismiss().catch(() => {}));
+    const stub = `window.Pi = { init(){}, authenticate(s, onInc){ return new Promise(r => setTimeout(() => { ${payment ? `onInc(${JSON.stringify(payment)});` : ""} r({ accessToken: "jeton", user: { username: "Testeur", uid: "u" } }); }, 400)); }, createPayment(){} };`;
+    await page.route("**/*", r => {
+      const u = r.request().url();
+      if (u.includes("sdk.minepi.com")) return r.fulfill({ contentType: "text/javascript", body: stub });
+      if (/\/api\//.test(u) && !u.startsWith(`http://localhost:${PORT}`)) {
+        const chemin = u.replace(/^https?:\/\/[^/]+/, "").split("?")[0];
+        let corps = {}; try { corps = JSON.parse(r.request().postData() || "{}"); } catch (e) {}
+        appels.push(chemin + (corps.paymentId ? ":" + corps.paymentId : "") + (corps.piPaymentId ? ":" + corps.piPaymentId : ""));
+        const body = chemin === "/api/pi-auth" && corps.action === "journal" ? JSON.stringify({ ok: true, events: [], admins: ["Hilaila"], ...(journalData || {}) }) : '{"ok":true,"projects":[]}';
+        return r.fulfill({ status: 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body });
+      }
+      if (u.startsWith(`http://localhost:${PORT}`)) return r.continue();
+      return r.abort();
+    });
+    await page.goto(`http://localhost:${PORT}/${pg}`, { waitUntil: "load" }); await page.waitForTimeout(700);
+    await page.click(btn); await attendre(page, ["idle"], 3000); await page.click("#gtc-cx-sphere");
+    await attendre(page, ["fermé"], 8000); await page.waitForTimeout(1200);
+    const r = { appels, errs, page, ctx };
+    return r;
+  }
+  let r = await enAttente("investissement.html", "#piLoginBtn", { identifier: "pa-1", transaction: null, metadata: { projetId: "p", unites: 1 } });
+  check(r.appels.includes("/api/payment-cancel:pa-1"), "Investissement : paiement jamais signé → annulé à la connexion");
+  check(r.errs.length === 0, "Investissement : aucune erreur JavaScript (paiement en attente)");
+  await r.ctx.close();
+  r = await enAttente("investissement.html", "#piLoginBtn", { identifier: "pa-2", transaction: { txid: "TX2" }, metadata: { projetId: "97956e1f-3dd7-482b-b060-00e164500fc9", unites: 1 } });
+  check(r.appels.includes("/api/payment-complete:pa-2") && r.appels.includes("/api/investment/invest:pa-2"), "Investissement : paiement signé → finalisé et unités attribuées");
+  await r.ctx.close();
+  r = await enAttente("tokenisation.html", "#piLoginBtn", { identifier: "pa-3", transaction: null, metadata: { requestId: "GTC-1" } });
+  check(r.appels.includes("/api/payment-cancel:pa-3"), "Tokeniser : paiement jamais signé → annulé à la connexion");
+  await r.ctx.close();
+  r = await enAttente("historique.html", "#loginBtn", null, { paiements: { verifies: 3, annules: 2, finalises: 1, aFinaliser: 0 } });
+  check((await r.page.evaluate(() => document.getElementById("updated").textContent)).includes("2 annulé(s), 1 finalisé(s)"), "Journal : résumé des paiements relus chez Pi");
+  await r.ctx.close();
+
   await browser.close(); srv.close();
   console.log(`\n${ok} réussis, ${ko} échoués`);
   process.exit(ko ? 1 : 0);

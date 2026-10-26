@@ -1702,8 +1702,16 @@ async function handleIncompletePayment() {
     const paymentId = payment.identifier;
     const txid = payment.transaction && payment.transaction.txid;
 
-    if (!paymentId || !txid) {
-        console.warn("Paiement incomplet sans transaction : Pi Network l'expirera automatiquement.", payment);
+    if (!paymentId) return;
+
+    if (!txid) {
+        // Jamais signé dans le portefeuille : on l'annule pour débloquer les paiements suivants.
+        try {
+            await postJSON("/api/payment-cancel", { accessToken: state.accessToken, paymentId: paymentId });
+            showToast("Un paiement Pi inachevé a été annulé (aucun Pi débité).", "success");
+        } catch (error) {
+            console.warn("Annulation du paiement inachevé impossible :", error);
+        }
         return;
     }
 
@@ -2737,6 +2745,8 @@ async function initiatePayment() {
 
                     console.log("Paiement annulé :", paymentId);
                     setPaymentStatus("Paiement annulé.", "error");
+                    // Noté « annulé » côté serveur (sinon il resterait « approuvé »).
+                    if (paymentId && state.accessToken) postJSON("/api/payment-cancel", { accessToken: state.accessToken, paymentId: paymentId }).catch(() => {});
                     showToast("Paiement annulé.", "error");
 
                     resetPayButton();
