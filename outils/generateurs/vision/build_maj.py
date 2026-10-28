@@ -28,6 +28,12 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-10-28", "28 octobre 2026", "28 October 2026", [
+    ("app", "Menu commun : un bouton « ☰ Menu » en haut de chaque page donne accès à toutes les pages du site, groupées et avec la page actuelle mise en évidence.",
+            "Shared menu: a “☰ Menu” button at the top of every page gives access to all the site's pages, grouped, with the current page highlighted."),
+    ("secu", "Paiements Pi en pause sur l'adresse principale jusqu'à la validation de l'application par Pi Network : aucun Pi ne peut y être prélevé.",
+             "Pi payments paused on the main address until Pi Network approves the app: no Pi can be taken there."),
+  ]),
   ("2026-10-26", "26 octobre 2026", "26 October 2026", [
     ("app", "Connexion Pioneer : une sphère animée or et violet sert désormais de bouton de connexion Pi et affiche chaque étape (connexion, vérification, bienvenue), avec « Réessayer » en cas d'échec.",
             "Pioneer sign-in: an animated gold and violet sphere now serves as the Pi sign-in button and shows each step (connecting, verifying, welcome), with “Try again” if it fails."),
@@ -166,6 +172,7 @@ page = f'''<!DOCTYPE html>
 <style>{BASE_CSS}{CSS}</style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="navigation.js" defer></script>
 </head>
 <body>
 <header class="top">

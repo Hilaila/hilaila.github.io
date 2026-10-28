@@ -60,6 +60,10 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
   Le serveur refuse aussi les paiements Mainnet tant que la variable Vercel `PAIEMENTS_MAINNET` ne vaut
   pas `ouverts`. L'adresse de test (Testnet) n'est pas concernée ; `?pause-paiements=1` force la pause
   pour un aperçu. Pour rouvrir : retirer `hilaila.github.io` de `ADRESSES_EN_PAUSE` et régler la variable.
+- `navigation.js` (toutes les pages sauf l'ancienne Tokenisation Testnet) : bouton « ☰ Menu » placé à côté du
+  lien « Accueil » de l'en-tête (ou à l'endroit marqué `data-gtc-menu-after` / `data-gtc-menu-before`), qui
+  ouvre la liste de toutes les pages groupées, page actuelle signalée ; FR/EN, clavier, lecteurs d'écran.
+  **Nouvelle page : l'ajouter dans `PAGES` de `navigation.js`** (le test `tests/navigation.js` le vérifie).
 - Réglage « réduire les animations » du téléphone respecté sur toutes les pages.
 - Accessibilité : contrastes conformes WCAG 2.2 AA, zoom jamais bloqué (`user-scalable=no` interdit).
 
@@ -84,6 +88,7 @@ npm install --no-save playwright axe-core && npx playwright install chromium
 node tests/audit-pages.js .
 node tests/accessibilite.js .
 node tests/clavier.js .
+node tests/navigation.js .
 node tests/connexion.js .
 ```
 
@@ -93,11 +98,12 @@ node tests/connexion.js .
   mesuré sur le rendu réel (fonds en dégradé compris) ; téléphone et ordinateur, FR et EN.
 - `clavier.js` : onglets, FAQ et ajout de documents utilisables au clavier, états annoncés aux lecteurs
   d'écran, contour de focus visible, zoom autorisé, langue déclarée.
-
+- `navigation.js` : bouton « Menu » dans l'en-tête de chaque page, menu complet (toutes les pages),
+  page actuelle signalée, Échap / Tab / retour au bouton, anglais, aucun lien interne cassé.
 - `connexion.js` : sphère de connexion Pi sur les 5 pages, avec Pi simulé (connexion acceptée, refusée,
   absente) : étapes, « Bienvenue », fermeture, « Réessayer », touche Échap.
 
-Les quatre sont lancés automatiquement par GitHub Actions à chaque publication
+Tous sont lancés automatiquement par GitHub Actions à chaque publication
 (`.github/workflows/verifier-pages.yml`).
 
 ## Publication

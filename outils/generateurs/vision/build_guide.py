@@ -242,6 +242,7 @@ page = f'''<!DOCTYPE html>
 <style>{BASE_CSS}{GUIDE_CSS}</style>
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
+<script src="navigation.js" defer></script>
 </head>
 <body>
 <header class="top">

@@ -32,3 +32,6 @@ jobs:
       - name: Tester la sphère de connexion Pi
         if: always()
         run: node tests/connexion.js .
+      - name: Tester le menu commun et les liens
+        if: always()
+        run: node tests/navigation.js .

@@ -15,7 +15,8 @@ const ROOT = path.resolve(process.argv[2] || path.join(__dirname, ".."));
 const PORT = 8766;
 const SKIP = new Set(["vision.html", "terms.html"]); // pages de simple redirection
 const EXTRA = ["historique.html?demo=1",            // Journal avec données fictives
-  "tokenisation.html?pause-paiements=1", "investissement.html?pause-paiements=1"]; // paiements en pause (adresse principale)
+  "tokenisation.html?pause-paiements=1", "investissement.html?pause-paiements=1", // paiements en pause (adresse principale)
+  "index.html?menu-ouvert=1", "termes.html?menu-ouvert=1"];                         // menu commun ouvert
 let AXE = null;
 try { AXE = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8"); }
 catch (e) { if (!process.env.SANS_AXE) throw e; console.log("axe-core absent : seul le contraste mesuré est contrôlé (SANS_AXE)."); }
@@ -55,6 +56,7 @@ function collect() {
     if (el.closest("button:disabled,[disabled],[aria-disabled=true]")) continue;
     { const d = el.closest("details"); if (d && !d.open && !el.closest("summary")) continue; }
     if (el.closest("#splash")) continue; // écran d'ouverture animé, éphémère
+    if (el.closest("[inert]")) continue;  // page inactive derrière une fenêtre (menu ouvert)
     const range = document.createRange(); range.selectNodeContents(t);
     const rr = [...range.getClientRects()].filter(r => r.width > 1 && r.height > 1);
     if (!rr.length) continue;
