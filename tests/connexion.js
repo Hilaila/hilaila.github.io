@@ -152,6 +152,16 @@ async function attendre(page, cible, max = 8000) {
   await r.ctx.close();
   r = await enAttente("historique.html", "#loginBtn", null, { paiements: { verifies: 3, annules: 2, finalises: 1, aFinaliser: 0 } });
   check((await r.page.evaluate(() => document.getElementById("updated").textContent)).includes("2 annulé(s), 1 finalisé(s)"), "Journal : résumé des paiements relus chez Pi");
+  check(await r.page.evaluate(() => document.getElementById("payCard").classList.contains("hide")), "Journal : pas de carte « non résolus » sans problème");
+  await r.ctx.close();
+  r = await enAttente("historique.html", "#loginBtn", null, { paiements: { verifies: 1, annules: 0, finalises: 0, aFinaliser: 0, erreurs: 2, problemes: [
+    { ref: "4smoxr", depuisJours: 17, etape: "annulation", http: 400, code: "<b>refus</b>", message: "Refus", etatPi: { reseau: "Pi Testnet", approuve: true, signe: false } },
+    { ref: "rjHxh1", depuisJours: 5, etape: "lecture", http: 404, code: "payment_not_found", message: null, etatPi: null }] } });
+  const carte = await r.page.evaluate(() => ({ cache: document.getElementById("payCard").classList.contains("hide"), txt: document.getElementById("payList").innerText, html: document.getElementById("payList").innerHTML, maj: document.getElementById("updated").textContent }));
+  check(!carte.cache && carte.txt.includes("Paiement …4smoxr · depuis 17 j") && carte.txt.includes("Pi refuse l'annulation") && carte.txt.includes("HTTP 400"), "Journal : paiement non résolu affiché avec sa raison");
+  check(carte.txt.includes("Chez Pi : Pi Testnet, approuvé") && carte.txt.includes("Pi ne renvoie pas ce paiement") && carte.txt.includes("HTTP 404 · payment_not_found"), "Journal : état chez Pi et lecture impossible");
+  check(!carte.html.includes("<b>refus</b>") && carte.maj.includes("2 paiement(s) non résolu(s)"), "Journal : texte de Pi échappé, total dans le résumé");
+  check(r.errs.length === 0, "Journal : aucune erreur JavaScript (paiements non résolus)");
   await r.ctx.close();
 
   await browser.close(); srv.close();

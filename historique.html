@@ -144,6 +144,15 @@
       empty_f: "Aucun évènement pour ce filtre.",
       updated: "Mis à jour à {h}",
       pay_rec: " · Paiements relus chez Pi : {a} annulé(s), {f} finalisé(s), {w} en attente de finalisation",
+      pay_err: " · {e} paiement(s) non résolu(s), détail ci-dessous",
+      pay_h: "Paiements non résolus",
+      pay_s: "Relus chez Pi à chaque ouverture du Journal. Rien n'est débité ni crédité ici.",
+      pay_ref: "Paiement …{r} · depuis {n} j",
+      pay_step_lecture: "Pi ne renvoie pas ce paiement",
+      pay_step_annulation: "Pi refuse l'annulation",
+      pay_step_enregistrement: "La base refuse la mise à jour",
+      pay_state: "Chez Pi : {s}",
+      pay_st_approuve: "approuvé", pay_st_signe: "signé", pay_st_txid: "transaction présente", pay_st_finalise: "finalisé", pay_st_annule: "annulé",
       diag_h: "Diagnostic serveur",
       diag_s: "Visible seulement par l'administrateur, pour comprendre un journal vide.",
       diag_audit: "Journal (gtc_audit_events)",
@@ -289,6 +298,15 @@
       empty_f: "No event for this filter.",
       updated: "Updated at {h}",
       pay_rec: " · Payments checked with Pi: {a} cancelled, {f} completed, {w} awaiting completion",
+      pay_err: " · {e} unresolved payment(s), details below",
+      pay_h: "Unresolved payments",
+      pay_s: "Checked with Pi each time the Log opens. Nothing is debited or credited here.",
+      pay_ref: "Payment …{r} · for {n} d",
+      pay_step_lecture: "Pi does not return this payment",
+      pay_step_annulation: "Pi refuses the cancellation",
+      pay_step_enregistrement: "The database refuses the update",
+      pay_state: "At Pi: {s}",
+      pay_st_approuve: "approved", pay_st_signe: "signed", pay_st_txid: "transaction present", pay_st_finalise: "completed", pay_st_annule: "cancelled",
       diag_h: "Server diagnostics",
       diag_s: "Visible to the administrator only, to understand an empty log.",
       diag_audit: "Log (gtc_audit_events)",
@@ -506,6 +524,7 @@
   .diag li b { font-weight:600; color:var(--text); }
   .diag li span { font-family:'JetBrains Mono', monospace; font-size:12px; text-align:right; color:#BDB6A3; overflow-wrap:anywhere; }
   .diag li span.ok { color:var(--green); } .diag li span.ko { color:var(--red); }
+  #payList li { flex-direction:column; gap:6px; } #payList li span { text-align:left; line-height:1.55; }
   footer { max-width:1000px; margin:36px auto 0; padding:24px 16px 44px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:12.5px; }
   footer img { width:48px; height:48px; margin:0 auto 10px; border-radius:50%; }
   footer .sig { font-family:'JetBrains Mono', monospace; letter-spacing:.18em; font-size:10.5px; color:#B08A2E; text-transform:uppercase; margin-top:8px; }
@@ -633,6 +652,11 @@
     <section class="glass diag hide" id="diagCard">
       <div class="head"><div><h2 data-i18n="diag_h"></h2><div class="hs" data-i18n="diag_s"></div></div></div>
       <ul id="diagList"></ul>
+    </section>
+
+    <section class="glass diag hide" id="payCard" aria-live="polite">
+      <div class="head"><div><h2 data-i18n="pay_h"></h2><div class="hs" data-i18n="pay_s"></div></div></div>
+      <ul id="payList"></ul>
     </section>
 
     <div class="actions">
@@ -833,9 +857,11 @@ function render() {
   });
   $("timeline").innerHTML = html ? html + "</div>" : `<div class="empty">${t("empty_f")}</div>`;
   const pr = state.paiements;
-  const prTxt = pr && (pr.annules || pr.finalises || pr.aFinaliser) ? t("pay_rec", { a: pr.annules || 0, f: pr.finalises || 0, w: pr.aFinaliser || 0 }) : "";
+  const prTxt = (pr && (pr.annules || pr.finalises || pr.aFinaliser) ? t("pay_rec", { a: pr.annules || 0, f: pr.finalises || 0, w: pr.aFinaliser || 0 }) : "")
+    + (pr && pr.erreurs ? t("pay_err", { e: pr.erreurs }) : "");
   $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) + prTxt : "";
   renderDiag();
+  renderPay();
   renderProjects();
   renderIncidents();
 }
@@ -955,6 +981,19 @@ async function reviewProject(btn) {
     btn.textContent = label;
     toast(t("pr_fail", { e: e.message || "?" }));
   }
+}
+
+/* Paiements restés « approuvés » que le serveur n'a pas pu régler : raison donnée par Pi ou par la base */
+function renderPay() {
+  const pr = state.paiements, list = pr && Array.isArray(pr.problemes) ? pr.problemes : [];
+  $("payCard").classList.toggle("hide", !list.length);
+  $("payList").innerHTML = list.map(x => {
+    const err = [x.http ? "HTTP " + x.http : "", x.code || "", x.message && x.message !== x.code ? x.message : ""].filter(Boolean).join(" · ");
+    const s = x.etatPi;
+    const etat = s ? [s.reseau || ""].concat(["approuve", "signe", "txid", "finalise", "annule"].filter(k => s[k]).map(k => t("pay_st_" + k))).filter(Boolean).join(", ") : "";
+    const lignes = [t("pay_step_" + x.etape), err, etat ? t("pay_state", { s: etat }) : ""].filter(Boolean).map(esc).join("<br>");
+    return `<li><b>${esc(t("pay_ref", { r: x.ref, n: x.depuisJours == null ? "?" : x.depuisJours }))}</b><span class="ko">${lignes}</span></li>`;
+  }).join("");
 }
 
 function renderDiag() {
@@ -1103,6 +1142,8 @@ applyLang();
 /* Aperçu sans serveur : historique.html?demo=1 */
 if (new URLSearchParams(location.search).get("demo") === "1") {
   $("demoBanner").classList.remove("hide");
+  state.paiements = { verifies: 1, annules: 0, finalises: 0, aFinaliser: 0, enAttente: 0, erreurs: 1,
+    problemes: [{ ref: "EXEMPL", depuisJours: 5, etape: "annulation", http: 400, code: "exemple_refus", message: "Raison fictive pour l'aperçu", etatPi: { reseau: "Pi Testnet", approuve: true } }] };
   setData([
     { created_at: "2026-10-12T09:30:40Z", type: "identite", username: "Pioneer_Demo", page: "tokenisation" },
     { created_at: "2026-10-12T09:32:10Z", type: "demande", username: "Pioneer_Demo", page: "tokenisation", reference: "GTC-EXEMPLE-0002", amount: 1000 },
