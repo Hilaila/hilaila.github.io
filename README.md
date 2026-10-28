@@ -54,6 +54,12 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
 - `clavier.js` (toutes les pages) : contour doré sur l'élément actif au clavier, onglets / FAQ / ajout de
   documents utilisables au clavier avec leur état annoncé, zones défilantes atteignables, champs en
   16 px sur téléphone (le zoom reste permis sans agrandissement automatique).
+- `pause-paiements.js` (Tokeniser, Investissement, ancienne page Tokenisation Testnet) : sur
+  `hilaila.github.io`, enregistrée chez Pi comme application **Mainnet** (vrais Pi), les paiements sont
+  en pause jusqu'à la validation de Pi : bandeau, boutons « Paiements en pause », aucun paiement ouvert.
+  Le serveur refuse aussi les paiements Mainnet tant que la variable Vercel `PAIEMENTS_MAINNET` ne vaut
+  pas `ouverts`. L'adresse de test (Testnet) n'est pas concernée ; `?pause-paiements=1` force la pause
+  pour un aperçu. Pour rouvrir : retirer `hilaila.github.io` de `ADRESSES_EN_PAUSE` et régler la variable.
 - Réglage « réduire les animations » du téléphone respecté sur toutes les pages.
 - Accessibilité : contrastes conformes WCAG 2.2 AA, zoom jamais bloqué (`user-scalable=no` interdit).
 

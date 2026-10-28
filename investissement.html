@@ -161,6 +161,7 @@ select option { background: #111; color: white; }
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
 <script src="connexion-pi.js"></script>
+<script src="pause-paiements.js"></script>
 </head>
 
 <body>
@@ -432,8 +433,10 @@ async function traiterPaiementEnAttente() {
     if (!paymentId) return;
     try {
         if (!txid) {
-            await postApi("/api/payment-cancel", { accessToken: state.accessToken, paymentId });
-            showToast("Un paiement Pi inachevé a été annulé (aucun Pi débité). Vous pouvez investir à nouveau.", "success");
+            const annul = await postApi("/api/payment-cancel", { accessToken: state.accessToken, paymentId });
+            showToast(annul.ok
+                ? "Un paiement Pi inachevé a été annulé (aucun Pi débité). Vous pouvez investir à nouveau."
+                : "Un paiement Pi inachevé n'a jamais été signé : aucun Pi débité. Pi l'annulera de lui-même à votre prochain paiement.", "success");
             return;
         }
         const fin = await postApi("/api/payment-complete", { accessToken: state.accessToken, paymentId, txid });
@@ -525,7 +528,7 @@ function renderProjectCard(p) {
             <input type="number" min="1" id="unites-${p.id}" placeholder="Ex : 10">
             <div style="font-size:11px; color:var(--muted); margin-top:6px;" id="cost-${p.id}"></div>
 
-            <button class="btn btn-primary" onclick="investInProject('${p.id}')">π Investir (Testnet)</button>
+            <button class="btn btn-primary" onclick="investInProject('${p.id}')"${paiementsEnPause() ? " data-gtc-paiement" : ""}>${paiementsEnPause() ? escapeHtml(GTCPaiements.bouton()) : "π Investir (Testnet)"}</button>
             <div id="investAlert-${p.id}"></div>
         </div>
         `;
@@ -535,7 +538,15 @@ function renderProjectCard(p) {
    INVESTISSEMENT
    ============================================================ */
 
+/* Paiements en pause sur l'adresse principale (application Mainnet) : voir pause-paiements.js */
+function paiementsEnPause() { return Boolean(window.GTCPaiements && GTCPaiements.pause); }
+
 async function investInProject(projetId) {
+
+    if (paiementsEnPause()) {
+        setAlert(`investAlert-${projetId}`, escapeHtml(GTCPaiements.message()), "warning");
+        return;
+    }
 
     if (!state.accessToken) {
         showToast("Connectez-vous à Pi d'abord.", "error");

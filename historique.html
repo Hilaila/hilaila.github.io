@@ -145,7 +145,10 @@
       updated: "Mis à jour à {h}",
       pay_rec: " · Paiements relus chez Pi : {a} annulé(s), {f} finalisé(s), {w} en attente de finalisation",
       pay_err: " · {e} paiement(s) non résolu(s), détail ci-dessous",
-      pay_h: "Paiements non résolus",
+      pay_h: "Paiements en suspens",
+      pay_wait: " · {n} paiement(s) en attente du Pioneer",
+      pay_wait_txt: "En attente du Pioneer : jamais signé, aucun Pi prélevé. Pi l'annulera de lui-même à son prochain paiement dans l'application.",
+      pay_net: "Réseau : {r}", pay_net_main: "Mainnet (vrais Pi)", pay_net_test: "Testnet",
       pay_s: "Relus chez Pi à chaque ouverture du Journal. Rien n'est débité ni crédité ici.",
       pay_ref: "Paiement …{r} · depuis {n} j",
       pay_step_lecture: "Pi ne renvoie pas ce paiement",
@@ -299,7 +302,10 @@
       updated: "Updated at {h}",
       pay_rec: " · Payments checked with Pi: {a} cancelled, {f} completed, {w} awaiting completion",
       pay_err: " · {e} unresolved payment(s), details below",
-      pay_h: "Unresolved payments",
+      pay_h: "Pending payments",
+      pay_wait: " · {n} payment(s) waiting for the Pioneer",
+      pay_wait_txt: "Waiting for the Pioneer: never signed, no Pi taken. Pi cancels it by itself at their next payment in the app.",
+      pay_net: "Network: {r}", pay_net_main: "Mainnet (real Pi)", pay_net_test: "Testnet",
       pay_s: "Checked with Pi each time the Log opens. Nothing is debited or credited here.",
       pay_ref: "Payment …{r} · for {n} d",
       pay_step_lecture: "Pi does not return this payment",
@@ -525,6 +531,7 @@
   .diag li span { font-family:'JetBrains Mono', monospace; font-size:12px; text-align:right; color:#BDB6A3; overflow-wrap:anywhere; }
   .diag li span.ok { color:var(--green); } .diag li span.ko { color:var(--red); }
   #payList li { flex-direction:column; gap:6px; } #payList li span { text-align:left; line-height:1.55; }
+  #payList li span.wait { color:#E8D9A8; }
   footer { max-width:1000px; margin:36px auto 0; padding:24px 16px 44px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:12.5px; }
   footer img { width:48px; height:48px; margin:0 auto 10px; border-radius:50%; }
   footer .sig { font-family:'JetBrains Mono', monospace; letter-spacing:.18em; font-size:10.5px; color:#B08A2E; text-transform:uppercase; margin-top:8px; }
@@ -858,6 +865,7 @@ function render() {
   $("timeline").innerHTML = html ? html + "</div>" : `<div class="empty">${t("empty_f")}</div>`;
   const pr = state.paiements;
   const prTxt = (pr && (pr.annules || pr.finalises || pr.aFinaliser) ? t("pay_rec", { a: pr.annules || 0, f: pr.finalises || 0, w: pr.aFinaliser || 0 }) : "")
+    + (pr && pr.attentePioneer ? t("pay_wait", { n: pr.attentePioneer }) : "")
     + (pr && pr.erreurs ? t("pay_err", { e: pr.erreurs }) : "");
   $("updated").textContent = state.loadedAt ? t("updated", { h: fmtTime(state.loadedAt) }) + prTxt : "";
   renderDiag();
@@ -986,13 +994,19 @@ async function reviewProject(btn) {
 /* Paiements restés « approuvés » que le serveur n'a pas pu régler : raison donnée par Pi ou par la base */
 function renderPay() {
   const pr = state.paiements, list = pr && Array.isArray(pr.problemes) ? pr.problemes : [];
-  $("payCard").classList.toggle("hide", !list.length);
-  $("payList").innerHTML = list.map(x => {
+  const attente = pr && Array.isArray(pr.attente) ? pr.attente : [];
+  $("payCard").classList.toggle("hide", !list.length && !attente.length);
+  const reseau = r => r === "Pi Network" ? t("pay_net_main") : r === "Pi Testnet" ? t("pay_net_test") : (r || "");
+  const ref = x => esc(t("pay_ref", { r: x.ref, n: x.depuisJours == null ? "?" : x.depuisJours }));
+  $("payList").innerHTML = attente.map(x => {
+    const lignes = [t("pay_wait_txt"), x.reseau ? t("pay_net", { r: reseau(x.reseau) }) : ""].filter(Boolean).map(esc).join("<br>");
+    return `<li><b>${ref(x)}</b><span class="wait">${lignes}</span></li>`;
+  }).join("") + list.map(x => {
     const err = [x.http ? "HTTP " + x.http : "", x.code || "", x.message && x.message !== x.code ? x.message : ""].filter(Boolean).join(" · ");
     const s = x.etatPi;
     const etat = s ? [s.reseau || ""].concat(["approuve", "signe", "txid", "finalise", "annule"].filter(k => s[k]).map(k => t("pay_st_" + k))).filter(Boolean).join(", ") : "";
     const lignes = [t("pay_step_" + x.etape), err, etat ? t("pay_state", { s: etat }) : ""].filter(Boolean).map(esc).join("<br>");
-    return `<li><b>${esc(t("pay_ref", { r: x.ref, n: x.depuisJours == null ? "?" : x.depuisJours }))}</b><span class="ko">${lignes}</span></li>`;
+    return `<li><b>${ref(x)}</b><span class="ko">${lignes}</span></li>`;
   }).join("");
 }
 
@@ -1142,7 +1156,8 @@ applyLang();
 /* Aperçu sans serveur : historique.html?demo=1 */
 if (new URLSearchParams(location.search).get("demo") === "1") {
   $("demoBanner").classList.remove("hide");
-  state.paiements = { verifies: 1, annules: 0, finalises: 0, aFinaliser: 0, enAttente: 0, erreurs: 1,
+  state.paiements = { verifies: 2, annules: 0, finalises: 0, aFinaliser: 0, enAttente: 0, attentePioneer: 1, erreurs: 1,
+    attente: [{ ref: "EXEMPA", depuisJours: 9, reseau: "Pi Network" }],
     problemes: [{ ref: "EXEMPL", depuisJours: 5, etape: "annulation", http: 400, code: "exemple_refus", message: "Raison fictive pour l'aperçu", etatPi: { reseau: "Pi Testnet", approuve: true } }] };
   setData([
     { created_at: "2026-10-12T09:30:40Z", type: "identite", username: "Pioneer_Demo", page: "tokenisation" },

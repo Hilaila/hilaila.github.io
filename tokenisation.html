@@ -809,6 +809,7 @@ input::placeholder, textarea::placeholder {
 <script src="reseau.js"></script>
 <script src="clavier.js" defer></script>
 <script src="connexion-pi.js"></script>
+<script src="pause-paiements.js"></script>
 </head>
 
 <body>
@@ -1707,8 +1708,10 @@ async function handleIncompletePayment() {
     if (!txid) {
         // Jamais signé dans le portefeuille : on l'annule pour débloquer les paiements suivants.
         try {
-            await postJSON("/api/payment-cancel", { accessToken: state.accessToken, paymentId: paymentId });
-            showToast("Un paiement Pi inachevé a été annulé (aucun Pi débité).", "success");
+            const annul = await postJSON("/api/payment-cancel", { accessToken: state.accessToken, paymentId: paymentId });
+            showToast(annul.ok
+                ? "Un paiement Pi inachevé a été annulé (aucun Pi débité)."
+                : "Un paiement Pi inachevé n'a jamais été signé : aucun Pi débité. Pi l'annulera de lui-même à votre prochain paiement.", "success");
         } catch (error) {
             console.warn("Annulation du paiement inachevé impossible :", error);
         }
@@ -2613,8 +2616,8 @@ function renderResultBox() {
         ${docsSection()}
         <div id="paymentStatus" style="margin-top:14px; font-size:11px; color:var(--muted);"></div>
         <div style="margin-top:14px;">
-            <button class="btn btn-primary" id="payNowBtn" type="button" onclick="initiatePayment()">
-                π Payer ${PAYMENT_TEST_AMOUNT} π (test)
+            <button class="btn btn-primary" id="payNowBtn" type="button" onclick="initiatePayment()"${paiementsEnPause() ? " data-gtc-paiement" : ""}>
+                ${escapeHtml(libellePaiement())}
             </button>
         </div>
         ${TEST_NOTE}
@@ -2629,10 +2632,15 @@ function resetPayButton() {
 
     if (button) {
         button.disabled = false;
-        button.textContent = `π Payer ${PAYMENT_TEST_AMOUNT} π (test)`;
+        button.textContent = libellePaiement();
     }
 
 }
+
+
+/* Paiements en pause sur l'adresse principale (application Mainnet) : voir pause-paiements.js */
+function paiementsEnPause() { return Boolean(window.GTCPaiements && GTCPaiements.pause); }
+function libellePaiement() { return paiementsEnPause() ? GTCPaiements.bouton() : `π Payer ${PAYMENT_TEST_AMOUNT} π (test)`; }
 
 
 function setPaymentStatus(message, type = "warning") {
@@ -2645,6 +2653,12 @@ function setPaymentStatus(message, type = "warning") {
 
 
 async function initiatePayment() {
+
+    if (paiementsEnPause()) {
+        setPaymentStatus(GTCPaiements.message(), "warning");
+        showToast(GTCPaiements.message(), "error");
+        return;
+    }
 
     if (typeof window.Pi === "undefined") {
         showToast("Pi SDK indisponible.", "error");

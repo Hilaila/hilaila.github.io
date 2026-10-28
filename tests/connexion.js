@@ -120,7 +120,7 @@ async function attendre(page, cible, max = 8000) {
     await ctx.addInitScript(() => { try { localStorage.setItem("gtcLang", "fr"); } catch (e) {} });
     const page = await ctx.newPage(); const appels = []; const errs = [];
     page.on("pageerror", e => errs.push(e.message)); page.on("dialog", d => d.dismiss().catch(() => {}));
-    const stub = `window.Pi = { init(){}, authenticate(s, onInc){ return new Promise(r => setTimeout(() => { ${payment ? `onInc(${JSON.stringify(payment)});` : ""} r({ accessToken: "jeton", user: { username: "Testeur", uid: "u" } }); }, 400)); }, createPayment(){} };`;
+    const stub = `window.Pi = { init(){}, authenticate(s, onInc){ return new Promise(r => setTimeout(() => { ${payment ? `onInc(${JSON.stringify(payment)});` : ""} r({ accessToken: "jeton", user: { username: "Testeur", uid: "u" } }); }, 400)); }, createPayment(){ window.__cpAppele = true; } };`;
     await page.route("**/*", r => {
       const u = r.request().url();
       if (u.includes("sdk.minepi.com")) return r.fulfill({ contentType: "text/javascript", body: stub });
@@ -162,6 +162,38 @@ async function attendre(page, cible, max = 8000) {
   check(carte.txt.includes("Chez Pi : Pi Testnet, approuvé") && carte.txt.includes("Pi ne renvoie pas ce paiement") && carte.txt.includes("HTTP 404 · payment_not_found"), "Journal : état chez Pi et lecture impossible");
   check(!carte.html.includes("<b>refus</b>") && carte.maj.includes("2 paiement(s) non résolu(s)"), "Journal : texte de Pi échappé, total dans le résumé");
   check(r.errs.length === 0, "Journal : aucune erreur JavaScript (paiements non résolus)");
+  await r.ctx.close();
+  r = await enAttente("historique.html", "#loginBtn", null, { paiements: { verifies: 1, attentePioneer: 1, erreurs: 0, problemes: [], attente: [{ ref: "rjHxh1", depuisJours: 5, reseau: "Pi Network" }] } });
+  const att = await r.page.evaluate(() => ({ cache: document.getElementById("payCard").classList.contains("hide"), txt: document.getElementById("payList").innerText, ko: document.querySelectorAll("#payList .ko").length, maj: document.getElementById("updated").textContent }));
+  check(!att.cache && att.ko === 0 && att.txt.includes("En attente du Pioneer : jamais signé, aucun Pi prélevé") && att.txt.includes("Réseau : Mainnet (vrais Pi)"), "Journal : paiement en attente du Pioneer, sans erreur rouge");
+  check(att.maj.includes("1 paiement(s) en attente du Pioneer") && !att.maj.includes("non résolu"), "Journal : résumé « en attente du Pioneer »");
+  await r.ctx.close();
+
+  // 6. Paiements en pause (adresse principale = application Mainnet) ; ?pause-paiements=1 la simule.
+  r = await enAttente("investissement.html", "#piLoginBtn", null);
+  check(await r.page.evaluate(() => !document.getElementById("gtc-pause") && window.GTCPaiements && GTCPaiements.pause === false), "Hors adresse principale : paiements non mis en pause");
+  await r.ctx.close();
+  r = await enAttente("investissement.html?pause-paiements=1", "#piLoginBtn", null);
+  const pz = await r.page.evaluate(() => {
+    const b = document.getElementById("gtc-pause");
+    let erreur = null;
+    window.Pi.createPayment({ amount: 0.001 }, { onError: e => { erreur = e.message; } });
+    return { b: b && b.textContent, role: b && b.getAttribute("role"), statut: document.querySelector(".header .status").textContent, erreur, appele: !!window.__cpAppele };
+  });
+  check(/Paiements Pi en pause/.test(pz.b || "") && pz.role === "status", "Pause : bandeau d'information annoncé (role=status)");
+  check(!/PAUSE/.test(pz.statut), "Pause : pastille de connexion Pi de l'en-tête laissée intacte");
+  check(!pz.appele && /validation de l'application par Pi Network/.test(pz.erreur || ""), "Pause : aucun paiement ouvert, explication donnée (garde-fou)");
+  await r.page.evaluate(() => { document.getElementById("projectsList").insertAdjacentHTML("beforeend", '<div id="investAlert-x"></div>'); });
+  await r.page.evaluate(() => { state.accessToken = "jeton"; return investInProject("x"); });
+  check((await r.page.evaluate(() => document.getElementById("investAlert-x").textContent)).includes("Aucun Pi n'a été prélevé"), "Pause : Investir affiche l'explication");
+  check(r.appels.every(a => !/payment-approve/.test(a)) && r.errs.length === 0, "Pause : aucune demande d'approbation, aucune erreur JavaScript");
+  await r.ctx.close();
+  r = await enAttente("tokenisation.html?pause-paiements=1", "#piLoginBtn", null);
+  const pt = await r.page.evaluate(() => { state.submissionId = "GTC-T"; renderResultBox(); const b = document.getElementById("payNowBtn"); b.click(); return { label: b.textContent.trim(), attr: b.hasAttribute("data-gtc-paiement"), msg: document.getElementById("paymentStatus").textContent, appele: !!window.__cpAppele, statut: document.querySelector(".header .status").textContent.trim() }; });
+  check(pt.statut === "PILOTE · PAIEMENTS EN PAUSE", "Pause : en-tête Tokeniser « PILOTE · PAIEMENTS EN PAUSE » (au lieu de PI TESTNET)");
+  check(pt.label === "⏸ Paiements en pause" && pt.attr, "Pause : bouton Tokeniser « Paiements en pause »");
+  check(!pt.appele && pt.msg.includes("Aucun Pi n'a été prélevé"), "Pause : Tokeniser n'ouvre aucun paiement et explique");
+  check(r.errs.length === 0, "Pause : Tokeniser sans erreur JavaScript");
   await r.ctx.close();
 
   await browser.close(); srv.close();
