@@ -32,10 +32,10 @@
   var TXT = {
     fr: { menu: "Menu", fermer: "Fermer le menu", titre: "Toutes les pages",
           app: "Application", savoir: "Comprendre", legal: "Informations légales", admin: "Administration",
-          ici: "page actuelle", pied: "Projet indépendant · Phase pilote" },
+          pied: "Projet indépendant · Phase pilote" },
     en: { menu: "Menu", fermer: "Close the menu", titre: "All pages",
           app: "App", savoir: "Learn", legal: "Legal information", admin: "Administration",
-          ici: "current page", pied: "Independent project · Pilot phase" }
+          pied: "Independent project · Pilot phase" }
   };
   var GROUPES = ["app", "savoir", "legal", "admin"];
 
@@ -112,8 +112,8 @@
       html += '<nav aria-label="' + t(g) + '"><h2>' + t(g) + '</h2><ul>';
       liste.forEach(function (p) {
         var cur = p.f === page;
-        html += '<li><a href="/' + p.f + '"' + (cur ? ' aria-current="page"' : '') + '>' + (l === "en" ? p.en : p.fr) +
-                (cur ? '<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"> (' + t("ici") + ')</span>' : '') + '</a></li>';
+        // aria-current="page" : les lecteurs d'écran annoncent eux-mêmes « page actuelle ».
+        html += '<li><a href="/' + p.f + '"' + (cur ? ' aria-current="page"' : '') + '>' + (l === "en" ? p.en : p.fr) + '</a></li>';
       });
       html += '</ul></nav>';
     });
