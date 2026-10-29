@@ -324,7 +324,6 @@
   .spl-svg .f { opacity:0; animation:apparait .7s ease var(--d,0s) forwards; }
   .spl-svg .p { opacity:0; transform-box:fill-box; transform-origin:center; animation:pop .5s cubic-bezier(.2,1.5,.4,1) var(--d,0s) forwards; }
   .spl-svg .glow { opacity:0; transform-box:fill-box; transform-origin:center; animation:lueur 1.8s ease-in-out var(--d,0s) infinite; }
-  .spl-svg .spin { transform-box:fill-box; transform-origin:center; animation:tourne 24s linear infinite; }
   .spl-svg .flow { stroke-dasharray:.07 .93; animation:flux 1.8s linear infinite; }
   .spl-svg text { font-family:'Space Grotesk', system-ui, sans-serif; font-weight:700; }
   .spl-title { margin-top:14px; font-family:'Space Grotesk', system-ui, sans-serif; font-weight:700; font-size:clamp(28px, 9.2vw, 58px); line-height:1.05; letter-spacing:-.015em;
@@ -355,7 +354,6 @@
   @keyframes pop { 0% { opacity:0; transform:scale(0); } 100% { opacity:1; transform:scale(1); } }
   @keyframes lueur { 0%,100% { opacity:0; transform:scale(.6); } 50% { opacity:.55; transform:scale(1.25); } }
   @keyframes halo { 0%,100% { transform:scale(.94); opacity:.75; } 50% { transform:scale(1.05); opacity:1; } }
-  @keyframes tourne { to { transform:rotate(360deg); } }
   @keyframes flux { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
   @keyframes monte { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   @keyframes brille { from { background-position:100% 0; } to { background-position:-160% 0; } }
@@ -503,7 +501,18 @@
         <!-- Cercles intérieurs -->
         <circle class="d" pathLength="1" style="--d:.5s;--t:1.3s" cx="512" cy="512" r="340" fill="none" stroke="#C9A84C" stroke-opacity=".35" stroke-width="3"/>
         <circle class="d" pathLength="1" style="--d:.7s;--t:1.2s" cx="512" cy="512" r="250" fill="none" stroke="#C9A84C" stroke-opacity=".35" stroke-width="3"/>
-        <g class="f" style="--d:1.2s"><circle class="spin" cx="512" cy="512" r="300" fill="none" stroke="#E8C872" stroke-opacity=".25" stroke-width="2" stroke-dasharray="4 18"/></g>
+        <!-- Cadran (« horloge ») : tourne avec la même technique que le globe (animation SVG),
+             pour que les deux tournent ensemble sur tous les téléphones. -->
+        <g class="f" style="--d:1.2s">
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="0 512 512" to="360 512 512" dur="12s" repeatCount="indefinite"/>
+            <circle cx="512" cy="512" r="300" fill="none" stroke="#E8C872" stroke-opacity=".5" stroke-width="3" stroke-dasharray="4 18"/>
+            <!-- Trotteuse : arc doré lumineux et sa tête, sur la piste intérieure de l'hexagone -->
+            <circle cx="512" cy="512" r="340" fill="none" stroke="#F6D978" stroke-width="9" stroke-linecap="round" pathLength="360" stroke-dasharray="30 330" transform="rotate(-90 512 512)"/>
+            <circle cx="682" cy="218" r="26" fill="#E8C872" fill-opacity=".25"/>
+            <circle cx="682" cy="218" r="12" fill="#FFF3C4"/>
+          </g>
+        </g>
 
         <!-- Rayons -->
         <g class="f" style="--d:1s" stroke="#C9A84C" stroke-opacity=".5" stroke-width="3">
