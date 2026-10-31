@@ -226,6 +226,19 @@ page = f'''<!DOCTYPE html>
 <meta name="theme-color" content="#000008">
 <title>Guide de tokenisation — GeoTerraChain QFS</title>
 <meta name="description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement pilote.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GeoTerraChain QFS">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Guide de tokenisation — GeoTerraChain QFS">
+<meta property="og:description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement pilote.">
+<meta property="og:image" content="https://hilaila.github.io/videos/apercu-lien.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo GeoTerraChain QFS — Notre Terre · Notre Richesse">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Guide de tokenisation — GeoTerraChain QFS">
+<meta name="twitter:description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement pilote.">
+<meta name="twitter:image" content="https://hilaila.github.io/videos/apercu-lien.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">

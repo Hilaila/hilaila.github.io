@@ -106,6 +106,17 @@ async function open(b, pg, lang = "fr", w = 390) {
   }
   check(casses.length === 0, "Liens internes : aucun lien cassé" + (casses.length ? " (" + [...new Set(casses)].join(", ") + ")" : ""));
 
+  // 6. Vignette de partage (WhatsApp, Facebook, PiNet) : titre, description et image présents,
+  //    image hébergée sur le site et existante. Hors : page 404, ancienne page Tokenisation Testnet.
+  const sansVignette = [];
+  for (const f of pages.filter(f => f !== "404.html" && f !== "tokenisation-testnet.html")) {
+    const s = fs.readFileSync(path.join(ROOT, f), "utf8");
+    const meta = k => { const m = s.match(new RegExp('<meta property="' + k + '" content="([^"]+)"')); return m ? m[1] : ""; };
+    const img = meta("og:image"), local = img.replace(/^https:\/\/hilaila\.github\.io\//, "");
+    if (!meta("og:title") || !meta("og:description") || !img.startsWith("https://hilaila.github.io/") || !fs.existsSync(path.join(ROOT, local))) sansVignette.push(f);
+  }
+  check(sansVignette.length === 0, "Vignette de partage sur toutes les pages" + (sansVignette.length ? " (manque : " + sansVignette.join(", ") + ")" : ""));
+
   await b.close(); srv.close();
   console.log(`\n${ok} réussis, ${ko} échoués`);
   process.exit(ko ? 1 : 0);
