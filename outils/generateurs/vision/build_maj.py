@@ -28,6 +28,10 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-10-31", "31 octobre 2026", "31 October 2026", [
+    ("gouv", "Transparence : entre le 29 août et le 15 octobre 2026, 11 paiements pilotes de 0,001 π (0,011 π au total) ont été effectués en Pi réels sur le réseau principal de Pi Network, dont 5 par le fondateur, alors que certaines pages parlaient de « paiement test » ou de « Testnet ». Les textes sont corrigés. Les jetons GTCπ émis en échange restent des jetons de test, sans valeur. Les paiements sont en pause depuis le 28 octobre 2026, et le remboursement de leur 0,001 π sera proposé aux Pioneers concernés.",
+             "Transparency: between 29 August and 15 October 2026, 11 pilot payments of 0.001 π (0.011 π in total) were made in real Pi on the Pi Network main network, 5 of them by the founder, while some pages spoke of a “test payment” or “Testnet”. The texts have been corrected. The GTCπ tokens issued in return remain test tokens with no value. Payments have been paused since 28 October 2026, and the Pioneers concerned will be offered a refund of their 0.001 π."),
+  ]),
   ("2026-10-28", "28 octobre 2026", "28 October 2026", [
     ("app", "Menu commun : un bouton « ☰ Menu » en haut de chaque page donne accès à toutes les pages du site, groupées et avec la page actuelle mise en évidence.",
             "Shared menu: a “☰ Menu” button at the top of every page gives access to all the site's pages, grouped, with the current page highlighted."),
@@ -196,7 +200,7 @@ page = f'''<!DOCTYPE html>
     <h1>{T("Ce qui a <em>changé</em>", "What has <em>changed</em>")}</h1>
     <p class="lead">{T("Les améliorations publiées dans GeoTerraChain QFS, date par date : sécurité, fiabilité, application et gouvernance.",
                        "The improvements published in GeoTerraChain QFS, date by date: security, reliability, app and governance.")}</p>
-    <div class="ver"><span>{T("VERSION PILOTE 1.0.0", "PILOT VERSION 1.0.0")}</span><span>PI TESTNET</span><span>{T("MAINNET : NON DÉPLOYÉ", "MAINNET: NOT DEPLOYED")}</span></div>
+    <div class="ver"><span>{T("VERSION PILOTE 1.0.0", "PILOT VERSION 1.0.0")}</span><span>PI NETWORK</span><span>{T("GTCπ MAINNET : NON DÉPLOYÉ", "GTCπ MAINNET: NOT DEPLOYED")}</span></div>
   </section>
 
   <section class="block">

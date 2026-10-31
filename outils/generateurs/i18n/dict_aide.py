@@ -17,8 +17,8 @@ EXACT = {
  "Est-ce que GeoTerraChainQFS est déjà entièrement opérationnel ?": "Is GeoTerraChainQFS already fully operational?",
  "Non. La plateforme est actuellement en": "No. The platform is currently in its",
  "phase pilote": "pilot phase",
- ". L'authentification Pi, le paiement en Pi (sur le Testnet de Pi Network), la tokenisation et le financement fractionné sont fonctionnels et testés, mais l'ouverture publique au grand investissement reste soumise à la confirmation du cadre réglementaire applicable.":
-   ". Pi sign-in, payment in Pi (on the Pi Network Testnet), tokenization and fractional financing work and have been tested, but opening to large-scale public investment remains subject to confirmation of the applicable regulatory framework.",
+ ". L'authentification Pi, le paiement pilote de 0,001 π (en Pi réels, sur le réseau principal de Pi Network, en pause depuis le 28 octobre 2026), la tokenisation et le financement fractionné sont fonctionnels et testés, mais l'ouverture publique au grand investissement reste soumise à la confirmation du cadre réglementaire applicable.":
+   ". Pi sign-in, the 0.001 π pilot payment (in real Pi, on the Pi Network main network, paused since 28 October 2026), tokenization and fractional financing work and have been tested, but opening to large-scale public investment remains subject to confirmation of the applicable regulatory framework.",
  "🧩 Classes d'actifs": "🧩 Asset classes",
  "Quelles sont les classes d'actifs disponibles ?": "Which asset classes are available?",
  "Cinq classes :": "Five classes:",

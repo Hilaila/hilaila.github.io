@@ -466,7 +466,7 @@ page = f'''<!DOCTYPE html>
       "GeoTerraChain QFS is a <b>pan-African digital infrastructure</b> designed to modernise land management, agro-economy, real estate and territorial development through blockchain, Web3, territorial intelligence, GIS, GPS and digital identity.")}</p></div>
     <div class="cols c3" style="margin-top:12px">
       <div class="glass kv"><small>{T("Fondateur", "Founder")}</small><b>@Hilaila</b><span>{T("Pioneer KYC vérifié · Côte d'Ivoire", "KYC-verified Pioneer · Côte d'Ivoire")}</span></div>
-      <div class="glass kv"><small>{T("Réseau", "Network")}</small><b>Pi Network</b><span>{T("Pi SDK 2.0 · Stellar · phase pilote (Testnet)", "Pi SDK 2.0 · Stellar · pilot phase (Testnet)")}</span></div>
+      <div class="glass kv"><small>{T("Réseau", "Network")}</small><b>Pi Network</b><span>{T("Pi SDK 2.0 · Stellar · phase pilote", "Pi SDK 2.0 · Stellar · pilot phase")}</span></div>
       <div class="glass kv"><small>{T("Zone cible", "Target area")}</small><b>{T("UEMOA · Afrique", "WAEMU · Africa")}</b><span>{T("8 pays · expansion continentale", "8 countries · continental expansion")}</span></div>
     </div>
   </section>

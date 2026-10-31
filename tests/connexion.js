@@ -190,7 +190,7 @@ async function attendre(page, cible, max = 8000) {
   await r.ctx.close();
   r = await enAttente("tokenisation.html?pause-paiements=1", "#piLoginBtn", null);
   const pt = await r.page.evaluate(() => { state.submissionId = "GTC-T"; renderResultBox(); const b = document.getElementById("payNowBtn"); b.click(); return { label: b.textContent.trim(), attr: b.hasAttribute("data-gtc-paiement"), msg: document.getElementById("paymentStatus").textContent, appele: !!window.__cpAppele, statut: document.querySelector(".header .status").textContent.trim() }; });
-  check(pt.statut === "PILOTE · PAIEMENTS EN PAUSE", "Pause : en-tête Tokeniser « PILOTE · PAIEMENTS EN PAUSE » (au lieu de PI TESTNET)");
+  check(pt.statut === "PILOTE · PAIEMENTS EN PAUSE", "Pause : en-tête Tokeniser « PILOTE · PAIEMENTS EN PAUSE » (au lieu de PI NETWORK · PILOTE)");
   check(pt.label === "⏸ Paiements en pause" && pt.attr, "Pause : bouton Tokeniser « Paiements en pause »");
   check(!pt.appele && pt.msg.includes("Aucun Pi n'a été prélevé"), "Pause : Tokeniser n'ouvre aucun paiement et explique");
   check(r.errs.length === 0, "Pause : Tokeniser sans erreur JavaScript");

@@ -2,7 +2,7 @@
 window.GTC_EN = {
   title: "GeoTerraChain QFS — Land Tokenization",
   exact: {
- "PI TESTNET · PILOTE": "PI TESTNET · PILOT",
+ "PI NETWORK · PILOTE": "PI NETWORK · PILOT",
  "GeoTerraChain QFS — Tokenisation Foncière": "GeoTerraChain QFS — Land Tokenization",
  "← Accueil": "← Home",
  "Pourquoi ?": "Why?",
@@ -177,7 +177,7 @@ window.GTC_EN = {
  "Erreur lors de la soumission.": "Error during submission.",
  "Impossible d'enregistrer la demande.": "Could not record the request.",
  "✓ DEMANDE ENREGISTRÉE": "✓ REQUEST RECORDED",
- "Phase pilote — paiement test.": "Pilot phase — test payment.",
+ "Phase pilote — paiement pilote en Pi réels.": "Pilot phase — pilot payment in real Pi.",
  "jeton de test (Stellar Testnet)": "test token (Stellar Testnet)",
  ": il n'a aucune valeur, ne s'échange pas et ne représente aucun droit sur l'actif.": ": it has no value, cannot be traded and grants no right over the asset.",
  "✓ Jeton de test GTCπ émis (Testnet)": "✓ GTCπ test token issued (Testnet)",
@@ -185,7 +185,7 @@ window.GTC_EN = {
  "⏳ Émission du token GTCπ en cours…": "⏳ Issuing the GTCπ token…",
  "✗ L'émission du token GTCπ a échoué. La demande et le paiement restent enregistrés.": "✗ GTCπ token issuance failed. The request and the payment remain recorded.",
  "Réessayer l'émission": "Retry issuance",
- "Paiement test confirmé sur Pi Network": "Test payment confirmed on Pi Network",
+ "Paiement pilote confirmé sur Pi Network": "Pilot payment confirmed on Pi Network",
  "État : PAIEMENT COMPLÉTÉ · DOSSIER EN ATTENTE DE VÉRIFICATION": "Status: PAYMENT COMPLETED · FILE AWAITING VERIFICATION",
  "État : EN ATTENTE DE VÉRIFICATION": "Status: AWAITING VERIFICATION",
  "Votre dossier va maintenant être vérifié. La tokenisation définitive n'aura lieu qu'après cette vérification. Le jeton de test émis en phase pilote sert uniquement à tester le parcours : il ne vaut ni tokenisation ni titre de propriété.": "Your file will now be verified. Final tokenization only happens after this verification. The test token issued during the pilot phase is only for testing the flow: it is neither a tokenization nor a property title.",
@@ -231,7 +231,7 @@ window.GTC_EN = {
   [new RegExp("^✓ (\\d+) document\\(s\\) envoyé\\(s\\) et scellé\\(s\\)$"), "✓ $1 document(s) uploaded and sealed"],
   [new RegExp("^Envoi refusé pour « (.+) » \\(code (\\d+)\\)\\.$"), "Upload refused for “$1” (code $2)."],
   [new RegExp("^Le montant de (.+?) π est débité en vrai Pi : c'est un montant symbolique qui sert uniquement à tester le circuit de paiement\\. Le jeton GTCπ émis ensuite est un$"), "The $1 π amount is charged in real Pi: it is a symbolic amount used only to test the payment flow. The GTCπ token issued next is a"],
-  [new RegExp("^π Payer (.+) π \\(test\\)$"), "π Pay $1 π (test)"],
+  [new RegExp("^π Payer (.+) π \\(pilote\\)$"), "π Pay $1 π (pilot)"],
   [new RegExp("× 0,005 ="), "× 0.005 ="]
   ]
 };

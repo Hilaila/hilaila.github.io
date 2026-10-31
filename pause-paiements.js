@@ -67,9 +67,9 @@
       else hote.insertBefore(b, hote.firstChild);
     }
     b.textContent = t("bandeau");
-    // Pastille « PI TESTNET » de l'en-tête (pas la pastille de connexion Pi).
+    // Pastille « PI NETWORK · PILOTE » de l'en-tête (pas la pastille de connexion Pi).
     var s = document.querySelector(".header .status");
-    if (s && (s.__gtcPause || /TESTNET/i.test(s.textContent))) {
+    if (s && (s.__gtcPause || /TESTNET|PI NETWORK/i.test(s.textContent))) {
       s.__gtcPause = true;
       var dot = s.querySelector(".status-dot");
       s.textContent = " " + t("statut");

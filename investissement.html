@@ -182,7 +182,7 @@ select option { background: #111; color: white; }
     </header>
 
     <div class="pilot-banner">
-        <strong>⚠️ Phase pilote.</strong> Cette fonctionnalité de fractionnement et d'investissement croisé est actuellement testée en environnement contrôlé (Testnet). Aucun investissement réel avec de vrais Pi n'est ouvert au public tant que cette autorisation n'est pas confirmée par l'autorité compétente. Les montants utilisés pendant les tests sont minimes, et les unités attribuées n'ont pas de valeur juridique de propriété.
+        <strong>⚠️ Phase pilote.</strong> Le fractionnement et l'investissement croisé sont en cours de test. Pendant cette phase, un paiement symbolique de 0,001 π est demandé, <strong>en Pi réels</strong> (réseau principal de Pi Network) ; ces paiements sont en pause depuis le 28 octobre 2026, jusqu'à la validation de l'application par Pi Network. Les unités attribuées n'ont ni valeur monétaire ni valeur juridique de propriété. Aucune offre d'investissement n'est ouverte au public tant que les autorisations nécessaires ne sont pas obtenues.
     </div>
 
     <div style="text-align:center; margin-bottom:20px;">
@@ -529,7 +529,7 @@ function renderProjectCard(p) {
             <input type="number" min="1" id="unites-${p.id}" placeholder="Ex : 10">
             <div style="font-size:11px; color:var(--muted); margin-top:6px;" id="cost-${p.id}"></div>
 
-            <button class="btn btn-primary" onclick="investInProject('${p.id}')"${paiementsEnPause() ? " data-gtc-paiement" : ""}>${paiementsEnPause() ? escapeHtml(GTCPaiements.bouton()) : "π Investir (Testnet)"}</button>
+            <button class="btn btn-primary" onclick="investInProject('${p.id}')"${paiementsEnPause() ? " data-gtc-paiement" : ""}>${paiementsEnPause() ? escapeHtml(GTCPaiements.bouton()) : "π Investir (pilote · 0,001 π)"}</button>
             <div id="investAlert-${p.id}"></div>
         </div>
         `;

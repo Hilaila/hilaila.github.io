@@ -733,7 +733,7 @@ input::placeholder, textarea::placeholder {
     display: none;
 }
 
-/* Mention « paiement test » */
+/* Mention « paiement pilote » */
 .test-note {
     max-width: 520px;
     margin: 14px auto 0;
@@ -828,7 +828,7 @@ input::placeholder, textarea::placeholder {
         </div>
         <div class="status">
             <span class="status-dot"></span>
-            PI TESTNET · PILOTE
+            PI NETWORK · PILOTE
         </div>
     </header>
 
@@ -2205,7 +2205,7 @@ function buildPayload() {
     return {
 
         version: "GTC-TOKENIZATION-1.0",
-        network: "Pi Testnet (phase pilote)",
+        network: "Pi Network (phase pilote)",
         token: CONFIG.TOKEN_SYMBOL,
 
         pi: {
@@ -2385,7 +2385,7 @@ function pioneerTag() {
 
 const TEST_NOTE = `
     <div class="test-note">
-        ⚠️ <strong>Phase pilote — paiement test.</strong>
+        ⚠️ <strong>Phase pilote — paiement pilote en Pi réels.</strong>
         Le montant de ${PAYMENT_TEST_AMOUNT} π est débité en vrai Pi : c'est un montant
         symbolique qui sert uniquement à tester le circuit de paiement.
         Le jeton GTCπ émis ensuite est un <strong>jeton de test (Stellar Testnet)</strong> :
@@ -2582,7 +2582,7 @@ function renderResultBox() {
 
         box.innerHTML = `
             <div class="lock-icon" style="color:var(--green);">✓</div>
-            <strong>Paiement test confirmé sur Pi Network</strong>
+            <strong>Paiement pilote confirmé sur Pi Network</strong>
             ${pioneerTag()}
             <div class="hash" style="margin-top:8px; color:#999; font-size:11px;">
                 Référence demande : ${escapeHtml(state.submissionId)}
@@ -2641,7 +2641,7 @@ function resetPayButton() {
 
 /* Paiements en pause sur l'adresse principale (application Mainnet) : voir pause-paiements.js */
 function paiementsEnPause() { return Boolean(window.GTCPaiements && GTCPaiements.pause); }
-function libellePaiement() { return paiementsEnPause() ? GTCPaiements.bouton() : `π Payer ${PAYMENT_TEST_AMOUNT} π (test)`; }
+function libellePaiement() { return paiementsEnPause() ? GTCPaiements.bouton() : `π Payer ${PAYMENT_TEST_AMOUNT} π (pilote)`; }
 
 
 function setPaymentStatus(message, type = "warning") {

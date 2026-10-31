@@ -30,7 +30,7 @@ nav = [("avant", "Avant", "Before"), ("etapes", "7 étapes", "7 steps"), ("paiem
 before = [
   ("phone", "Le Pi Browser installé", "The Pi Browser installed", "L'app ne fonctionne que dans le Pi Browser, pas dans Chrome ni WhatsApp.", "The app only works inside the Pi Browser, not in Chrome or WhatsApp."),
   ("shield", "Un compte Pioneer avec KYC validé", "A Pioneer account with validated KYC", "Le KYC est fait sur Pi Network : l'app ne vous demande aucun document d'identité.", "KYC is done on Pi Network: the app never asks for an ID document."),
-  ("wallet", "Un peu de π dans votre Pi Wallet", "A little π in your Pi Wallet", "0,001 π pour le paiement test, plus les frais de réseau affichés par le Pi Wallet.", "0.001 π for the test payment, plus the network fees shown by the Pi Wallet."),
+  ("wallet", "Un peu de π dans votre Pi Wallet", "A little π in your Pi Wallet", "0,001 π, en Pi réels, pour le paiement pilote, plus les frais de réseau affichés par le Pi Wallet.", "0.001 π, in real Pi, for the pilot payment, plus the network fees shown by the Pi Wallet."),
   ("file", "Les informations du bien", "The property details", "Type, nom ou référence, pays, région, ville, superficie, statut de propriété.", "Type, name or reference, country, region, city, area, ownership status."),
   ("pin", "Sa localisation", "Its location", "Être sur place pour utiliser le GPS du téléphone, ou connaître la latitude et la longitude.", "Be on site to use the phone's GPS, or know the latitude and longitude."),
   ("file", "Un document foncier", "A land document", "Fichier PDF, JPG ou PNG (10 Mo maximum), ou un lien vers le document.", "A PDF, JPG or PNG file (10 MB maximum), or a link to the document."),
@@ -90,10 +90,10 @@ steps = [
 ]
 
 pay = [
-  ("Appuyez sur", "Tap", btnlabel("π Payer 0,001 π (test)", "π Pay 0.001 π (test)"), "sous votre demande.", "under your request."),
+  ("Appuyez sur", "Tap", btnlabel("π Payer 0,001 π (pilote)", "π Pay 0.001 π (pilot)"), "sous votre demande.", "under your request."),
   ("Le", "The", "<b>Pi Wallet officiel</b>", "s'ouvre. Vérifiez le montant (0,001 π) et le mémo « Tokenisation : GTC-… ».", "opens. Check the amount (0.001 π) and the memo “Tokenisation: GTC-…”."),
   ("Si le Pi Wallet le demande, déverrouillez-le", "If the Pi Wallet asks, unlock it", "", "(phrase secrète ou empreinte), puis confirmez le paiement.", "(secret phrase or fingerprint), then confirm the payment."),
-  ("L'app affiche", "The app shows", "« Paiement test confirmé sur Pi Network »", "avec votre TXID Pi.", "with your Pi TXID."),
+  ("L'app affiche", "The app shows", "« Paiement pilote confirmé sur Pi Network »", "avec votre TXID Pi.", "with your Pi TXID."),
   ("Phase pilote : un", "Pilot phase: a", "jeton de test GTCπ", "est émis sur le réseau de test Stellar. Il n'a aucune valeur et ne vaut ni tokenisation ni titre de propriété.", "is issued on the Stellar test network. It has no value and is neither a tokenization nor a property title."),
 ]
 
@@ -114,8 +114,8 @@ faq = [
    "Non. En phase pilote, le jeton GTCπ est émis sur le réseau de test Stellar pour tester le parcours. Il ne s'échange pas et ne représente aucun droit sur l'actif.",
    "No. During the pilot phase, the GTCπ token is issued on the Stellar test network to test the journey. It cannot be traded and grants no right over the asset."),
   ("Combien de π faut-il ?", "How much π do I need?",
-   "0,001 π pour le paiement test, plus les frais de réseau affichés par le Pi Wallet avant confirmation.",
-   "0.001 π for the test payment, plus the network fees shown by the Pi Wallet before you confirm."),
+   "0,001 π, en Pi réels, pour le paiement pilote, plus les frais de réseau affichés par le Pi Wallet avant confirmation. Ces paiements sont en pause depuis le 28 octobre 2026, jusqu'à la validation de l'application par Pi Network.",
+   "0.001 π, in real Pi, for the pilot payment, plus the network fees shown by the Pi Wallet before you confirm. These payments have been paused since 28 October 2026, until Pi Network approves the app."),
   ("Mes documents sont-ils envoyés ?", "Are my documents uploaded?",
    "Oui, juste après la soumission, dans un espace de stockage privé, avec leur empreinte SHA-256. Seuls les vérificateurs de la plateforme peuvent les ouvrir, par un lien valable 5 minutes. Si l'envoi est interrompu, appuyez sur « Réessayer l'envoi ».",
    "Yes, right after submission, to a private storage space, with their SHA-256 fingerprint. Only the platform's verifiers can open them, through a link valid for 5 minutes. If the upload is interrupted, tap “Retry upload”."),
@@ -225,7 +225,7 @@ page = f'''<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000008">
 <title>Guide de tokenisation — GeoTerraChain QFS</title>
-<meta name="description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement test.">
+<meta name="description" content="Tokeniser un actif foncier avec GeoTerraChain QFS, étape par étape : connexion Pi, identité, actif, localisation, documents, burn, soumission et paiement pilote.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
@@ -268,13 +268,13 @@ page = f'''<!DOCTYPE html>
   <section class="hero">
     <span class="eyebrow"><i></i>{T("Guide officiel · Phase pilote", "Official guide · Pilot phase")}</span>
     <h1>{T("Tokeniser votre actif, <em>étape par étape</em>", "Tokenize your asset, <em>step by step</em>")}</h1>
-    <p class="lead">{T("Ce guide suit exactement l'écran « Tokeniser » de l'application : 7 étapes, puis un paiement test de 0,001 π. Comptez une dizaine de minutes.",
-      "This guide follows the app's “Tokenize” screen exactly: 7 steps, then a 0.001 π test payment. Allow about ten minutes.")}</p>
+    <p class="lead">{T("Ce guide suit exactement l'écran « Tokeniser » de l'application : 7 étapes, puis un paiement pilote de 0,001 π en Pi réels. Comptez une dizaine de minutes.",
+      "This guide follows the app's “Tokenize” screen exactly: 7 steps, then a 0.001 π pilot payment in real Pi. Allow about ten minutes.")}</p>
     <div class="chips">
       <span class="chip">{ic("clock")}{T("≈ 10 minutes", "≈ 10 minutes")}</span>
       <span class="chip">{ic("layers")}{T("7 étapes", "7 steps")}</span>
       <span class="chip">{ic("shield")}{T("KYC Pi requis", "Pi KYC required")}</span>
-      <span class="chip">{ic("wallet")}{T("Paiement test 0,001 π", "0.001 π test payment")}</span>
+      <span class="chip">{ic("wallet")}{T("Paiement pilote 0,001 π", "0.001 π pilot payment")}</span>
     </div>
   </section>
 
@@ -294,7 +294,10 @@ page = f'''<!DOCTYPE html>
   </section>
 
   <section class="block" id="paiement">
-    {sec_head("02", "wallet", "Le paiement test", "The test payment", "Juste après la soumission, sous votre demande.", "Right after submission, under your request.")}
+    {sec_head("02", "wallet", "Le paiement pilote", "The pilot payment", "Juste après la soumission, sous votre demande.", "Right after submission, under your request.")}
+    <div class="glass" style="margin-bottom:12px"><p class="lead2" style="font-size:14.5px">{T(
+      "⏸ <b>Paiements en pause</b> depuis le 28 octobre 2026, jusqu'à la validation de l'application par Pi Network : aucun Pi ne peut être prélevé pour l'instant. Quand ils rouvriront, ce paiement se fera <b>en Pi réels</b> (réseau principal de Pi Network).",
+      "⏸ <b>Payments paused</b> since 28 October 2026, until Pi Network approves the app: no Pi can be taken for now. When they reopen, this payment will be made <b>in real Pi</b> (Pi Network main network).")}</p></div>
     {pay_html()}
     <div class="glass" style="margin-top:12px"><p class="lead2" style="font-size:14.5px">{T(
       "L'écran se termine par : « <b>Votre dossier va maintenant être vérifié.</b> La tokenisation définitive n'aura lieu qu'après cette vérification. »",
