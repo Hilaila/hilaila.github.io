@@ -46,7 +46,7 @@ fields = [
   ("Superficie (ha)", "Area (ha)", True, "En hectares.", "In hectares."),
   ("Statut de propriété", "Ownership status", True, "Titre foncier, certificat foncier, attestation, droit coutumier, bail / concession, autre.", "Land title, land certificate, attestation letter, customary right, lease / concession, other."),
   ("Latitude / Longitude", "Latitude / Longitude", True, "Remplies automatiquement à l'étape 4, ou saisies à la main.", "Filled in automatically at step 4, or typed by hand."),
-  ("Valeur estimée + Unité", "Estimated value + Unit", False, "Unité en Pi par défaut ; XOF, USD et EUR sont indicatifs.", "Unit in Pi by default; XOF, USD and EUR are indicative."),
+  ("Valeur estimée (en Pi)", "Estimated value (in Pi)", False, "Exprimée uniquement en Pi.", "Expressed in Pi only."),
   ("Nombre cible de GTCπ", "Target number of GTCπ", True, "Pour un premier essai : 1.", "For a first try: 1."),
   ("Lien document foncier", "Land document link", False, "Lien vers votre document, si vous en avez un.", "Link to your document, if you have one."),
   ("Description", "Description", True, "Situation, usage, tout élément utile à la vérification.", "Location, use, anything useful for verification."),
@@ -94,7 +94,7 @@ pay = [
   ("Le", "The", "<b>Pi Wallet officiel</b>", "s'ouvre. Vérifiez le montant (0,001 π) et le mémo « Tokenisation : GTC-… ».", "opens. Check the amount (0.001 π) and the memo “Tokenisation: GTC-…”."),
   ("Si le Pi Wallet le demande, déverrouillez-le", "If the Pi Wallet asks, unlock it", "", "(phrase secrète ou empreinte), puis confirmez le paiement.", "(secret phrase or fingerprint), then confirm the payment."),
   ("L'app affiche", "The app shows", "« Paiement pilote confirmé sur Pi Network »", "avec votre TXID Pi.", "with your Pi TXID."),
-  ("Phase pilote : un", "Pilot phase: a", "jeton de test GTCπ", "est émis sur le réseau de test Stellar. Il n'a aucune valeur et ne vaut ni tokenisation ni titre de propriété.", "is issued on the Stellar test network. It has no value and is neither a tokenization nor a property title."),
+  ("Phase pilote :", "Pilot phase:", "aucun jeton", "n'est émis depuis l'adresse principale. Le jeton GTCπ de test n'existe que dans l'environnement de test : il n'a aucune valeur et ne vaut ni tokenisation ni titre de propriété.", "is issued from the main address. The GTCπ test token only exists in the test environment: it has no value and is neither a tokenization nor a property title."),
 ]
 
 statuses = [
@@ -111,8 +111,8 @@ faq = [
    "À chaque tokenisation, 0,5 % de l'offre en GTCπ est destiné au burn. Exemple : pour 1 GTCπ, 0,005 est brûlé et 0,995 reste. Ce mécanisme ne garantit aucune valeur ni aucun rendement.",
    "For each tokenization, 0.5% of the GTCπ offer goes to the burn. Example: for 1 GTCπ, 0.005 is burned and 0.995 remains. This mechanism guarantees no value and no return."),
   ("Le jeton de test a-t-il une valeur ?", "Does the test token have any value?",
-   "Non. En phase pilote, le jeton GTCπ est émis sur le réseau de test Stellar pour tester le parcours. Il ne s'échange pas et ne représente aucun droit sur l'actif.",
-   "No. During the pilot phase, the GTCπ token is issued on the Stellar test network to test the journey. It cannot be traded and grants no right over the asset."),
+   "Non. En phase pilote, aucun jeton n'est émis depuis l'adresse principale. Le jeton GTCπ de test n'est émis que dans l'environnement de test, pour tester le parcours : il ne s'échange pas et ne représente aucun droit sur l'actif. À terme, le GTCπ est prévu sur la blockchain Pi.",
+   "No. During the pilot phase, no token is issued from the main address. The GTCπ test token is only issued in the test environment, to test the journey: it cannot be traded and grants no right over the asset. In time, GTCπ is planned on the Pi blockchain."),
   ("Combien de π faut-il ?", "How much π do I need?",
    "0,001 π, en Pi réels, pour le paiement pilote, plus les frais de réseau affichés par le Pi Wallet avant confirmation. Ces paiements sont en pause depuis le 28 octobre 2026, jusqu'à la validation de l'application par Pi Network.",
    "0.001 π, in real Pi, for the pilot payment, plus the network fees shown by the Pi Wallet before you confirm. These payments have been paused since 28 October 2026, until Pi Network approves the app."),

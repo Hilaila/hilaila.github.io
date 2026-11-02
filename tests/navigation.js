@@ -115,6 +115,9 @@ async function open(b, pg, lang = "fr", w = 390) {
     const img = meta("og:image"), local = img.replace(/^https:\/\/hilaila\.github\.io\//, "");
     if (!meta("og:title") || !meta("og:description") || !img.startsWith("https://hilaila.github.io/") || !fs.existsSync(path.join(ROOT, local))) sansVignette.push(f);
   }
+  // 7. Règles de Pi (transactions uniquement en Pi) : aucun prix en devise classique sur le Marché.
+  const marche = fs.readFileSync(path.join(ROOT, "marketplace.html"), "utf8");
+  check(!/\b(XOF|FCFA|USD|EUR)\b/.test(marche), "Marché : prix en Pi uniquement (aucune devise classique)");
   check(sansVignette.length === 0, "Vignette de partage sur toutes les pages" + (sansVignette.length ? " (manque : " + sansVignette.join(", ") + ")" : ""));
 
   await b.close(); srv.close();

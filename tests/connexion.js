@@ -67,6 +67,7 @@ async function attendre(page, cible, max = 8000) {
     await page.click(P.btn);
     check(await attendre(page, ["idle"], 3000) === "idle", `${P.pg} : le bouton ouvre la sphère de connexion`);
     check(await page.evaluate(() => document.activeElement && document.activeElement.id === "gtc-cx-sphere"), `${P.pg} : la sphère reçoit le focus (clavier, lecteur d'écran)`);
+    if (P.pg === "index.html") check(await page.evaluate(() => { const c = document.querySelector("#gtc-cx .cx-pi"); return !!c && !!c.querySelector("svg") && !/π/.test(c.textContent); }), "Sphère : emblème GeoTerraChain QFS au centre, pas de symbole π (marque Pi)");
     if (SHOTS && P.pg === "index.html") await page.screenshot({ path: path.join(SHOTS, "1-repos.png") });
     await page.click("#gtc-cx-sphere");
     check(["pi", "verif", "almost", "ok"].includes(await attendre(page, ["pi", "verif", "almost", "ok"], 3000)), `${P.pg} : « Connexion à Pi Network… » après le toucher`);
@@ -194,6 +195,14 @@ async function attendre(page, cible, max = 8000) {
   check(pt.label === "⏸ Paiements en pause" && pt.attr, "Pause : bouton Tokeniser « Paiements en pause »");
   check(!pt.appele && pt.msg.includes("Aucun Pi n'a été prélevé"), "Pause : Tokeniser n'ouvre aucun paiement et explique");
   check(r.errs.length === 0, "Pause : Tokeniser sans erreur JavaScript");
+  const pm = await r.page.evaluate(async () => {
+    state.accessToken = "jeton"; state.submissionId = "GTC-T"; state.paymentCompleted = true; state.burn = { offer: 1 };
+    await triggerMint();
+    return { note: document.querySelector(".test-note") ? document.querySelector(".test-note").textContent : "", box: document.getElementById("resultBox").textContent,
+             unites: [...document.querySelectorAll("#valueUnit option")].map(o => o.value).join(",") };
+  });
+  check(!r.appels.some(a => /tokenization\/mint/.test(a)) && /Aucun jeton n'est émis depuis l'adresse principale/.test(pm.box), "Adresse principale : aucun jeton émis, explication affichée");
+  check(pm.unites === "PI", "Tokeniser : valeur du terrain en Pi uniquement (aucune devise classique)");
   await r.ctx.close();
 
   await browser.close(); srv.close();

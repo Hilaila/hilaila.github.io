@@ -4,7 +4,7 @@
   var CATS = D.cats || [], P = D.products || [], C = D.countries || {}, PIC = D.icons || {}, UI = D.ui || {};
   var root = document.documentElement;
   var LANG = root.getAttribute("data-lang") === "en" ? "en" : "fr";
-  var MAX = 30000;
+  var MAX = 30;
 
   var S = {
     fr: {
@@ -88,7 +88,7 @@
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function svg(inner) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (inner || "") + "</svg>"; }
   function num(n) { return new Intl.NumberFormat(LANG === "en" ? "en-US" : "fr-FR").format(n); }
-  function money(n) { return num(n) + " XOF"; }
+  function money(n) { return num(Math.round(n * 1000) / 1000) + " π"; }
   function when(iso) {
     try { return new Date(iso).toLocaleString(LANG === "en" ? "en-GB" : "fr-FR", { dateStyle: "medium", timeStyle: "medium" }); }
     catch (e) { return iso; }
@@ -174,7 +174,7 @@
         '<button type="button" class="fav' + (fav ? " on" : "") + '" data-fav="' + p.id + '" aria-pressed="' + fav + '" aria-label="' + esc(t("fav") + " — " + tx(p.name)) + '">' + svg(UI.heart) + "</button></div>" +
       '<div class="pb"><small>' + esc(tx(c.name)) + "</small><h3>" + esc(tx(p.name)) + "</h3>" +
         '<div class="loc">' + svg(UI.pin) + "<span>" + esc(p.city) + ", " + esc(tx(C[p.c])) + "</span></div>" +
-        '<div class="price">' + num(p.price) + " <span>XOF / " + esc(tx(p.unit)) + "</span></div>" +
+        '<div class="price">' + num(p.price) + " <span>π / " + esc(tx(p.unit)) + "</span></div>" +
         '<div class="prod">' + esc(tx(p.prod)) + t("exSuffix") + "</div>" +
         '<div class="pact"><button type="button" class="bs gold" data-add="' + p.id + '">' + svg(UI.plus) + t("add") + "</button>" +
         '<button type="button" class="bs icon" data-info="' + p.id + '" aria-label="' + esc(t("details") + " — " + tx(p.name)) + '">' + svg(UI.info) + "</button></div>" +
@@ -327,7 +327,7 @@
   function confirmOrder(e, tt) {
     var now = new Date();
     var ref = "DEMO-" + now.toISOString().slice(0, 10).replace(/-/g, "") + "-" + rand4();
-    var payload = JSON.stringify({ ref: ref, time: now.toISOString(), items: e.map(function (x) { return { id: x[0].id, qty: x[1], price: x[0].price }; }), total: tt.s, currency: "XOF", demo: true });
+    var payload = JSON.stringify({ ref: ref, time: now.toISOString(), items: e.map(function (x) { return { id: x[0].id, qty: x[1], price: x[0].price }; }), total: Math.round(tt.s * 1000) / 1000, currency: "PI", demo: true });
     sha256(payload).then(function (hash) {
       journal.unshift({ type: "order", ref: ref, time: now.toISOString(), hash: hash }); journal = journal.slice(0, 8);
       cart = {}; save("gtcMarketCart", cart); renderCart(); renderJournal(); closeDrawer(true);

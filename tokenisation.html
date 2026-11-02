@@ -1045,17 +1045,14 @@ input::placeholder, textarea::placeholder {
                         </div>
 
                         <div class="form-group">
-                            <label>Valeur estimée</label>
-                            <input id="estimatedValue" type="number" min="0" step="0.01" placeholder="Valeur estimée">
+                            <label>Valeur estimée (en Pi)</label>
+                            <input id="estimatedValue" type="number" min="0" step="0.01" placeholder="Valeur estimée en Pi">
                         </div>
 
                         <div class="form-group">
                             <label>Unité</label>
                             <select id="valueUnit">
                                 <option value="PI" selected>Pi</option>
-                                <option value="XOF">XOF (indicatif)</option>
-                                <option value="USD">USD (indicatif)</option>
-                                <option value="EUR">EUR (indicatif)</option>
                             </select>
                         </div>
 
@@ -1477,6 +1474,10 @@ async function postJSON(path, body, timeoutMs) {
 function serverMessage(data, fallback) {
 
     const message = data && (data.error || data.message);
+
+    if (message === "MINT_NOT_ALLOWED_ON_MAINNET") {
+        return "Aucun jeton n'est émis pour un paiement fait sur le réseau principal de Pi pendant la phase pilote.";
+    }
 
     return (typeof message === "string" && message.trim()) ? message : fallback;
 
@@ -2397,7 +2398,17 @@ function pioneerTag() {
 }
 
 
-const TEST_NOTE = `
+/* Adresse principale (application Mainnet) : aucun jeton n'y est émis pendant la phase pilote.
+   Le jeton GTCπ de test n'est émis que depuis l'adresse de test. Voir pause-paiements.js. */
+const ADRESSE_PRINCIPALE = Boolean(window.GTCPaiements && GTCPaiements.adressePrincipale);
+
+const TEST_NOTE = ADRESSE_PRINCIPALE ? `
+    <div class="test-note">
+        ⚠️ <strong>Phase pilote — réseau principal de Pi Network.</strong>
+        Sur cette adresse, les paiements sont en pause et aucun jeton n'est émis.
+        Quand les paiements rouvriront, ce paiement pilote se fera en Pi réels, uniquement en Pi.
+    </div>
+    ` : `
     <div class="test-note">
         ⚠️ <strong>Phase pilote — paiement pilote en Pi réels.</strong>
         Le montant de ${PAYMENT_TEST_AMOUNT} π est débité en vrai Pi : c'est un montant
@@ -2564,13 +2575,19 @@ function renderResultBox() {
 
         let mintSection = "";
 
-        if (state.mintStatus === "success") {
+        if (ADRESSE_PRINCIPALE) {
+            mintSection = `
+                <div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.08); color:#cfc6b2; font-size:11px;">
+                    Aucun jeton n'est émis depuis l'adresse principale pendant la phase pilote.
+                </div>
+                `;
+        } else if (state.mintStatus === "success") {
             mintSection = `
                 <div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.08);">
                     <strong style="color:var(--green); font-size:12px;">✓ Jeton de test GTCπ émis (Testnet)</strong>
                     <div class="hash" style="margin-top:4px; color:#999; font-size:10px;">
                         TX Stellar : ${escapeHtml(state.mintTxHash || "—")}
-                        ${state.mintTxHash ? `<div style="margin-top:6px;"><a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(state.mintTxHash)}" target="_blank" rel="noopener" style="color:var(--gold-light, #f3ca6c); font-size:11px; font-weight:700; text-decoration:underline;">Voir sur l'explorateur ↗</a></div>` : ""}
+                        ${state.mintTxHash && state.mintExplorer ? `<div style="margin-top:6px;"><a href="https://stellar.expert/explorer/testnet/tx/${encodeURIComponent(state.mintTxHash)}" target="_blank" rel="noopener" style="color:var(--gold-light, #f3ca6c); font-size:11px; font-weight:700; text-decoration:underline;">Voir sur l'explorateur ↗</a></div>` : ""}
                     </div>
                     <div style="margin-top:6px; color:#8F8F8F; font-size:10px;">
                         Jeton de test sans valeur, non échangeable — ce n'est pas la tokenisation de votre actif.
@@ -2612,7 +2629,7 @@ function renderResultBox() {
             ${mintSection}
             <div style="margin-top:14px; padding:10px 12px; border:1px dashed rgba(234,203,131,.35); border-radius:12px; color:#cfc6b2; font-size:11px; line-height:1.5; text-align:left;">
                 Votre dossier va maintenant être vérifié. La tokenisation définitive n'aura lieu qu'après cette vérification.
-                Le jeton de test émis en phase pilote sert uniquement à tester le parcours : il ne vaut ni tokenisation ni titre de propriété.
+                ${ADRESSE_PRINCIPALE ? "" : "Le jeton de test émis en phase pilote sert uniquement à tester le parcours : il ne vaut ni tokenisation ni titre de propriété."}
             </div>
             `;
         return;
@@ -2811,6 +2828,9 @@ async function triggerMint() {
 
     if (!state.accessToken || !state.submissionId) return;
 
+    // Adresse principale (Mainnet) : aucun jeton n'est émis pendant la phase pilote.
+    if (ADRESSE_PRINCIPALE) { renderResultBox(); return; }
+
     state.mintStatus = "pending";
     renderResultBox();
 
@@ -2832,6 +2852,8 @@ async function triggerMint() {
 
         state.mintStatus = "success";
         state.mintTxHash = data.stellarTxHash;
+        // Lien d'explorateur seulement quand le serveur en donne un (réseau de test de Stellar).
+        state.mintExplorer = Boolean(data.explorerUrl);
 
         showToast("Jeton de test GTCπ émis (Testnet).", "success");
 

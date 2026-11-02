@@ -28,6 +28,14 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-11-02", "2 novembre 2026", "2 November 2026", [
+    ("gouv", "Conformité aux règles de Pi Network (transactions uniquement en Pi) : aucun jeton n'est émis depuis l'adresse principale. Le jeton GTCπ de test reste limité à l'environnement de test, et son passage sur la blockchain Pi est préparé.",
+             "Compliance with Pi Network rules (transactions in Pi only): no token is issued from the main address. The GTCπ test token stays limited to the test environment, and its move to the Pi blockchain is being prepared."),
+    ("market", "Valeurs et prix uniquement en Pi : la valeur d'un terrain se saisit en Pi, et les prix d'exemple du Marché sont désormais fictifs et exprimés en π.",
+               "Values and prices in Pi only: a land plot's value is entered in Pi, and the Market's sample prices are now fictitious and shown in π."),
+    ("app", "Connexion Pioneer : la sphère affiche désormais l'emblème GeoTerraChain QFS (globe et réseau dorés).",
+            "Pioneer sign-in: the sphere now shows the GeoTerraChain QFS emblem (golden globe and network)."),
+  ]),
   ("2026-10-31", "31 octobre 2026", "31 October 2026", [
     ("gouv", "Transparence : entre le 29 août et le 15 octobre 2026, 11 paiements pilotes de 0,001 π (0,011 π au total) ont été effectués en Pi réels sur le réseau principal de Pi Network, dont 5 par le fondateur, alors que certaines pages parlaient de « paiement test » ou de « Testnet ». Les textes sont corrigés. Les jetons GTCπ émis en échange restent des jetons de test, sans valeur. Les paiements sont en pause depuis le 28 octobre 2026, et le remboursement de leur 0,001 π sera proposé aux Pioneers concernés.",
              "Transparency: between 29 August and 15 October 2026, 11 pilot payments of 0.001 π (0.011 π in total) were made in real Pi on the Pi Network main network, 5 of them by the founder, while some pages spoke of a “test payment” or “Testnet”. The texts have been corrected. The GTCπ tokens issued in return remain test tokens with no value. Payments have been paused since 28 October 2026, and the Pioneers concerned will be offered a refund of their 0.001 π."),

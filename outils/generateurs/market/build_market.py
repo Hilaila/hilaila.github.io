@@ -81,8 +81,11 @@ CATS = [
   {"id": "artisanat", "name": B("Artisanat", "Crafts"), "ic": "basket", "a": "#E07A5F", "b": "#4A1A10"},
 ]
 
+# Prix d'exemple exprimés en Pi (π), fictifs : ils ne reflètent ni un cours du Pi ni un prix réel
+# (règles d'inscription de Pi : transactions uniquement en Pi). Les valeurs ci-dessous sont
+# données en millièmes de π pour rester lisibles (6000 → 6 π).
 def P(id, cat, icn, name, city, c, price, unit, prod, desc):
-    return {"id": id, "cat": cat, "ic": icn, "name": name, "city": city, "c": c, "price": price, "unit": unit, "prod": prod, "desc": desc}
+    return {"id": id, "cat": cat, "ic": icn, "name": name, "city": city, "c": c, "price": round(price / 1000, 3), "unit": unit, "prod": prod, "desc": desc}
 
 PRODUCTS = [
   P("ra1", "rani", "frog", B("Cuisses de grenouille fraîches", "Fresh frog legs"), "Grand-Bassam", "CI", 6000, B("kg", "kg"),
@@ -485,7 +488,7 @@ page = f'''<!DOCTYPE html>
   </section>
 
   <section class="block" id="catalogue">
-    {sec_head("01", "cart", "Catalogue", "Catalogue", "Prix d'exemple en francs CFA (XOF), donnés à titre indicatif.", "Sample prices in CFA francs (XOF), for illustration only.")}
+    {sec_head("01", "cart", "Catalogue", "Catalogue", "Prix fictifs en Pi (π), pour la démonstration : ils ne reflètent ni un cours du Pi ni un prix réel.", "Fictitious prices in Pi (π), for the demo: they reflect neither a Pi rate nor a real price.")}
     <div class="cats" id="cats" role="group" aria-label="Catégories"></div>
     <div class="tools">
       <label class="search">{svg(UI["search"])}<input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Produit, ville, filière…"></label>
@@ -493,7 +496,7 @@ page = f'''<!DOCTYPE html>
     </div>
     <div class="fpanel glass" id="fpanel">
       <label class="fld"><small>{T("Pays", "Country")}</small><select id="fc"></select></label>
-      <label class="fld"><small>{T("Prix maximum", "Maximum price")}</small><span class="rng"><input type="range" id="fp" min="500" max="30000" step="500" value="30000"><b class="mono" id="fpv"></b></span></label>
+      <label class="fld"><small>{T("Prix maximum", "Maximum price")}</small><span class="rng"><input type="range" id="fp" min="0.5" max="30" step="0.5" value="30"><b class="mono" id="fpv"></b></span></label>
       <label class="fld"><small>{T("Trier par", "Sort by")}</small><select id="fs"></select></label>
       <label class="tg"><input type="checkbox" id="fstar"><span>{T("Filières phares uniquement", "Flagship sectors only")}</span></label>
       <label class="tg"><input type="checkbox" id="ffav"><span>{T("Mes favoris uniquement", "My favourites only")}</span></label>
@@ -531,7 +534,7 @@ page = f'''<!DOCTYPE html>
   <div class="dh"><h2 id="dt">{svg(UI["cart"])}{T("Mon panier", "My basket")}</h2><button type="button" class="icb" id="dclose" aria-label="Fermer">{svg(UI["x"])}</button></div>
   <div class="dl" id="dl"></div>
   <div class="df">
-    <div class="tot"><span>{T("Sous-total", "Subtotal")}</span><b id="subt">0 XOF</b></div>
+    <div class="tot"><span>{T("Sous-total", "Subtotal")}</span><b id="subt">0 π</b></div>
     <p class="fine">{T("Paiement en Pi prévu après la phase pilote. Aucun taux de conversion n'est appliqué dans cette démonstration.", "Payment in Pi is planned after the pilot phase. No conversion rate is applied in this demo.")}</p>
     <button type="button" class="btn btn-gold wide" id="checkout">{T("Simuler la commande", "Simulate the order")} →</button>
   </div>

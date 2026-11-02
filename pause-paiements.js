@@ -42,6 +42,9 @@
 
   window.GTCPaiements = {
     pause: pause,
+    // Adresse principale = application Mainnet : aucun jeton GTCπ n'y est émis (règles Pi :
+    // transactions uniquement en Pi). ?pause-paiements=1 la simule pour un aperçu.
+    adressePrincipale: pause,
     bouton: function () { return t("bouton"); },
     message: function () { return t("clic"); }
   };

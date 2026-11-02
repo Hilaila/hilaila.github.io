@@ -80,6 +80,24 @@
   var inPiBrowser = /PiBrowser/i.test(navigator.userAgent || "");
 
   /* ---------- Styles ---------- */
+  // Emblème GeoTerraChain QFS : globe bleu nuit, méridiens et réseau de nœuds dorés.
+  var EMBLEME =
+    '<svg viewBox="0 0 100 100" focusable="false"><defs>' +
+    '<radialGradient id="gtcEmbG" cx=".42" cy=".38" r=".72"><stop offset="0" stop-color="#22355F"/><stop offset="1" stop-color="#0B1430"/></radialGradient>' +
+    '<clipPath id="gtcEmbC"><circle cx="50" cy="50" r="40"/></clipPath></defs>' +
+    '<circle cx="50" cy="50" r="40" fill="url(#gtcEmbG)"/>' +
+    '<g clip-path="url(#gtcEmbC)" fill="none" stroke="#D9AE3C" stroke-width="2" opacity=".9">' +
+    '<ellipse cx="50" cy="50" rx="19" ry="40"/><ellipse cx="50" cy="50" rx="34" ry="40"/>' +
+    '<line x1="50" y1="8" x2="50" y2="92"/><line x1="8" y1="50" x2="92" y2="50"/>' +
+    '<line x1="10" y1="33" x2="90" y2="33"/><line x1="10" y1="67" x2="90" y2="67"/></g>' +
+    '<circle cx="50" cy="50" r="40" fill="none" stroke="#E8C872" stroke-width="4"/>' +
+    '<g stroke="#F3D789" stroke-width="2.6" stroke-linecap="round">' +
+    '<line x1="36" y1="63" x2="48" y2="52"/><line x1="48" y1="52" x2="43" y2="38"/><line x1="48" y1="52" x2="61" y2="43"/>' +
+    '<line x1="61" y1="43" x2="65" y2="29"/><line x1="61" y1="43" x2="69" y2="56"/></g>' +
+    '<g fill="#FCEBB0" stroke="#D9AE3C" stroke-width="1.6">' +
+    '<circle cx="36" cy="63" r="3.8"/><circle cx="48" cy="52" r="4.6"/><circle cx="43" cy="38" r="3.3"/>' +
+    '<circle cx="61" cy="43" r="4"/><circle cx="65" cy="29" r="3.3"/><circle cx="69" cy="56" r="3.5"/></g></svg>';
+
   var CSS =
     "#gtc-cx{position:fixed;inset:0;z-index:2147482000;display:none;flex-direction:column;align-items:center;" +
     "background:radial-gradient(circle at 50% 42%,rgba(123,92,214,.20),transparent 58%),radial-gradient(circle at 50% 100%,rgba(232,200,114,.10),transparent 50%),#000008;" +
@@ -95,9 +113,9 @@
     "#gtc-cx .cx-sphere{position:relative;width:min(76vw,330px);height:min(76vw,330px);border:0;padding:0;border-radius:50%;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
     "#gtc-cx .cx-sphere[aria-disabled=true]{cursor:progress}" +
     "#gtc-cx .cx-sphere canvas{position:absolute;inset:0;width:100%;height:100%}" +
-    "#gtc-cx .cx-pi{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;display:grid;place-items:center;" +
-    "font:800 34px/1 Georgia,'Times New Roman',serif;color:#000008;background:radial-gradient(circle at 35% 30%,#FFF3C4,#E8C872 45%,#B08A2E);" +
-    "box-shadow:0 0 26px rgba(232,200,114,.55),0 0 60px rgba(232,200,114,.25);transition:transform .5s ease,opacity .5s ease}" +
+    "#gtc-cx .cx-pi{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;display:block;" +
+    "background:#0B1430;box-shadow:0 0 0 1px rgba(232,200,114,.35),0 0 26px rgba(232,200,114,.45),0 0 60px rgba(232,200,114,.2);transition:transform .5s ease,opacity .5s ease}" +
+    "#gtc-cx .cx-pi svg{display:block;width:100%;height:100%}" +
     "#gtc-cx[data-etat=pi] .cx-pi,#gtc-cx[data-etat=verif] .cx-pi{transform:scale(.82);opacity:.9}" +
     "#gtc-cx[data-etat=ok] .cx-pi{transform:scale(1.18)}" +
     "#gtc-cx[data-etat=fail] .cx-pi,#gtc-cx[data-etat=slow] .cx-pi{opacity:.55}" +
@@ -200,7 +218,9 @@
     var zone = el("div", "cx-zone");
     var b = el("button", "cx-sphere"); b.type = "button"; b.id = "gtc-cx-sphere";
     var cv = el("canvas"); cv.setAttribute("aria-hidden", "true");
-    var pi = el("span", "cx-pi", "π"); pi.setAttribute("aria-hidden", "true");
+    // Centre de la sphère : l'emblème GeoTerraChain QFS (globe et réseau dorés), et non le
+    // symbole π, pour ne pas imiter le logo de Pi Network (règles de marque de Pi).
+    var pi = el("span", "cx-pi"); pi.setAttribute("aria-hidden", "true"); pi.innerHTML = EMBLEME;
     b.appendChild(cv); b.appendChild(pi); zone.appendChild(b);
     b.addEventListener("click", function () { if (etat === "idle" || etat === "fail" || etat === "slow") lancer(); });
     var act = el("div", "cx-act");
