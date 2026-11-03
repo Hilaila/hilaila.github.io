@@ -28,6 +28,10 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-11-03", "3 novembre 2026", "3 November 2026", [
+    ("gouv", "Transparence (suite) : les 6 Pioneers dont le paiement pilote de 0,001 π avait été prélevé en Pi réels ont tous été remboursés, chacun vers l'adresse d'où venait son paiement.",
+             "Transparency (follow-up): the 6 Pioneers whose 0.001 π pilot payment had been taken in real Pi have all been refunded, each to the address their payment came from."),
+  ]),
   ("2026-11-02", "2 novembre 2026", "2 November 2026", [
     ("gouv", "Conformité aux règles de Pi Network (transactions uniquement en Pi) : aucun jeton n'est émis depuis l'adresse principale. Le jeton GTCπ de test reste limité à l'environnement de test, et son passage sur la blockchain Pi est préparé.",
              "Compliance with Pi Network rules (transactions in Pi only): no token is issued from the main address. The GTCπ test token stays limited to the test environment, and its move to the Pi blockchain is being prepared."),
