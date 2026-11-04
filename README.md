@@ -64,6 +64,11 @@ Stellar Testnet). Projet indépendant — Côte d'Ivoire, zone UEMOA.
   lien « Accueil » de l'en-tête (ou à l'endroit marqué `data-gtc-menu-after` / `data-gtc-menu-before`), qui
   ouvre la liste de toutes les pages groupées, page actuelle signalée ; FR/EN, clavier, lecteurs d'écran.
   **Nouvelle page : l'ajouter dans `PAGES` de `navigation.js`** (le test `tests/navigation.js` le vérifie).
+- `echeance-fonciere.js` (Tokeniser, Mon espace) : pour un terrain en Côte d'Ivoire, calcule l'échéance des
+  démarches foncières — certificat foncier : immatriculation dans les 10 ans (décret n°2023-238, art. 43) ;
+  droits coutumiers : constatation avant le 13 juin 2033 (décret n°2023-378, art. 2) ; concession provisoire :
+  immatriculation avant le 13 juin 2028 (décret n°2023-238, art. 29). Calcul indicatif, affiché comme tel.
+  La date de signature du certificat est envoyée avec la demande (`asset.certificateSignedAt`).
 - Réglage « réduire les animations » du téléphone respecté sur toutes les pages.
 - Accessibilité : contrastes conformes WCAG 2.2 AA, zoom jamais bloqué (`user-scalable=no` interdit).
 
@@ -90,6 +95,7 @@ node tests/accessibilite.js .
 node tests/clavier.js .
 node tests/navigation.js .
 node tests/connexion.js .
+node tests/echeance.js .
 ```
 
 - `audit-pages.js` : chaque page sur un écran de téléphone (360 px), en français et en anglais. Échoue
@@ -100,6 +106,8 @@ node tests/connexion.js .
   d'écran, contour de focus visible, zoom autorisé, langue déclarée.
 - `navigation.js` : bouton « Menu » dans l'en-tête de chaque page, menu complet (toutes les pages),
   page actuelle signalée, Échap / Tab / retour au bouton, anglais, aucun lien interne cassé.
+- `echeance.js` : calcul des échéances foncières (dates, cas limites, textes FR/EN), puis dans le navigateur :
+  champ date, encadré, récapitulatif, données envoyées, anglais, Mon espace.
 - `connexion.js` : sphère de connexion Pi sur les 5 pages, avec Pi simulé (connexion acceptée, refusée,
   absente) : étapes, « Bienvenue », fermeture, « Réessayer », touche Échap.
 

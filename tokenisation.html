@@ -424,6 +424,21 @@ button {
     color: #ff9292;
 }
 
+/* Échéance foncière (Côte d'Ivoire) : décrets n°2023-238 et n°2023-378 */
+.form-group[hidden], .summary-row[hidden] { display: none !important; }
+.echeance {
+    display: block;
+    margin: 0;
+    color: #e6e6e6;
+    line-height: 1.5;
+}
+.echeance strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.echeance .echeance-detail { display: block; }
+.echeance .echeance-note { display: block; margin-top: 6px; color: #bdbdbd; font-style: italic; }
+.echeance.warning strong { color: #eacb83; }
+.echeance.error strong { color: #ff9292; }
+.field-help { color: #bdbdbd; font-size: 11px; line-height: 1.45; }
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -825,6 +840,7 @@ input::placeholder, textarea::placeholder {
 <script src="navigation.js" defer></script>
 <script src="connexion-pi.js"></script>
 <script src="pause-paiements.js"></script>
+<script src="echeance-fonciere.js"></script>
 </head>
 
 <body>
@@ -1034,6 +1050,16 @@ input::placeholder, textarea::placeholder {
                             </select>
                         </div>
 
+                        <div class="form-group" id="certificateDateGroup" hidden>
+                            <label for="certificateDate">Date de signature du certificat foncier</label>
+                            <input id="certificateDate" type="date" min="1999-01-01" aria-describedby="certificateDateHelp" disabled>
+                            <span id="certificateDateHelp" class="field-help">Sert à calculer l'échéance d'immatriculation (10 ans).</span>
+                        </div>
+
+                        <div class="form-group full" id="echeanceGroup" hidden>
+                            <div id="echeanceFonciere" class="alert echeance" role="status" aria-live="polite" data-gtc-noi18n></div>
+                        </div>
+
                         <div class="form-group">
                             <label>Latitude</label>
                             <input id="latitude" type="number" step="any" placeholder="Ex : 5.3364">
@@ -1220,6 +1246,7 @@ input::placeholder, textarea::placeholder {
                     <div class="summary-row"><span>Localité</span><span id="summaryLocality">—</span></div>
                     <div class="summary-row"><span>Superficie</span><span id="summaryArea">—</span></div>
                     <div class="summary-row"><span>Statut propriété</span><span id="summaryOwnership">—</span></div>
+                    <div class="summary-row" id="summaryEcheanceRow" hidden><span>Échéance d'immatriculation</span><span id="summaryEcheance" data-gtc-noi18n>—</span></div>
                     <div class="summary-row"><span>Latitude</span><span id="summaryLat">—</span></div>
                     <div class="summary-row"><span>Longitude</span><span id="summaryLng">—</span></div>
                     <div class="summary-row"><span>Valeur estimée</span><span id="summaryValue">—</span></div>
@@ -1477,6 +1504,10 @@ function serverMessage(data, fallback) {
 
     if (message === "MINT_NOT_ALLOWED_ON_MAINNET") {
         return "Aucun jeton n'est émis pour un paiement fait sur le réseau principal de Pi pendant la phase pilote.";
+    }
+
+    if (message === "INVALID_CERTIFICATE_DATE") {
+        return "La date de signature du certificat foncier n'est pas valide.";
     }
 
     return (typeof message === "string" && message.trim()) ? message : fallback;
@@ -2200,6 +2231,7 @@ function buildSummary() {
     $("summaryLocality").textContent = locality || "—";
     $("summaryArea").textContent = area ? `${area} ha` : "—";
     $("summaryOwnership").textContent = ownership || "—";
+    renderSummaryEcheance();
     $("summaryLat").textContent = lat || "—";
     $("summaryLng").textContent = lng || "—";
     $("summaryValue").textContent = estimatedValue ? `${formatNumber(estimatedValue)} ${valueUnit}` : "—";
@@ -2242,6 +2274,7 @@ function buildPayload() {
             locality: $("locality").value.trim(),
             areaHa: Number($("area").value),
             ownershipStatus: $("ownershipStatus").value,
+            certificateSignedAt: certificateDateValue(),
             latitude: Number($("latitude").value),
             longitude: Number($("longitude").value),
             estimatedValue: $("estimatedValue").value ? Number($("estimatedValue").value) : null,
@@ -2882,6 +2915,89 @@ if (window.GTCConnexion) GTCConnexion.lier($("piLoginBtn"), {
     nom: () => state.piUser && state.piUser.username
 });
 else $("piLoginBtn").addEventListener("click", () => authenticatePi(false));
+/* ============================================================
+   ÉCHÉANCE FONCIÈRE (Côte d'Ivoire) — voir echeance-fonciere.js
+   Certificat foncier : immatriculation dans les 10 ans (décret n°2023-238, art. 43).
+   Droits coutumiers : constatation avant le 13 juin 2033 (décret n°2023-378, art. 2).
+   Concession provisoire : immatriculation avant le 13 juin 2028 (décret n°2023-238, art. 29).
+============================================================ */
+
+function currentLang() {
+    return window.GTC_LANG === "en" ? "en" : "fr";
+}
+
+function certificateDateValue() {
+    const input = $("certificateDate");
+    if (!input || input.disabled) return null;
+    return (window.GTCFoncier && GTCFoncier.dateValide(input.value)) || null;
+}
+
+function echeanceActuelle() {
+    if (!window.GTCFoncier) return null;
+    return GTCFoncier.calcul({
+        pays: $("country").value,
+        statut: $("ownershipStatus").value,
+        signature: certificateDateValue()
+    });
+}
+
+function updateEcheance() {
+
+    const group = $("certificateDateGroup");
+    const input = $("certificateDate");
+    const box = $("echeanceFonciere");
+    if (!group || !input || !box) return;
+
+    const certificat = $("country").value === "Côte d'Ivoire" && $("ownershipStatus").value === "certificat_foncier";
+    group.hidden = !certificat;
+    input.disabled = !certificat;            // un champ masqué ne bloque jamais l'envoi
+    input.max = new Date().toISOString().slice(0, 10);
+
+    const r = echeanceActuelle();
+    const t = r && GTCFoncier.texte(r, currentLang());
+    $("echeanceGroup").hidden = !t;
+    if (!t) { box.textContent = ""; return; }
+
+    box.className = "alert echeance" + (r.etat === "depasse" ? " error" : r.etat === "proche" ? " warning" : "");
+    box.innerHTML = "";
+    const titre = document.createElement("strong");
+    titre.textContent = t.titre;
+    box.appendChild(titre);
+    if (t.detail) {
+        const detail = document.createElement("span");
+        detail.className = "echeance-detail";
+        detail.textContent = t.detail;
+        box.appendChild(detail);
+    }
+    if (t.note) {
+        const note = document.createElement("span");
+        note.className = "echeance-note";
+        note.textContent = t.note;
+        box.appendChild(note);
+    }
+
+}
+
+function renderSummaryEcheance() {
+
+    const row = $("summaryEcheanceRow");
+    if (!row) return;
+    const r = echeanceActuelle();
+    const visible = Boolean(r && r.date && r.cas !== "certificat_sans_date");
+    row.hidden = !visible;
+    if (!visible) return;
+    const lang = currentLang();
+    const passee = r.etat === "depasse" ? (lang === "en" ? " · passed" : " · dépassée") : "";
+    $("summaryEcheance").textContent = GTCFoncier.dateLisible(r.date, lang) + passee;
+
+}
+
+["country", "ownershipStatus", "certificateDate"].forEach(id => {
+    $(id).addEventListener("change", updateEcheance);
+    $(id).addEventListener("input", updateEcheance);
+});
+window.addEventListener("gtc:lang", () => { updateEcheance(); renderSummaryEcheance(); });
+
 $("verifyKycBtn").addEventListener("click", () => verifyBackendIdentity());
 $("gtcSupply").addEventListener("input", calculateBurn);
 $("latitude").addEventListener("input", updateLocationDisplay);
@@ -2892,6 +3008,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initializePi();
     updateBurnUI();
+    updateEcheance();
     renderPiButton();
     renderVerifyButton();
 
@@ -2921,7 +3038,7 @@ document.addEventListener("DOMContentLoaded", () => {
 (function () {
     var KEY = "gtcTokDraft", MAX_AGE = 30 * 24 * 3600 * 1000;
     var IDS = ["assetType", "assetReference", "country", "region", "city", "locality", "area", "ownershipStatus",
-        "latitude", "longitude", "estimatedValue", "valueUnit", "gtcSupply", "documentUrl", "description"];
+        "certificateDate", "latitude", "longitude", "estimatedValue", "valueUnit", "gtcSupply", "documentUrl", "description"];
     var timer = null, restoring = false;
 
     function el(id) { return document.getElementById(id); }

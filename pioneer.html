@@ -91,6 +91,10 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .item-row:last-of-type { border-bottom: none; }
 .item-row span:first-child { color: #777; }
 .item-row span:last-child { color: #eee; font-weight: 600; text-align: right; }
+/* Échéance foncière (Côte d'Ivoire) : décrets n°2023-238 et n°2023-378 */
+.item-row span.echeance-proche { color: #eacb83; }
+.item-row span.echeance-depasse { color: #ff9292; }
+.item-note { font-size: 10.5px; line-height: 1.45; color: #a9a29a; margin-top: 6px; }
 
 .status-pill { display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; margin-bottom: 8px; }
 .status-pill.pending_review, .status-pill.pilote_testnet, .status-pill.en_attente, .status-pill.en_attente_validation, .status-pill.actif { background: rgba(217,164,65,.1); color: var(--gold-light); border: 1px solid var(--border); }
@@ -107,6 +111,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 <script src="clavier.js" defer></script>
 <script src="navigation.js" defer></script>
 <script src="connexion-pi.js"></script>
+<script src="echeance-fonciere.js"></script>
 </head>
 
 <body>
@@ -300,9 +305,32 @@ function renderActifs(actifs) {
                 <div class="item-row"><span>Référence</span><span>${escapeHtml(p.requestId || '—')}</span></div>
                 <div class="item-row"><span>Offre GTCπ</span><span>${formatNumber(p.tokenomics ? p.tokenomics.targetOffer : 0)}</span></div>
                 <div class="item-row"><span>Soumis le</span><span>${formatDate(e.created_at)}</span></div>
+                ${echeanceHtml(asset)}
             </div>
             `;
     }).join("");
+}
+
+/* Échéance foncière d'un actif situé en Côte d'Ivoire (voir echeance-fonciere.js) :
+   certificat foncier → immatriculation dans les 10 ans (décret n°2023-238, art. 43) ;
+   droits coutumiers → constatation avant le 13 juin 2033 (décret n°2023-378, art. 2) ;
+   concession provisoire → immatriculation avant le 13 juin 2028 (décret n°2023-238, art. 29). */
+function echeanceHtml(asset) {
+    if (!window.GTCFoncier) return "";
+    const r = GTCFoncier.calcul({ pays: asset.country, statut: asset.ownershipStatus, signature: asset.certificateSignedAt });
+    if (!r || r.cas === "titre") return "";
+    const date = GTCFoncier.dateLisible(r.date, "fr");
+    const classe = r.etat === "depasse" ? "echeance-depasse" : r.etat === "proche" ? "echeance-proche" : "";
+    let label = "Échéance d'immatriculation", valeur = date + (r.etat === "depasse" ? " · dépassée" : "");
+    if (r.cas === "certificat_sans_date") valeur = "date du certificat non indiquée";
+    if (r.cas === "coutumier") label = "Constatation des droits coutumiers";
+    if (r.cas === "concession") label = "Concession provisoire : immatriculation";
+    const reste = r.reste && r.etat !== "depasse"
+        ? `<div class="item-row"><span>Temps restant</span><span class="${classe}">${escapeHtml(GTCFoncier.duree(r.reste, "fr"))}</span></div>` : "";
+    const t = GTCFoncier.texte(r, "fr");
+    return `
+                <div class="item-row"><span>${escapeHtml(label)}</span><span class="${classe}">${escapeHtml(valeur)}</span></div>${reste}
+                <div class="item-note">${escapeHtml(t.detail)} ${escapeHtml(t.note)}</div>`;
 }
 
 function renderProjets(projets) {

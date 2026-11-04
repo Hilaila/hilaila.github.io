@@ -35,3 +35,6 @@ jobs:
       - name: Tester le menu commun et les liens
         if: always()
         run: node tests/navigation.js .
+      - name: Tester l'échéance foncière (Côte d'Ivoire)
+        if: always()
+        run: node tests/echeance.js .

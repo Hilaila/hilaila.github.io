@@ -70,6 +70,7 @@ EXACT = {
  "Vérifiez votre demande avant transmission.": "Review your request before sending it.",
  "Vérifiez attentivement les informations avant de soumettre.": "Check the information carefully before submitting.",
  "Référence": "Reference", "Localité": "Locality", "Superficie": "Area", "Statut propriété": "Ownership status",
+ "Échéance d'immatriculation": "Registration deadline",
  "Offre GTCπ": "GTCπ offer", "← Modifier": "← Edit", "◈ SOUMETTRE À LA TOKENISATION": "◈ SUBMIT FOR TOKENIZATION",
  "Aucune demande.": "No request yet.", "Complétez les 7 étapes pour créer une demande.": "Complete the 7 steps to create a request.",
  # Bloc « ce que fait le module »
@@ -143,6 +144,10 @@ EXACT = {
    "On this address, payments are paused and no token is issued. When payments reopen, this pilot payment will be made in real Pi, in Pi only.",
  "Aucun jeton n'est émis depuis l'adresse principale pendant la phase pilote.": "No token is issued from the main address during the pilot phase.",
  "Aucun jeton n'est émis pour un paiement fait sur le réseau principal de Pi pendant la phase pilote.": "No token is issued for a payment made on the Pi main network during the pilot phase.",
+ "La date de signature du certificat foncier n'est pas valide.": "The land certificate signing date is not valid.",
+ # Échéance foncière (Côte d'Ivoire)
+ "Date de signature du certificat foncier": "Land certificate signing date",
+ "Sert à calculer l'échéance d'immatriculation (10 ans).": "Used to work out the registration deadline (10 years).",
  "Votre dossier va maintenant être vérifié. La tokenisation définitive n'aura lieu qu'après cette vérification.": "Your file will now be verified. Final tokenization only happens after this verification.",
  "Valeur estimée (en Pi)": "Estimated value (in Pi)",
  "jeton de test (Stellar Testnet)": "test token (Stellar Testnet)",

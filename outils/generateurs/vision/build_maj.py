@@ -28,6 +28,10 @@ TAGS = {
 
 # (date ISO, date FR, date EN, [(tag, texte FR, texte EN), …]) — du plus récent au plus ancien
 ENTRIES = [
+  ("2026-11-04", "4 novembre 2026", "4 November 2026", [
+    ("app", "Échéance d'immatriculation (Côte d'Ivoire) : pour un terrain avec certificat foncier, l'application calcule la date limite pour demander l'immatriculation, 10 ans après la signature du certificat ou le 13 juin 2033 pour un certificat plus ancien (décret n°2023-238, article 43). Elle signale aussi la date du 13 juin 2033 pour faire constater des droits coutumiers (décret n°2023-378). L'échéance s'affiche dans le formulaire, le récapitulatif et Mon espace. Calcul indicatif, à vérifier auprès de l'AFOR ou d'un juriste.",
+            "Registration deadline (Côte d'Ivoire): for land with a land certificate, the app works out the deadline to request registration, 10 years after the certificate was signed or 13 June 2033 for an older certificate (Decree No. 2023-238, article 43). It also flags 13 June 2033 as the date to have customary rights recorded (Decree No. 2023-378). The deadline appears in the form, the summary and My space. Indicative calculation, to be checked with AFOR or a lawyer."),
+  ]),
   ("2026-11-03", "3 novembre 2026", "3 November 2026", [
     ("gouv", "Transparence (suite) : les 6 Pioneers dont le paiement pilote de 0,001 π avait été prélevé en Pi réels ont tous été remboursés, chacun vers l'adresse d'où venait son paiement.",
              "Transparency (follow-up): the 6 Pioneers whose 0.001 π pilot payment had been taken in real Pi have all been refunded, each to the address their payment came from."),
